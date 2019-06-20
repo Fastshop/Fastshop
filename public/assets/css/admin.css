@@ -1,0 +1,26 @@
+
+td.column-__actions__ .fa {
+    font-size: 1.4em;
+    padding-right: 5px;
+}
+
+div.content {
+    min-height: 100% !important;
+}
+
+td.column-__actions__ .fa-trash { color: red;}
+
+body .content-tabs .page-tabs a.active, body .content-tabs .page-tabs a.active:hover {
+    background: #51516f82 !important;
+    color: #00ccfd !important;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.main-footer {
+    background: #dbe4f1 !important;
+}
+
+.skin-blue-light .main-header .logo {
+    background-color: #597586 !important;
+}
