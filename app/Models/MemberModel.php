@@ -103,6 +103,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MemberModel whereMemberWw($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MemberModel whereWeixinInfo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MemberModel whereWeixinUnionid($value)
+ * @mixin \Eloquent
  */
 class MemberModel extends BaseModel {
     

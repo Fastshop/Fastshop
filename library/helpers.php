@@ -3,6 +3,7 @@
 use Illuminate\Container\Container;
 use Symfony\Component\VarDumper\VarDumper;
 
+
 if( ! function_exists('dump')) {
     /**
      * @param $var
@@ -62,7 +63,7 @@ if( ! function_exists('dd')) {
     }
 }
 
-if (! function_exists('app')) {
+if( ! function_exists('app')) {
     /**
      * Get the available container instance.
      *
@@ -71,9 +72,8 @@ if (! function_exists('app')) {
      * @return mixed|\App\Kernel
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    function app($abstract = null, array $parameters = [])
-    {
-        if (is_null($abstract)) {
+    function app($abstract = null, array $parameters = []) {
+        if(is_null($abstract)) {
             return Container::getInstance();
         }
         

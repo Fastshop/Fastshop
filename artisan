@@ -17,7 +17,14 @@ define('LARAVEL_START', microtime(true));
 
 require __DIR__.'/core/vendor/autoload.php';
 
-$app = require_once __DIR__.'/core/bootstrap/app.php';
+require_once(dirname(__FILE__).'/public/app/wp-load.php');
+
+// Set up the WordPress query.
+wp();
+
+require_once __DIR__.'/core/bootstrap/app.php';
+
+$app = app();
 
 /*
 |--------------------------------------------------------------------------
@@ -32,10 +39,7 @@ $app = require_once __DIR__.'/core/bootstrap/app.php';
 
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
-$status = $kernel->handle(
-    $input = new Symfony\Component\Console\Input\ArgvInput,
-    new Symfony\Component\Console\Output\ConsoleOutput
-);
+$status = $kernel->handle($input = new Symfony\Component\Console\Input\ArgvInput(), new Symfony\Component\Console\Output\ConsoleOutput());
 
 /*
 |--------------------------------------------------------------------------

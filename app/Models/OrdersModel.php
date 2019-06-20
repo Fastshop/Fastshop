@@ -85,6 +85,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\OrdersModel whereStoreId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\OrdersModel whereStoreName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\OrdersModel whereTradeNo($value)
+ * @mixin \Eloquent
  */
 class OrdersModel extends BaseModel {
     

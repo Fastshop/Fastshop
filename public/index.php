@@ -23,6 +23,11 @@ define('LARAVEL_START', microtime(true));
 
 require __DIR__.'/../core/vendor/autoload.php';
 
+require_once(dirname(__FILE__).'/app/wp-load.php');
+
+// Set up the WordPress query.
+wp();
+
 /*
 |--------------------------------------------------------------------------
 | Turn On The Lights
@@ -35,7 +40,8 @@ require __DIR__.'/../core/vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../core/bootstrap/app.php';
+require_once __DIR__.'/../core/bootstrap/app.php';
+$app = app();
 
 /*
 |--------------------------------------------------------------------------
@@ -51,9 +57,7 @@ $app = require_once __DIR__.'/../core/bootstrap/app.php';
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
-$response = $kernel->handle(
-    $request = Illuminate\Http\Request::capture()
-);
+$response = $kernel->handle($request = Illuminate\Http\Request::capture());
 
 $response->send();
 

@@ -42,6 +42,13 @@ return [
     */
 
     'disks' => [
+    
+        'admin' => [
+            'driver' => 'local',
+            'root' => public_path('home/uploads'),
+            'visibility' => 'public',
+            'url' => env('APP_URL').'/home/uploads',
+        ],
 
         'local' => [
             'driver' => 'local',

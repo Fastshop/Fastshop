@@ -11,6 +11,25 @@
 |
 */
 
+if(!defined('ABSPATH')){
+    if (! function_exists('__')) {
+        /**
+         * Translate the given message.
+         *
+         * @param string $key
+         * @param array $replace
+         * @param string|null $locale
+         * @return string|array|null
+         * @throws \Illuminate\Contracts\Container\BindingResolutionException
+         */
+        function __($key, $replace = [], $locale = null)
+        {
+            return app('translator')->getFromJson($key, $replace, $locale);
+        }
+    }
+    
+}
+
 Route::get('/', function () {
     return view('welcome');
 });
