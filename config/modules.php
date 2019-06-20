@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'namespace' => 'Modules',
+    'namespace' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ return [
         |
         */
 
-        'modules' => base_path('Modules'),
+        'modules' => base_path('../module'),
         /*
         |--------------------------------------------------------------------------
         | Modules assets path
@@ -77,7 +77,7 @@ return [
         |
         */
 
-        'assets' => public_path('modules'),
+        'assets' => public_path('assets'),
         /*
         |--------------------------------------------------------------------------
         | The migrations path

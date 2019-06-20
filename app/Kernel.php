@@ -34,12 +34,16 @@ class Kernel extends Application {
         return self::$kernel;
     }
     
+    public function resourcePath($path = '') {
+        return dirname($this->basePath).DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+    
     public function publicPath() {
         return dirname($this->basePath).DIRECTORY_SEPARATOR.'public';
     }
     
     public function configPath($path = '') {
-        return dirname($this->basePath).DIRECTORY_SEPARATOR.'config' .($path ? DIRECTORY_SEPARATOR.$path : $path);
+        return dirname($this->basePath).DIRECTORY_SEPARATOR.'config'.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
     
     public function path($path = '') {
