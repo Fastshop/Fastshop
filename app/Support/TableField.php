@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Support;
+
+use ArrayObject;
+
 /**
  * @package shop.pro
  * @since 2019-06-16

@@ -8,7 +8,6 @@ namespace App\Models;
  *
  * @package shop.pro
  * @since 2019-06-16
- * @mixin 
  * @property int $order_id 订单索引id
  * @property int $order_sn 订单编号
  * @property int $pay_sn 支付单号

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\TableField;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -23,6 +24,6 @@ class BaseModel extends Model {
      * @return static|\Illuminate\Database\Eloquent\Builder
      */
     public static function fn() {
-        return new \TableField();
+        return new TableField();
     }
 }

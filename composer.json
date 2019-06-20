@@ -104,7 +104,7 @@
             "php artisan ide-helper:generate -q"
         ],
         "post-root-package-install": [
-            "@php -r \"file_exists('core/.env') || copy('.env.example', 'core/.env');\""
+            "@php -r \"file_exists('core/.env') || copy('core/.env.example', 'core/.env');\""
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"

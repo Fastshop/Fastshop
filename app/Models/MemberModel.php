@@ -8,7 +8,6 @@ namespace App\Models;
  *
  * @package shop.pro
  * @since 2019-06-16
- * @mixin 
  * @property int $member_id 会员id
  * @property string $member_name 会员名称
  * @property string|null $member_truename 真实姓名
