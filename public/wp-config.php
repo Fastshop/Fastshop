@@ -22,16 +22,17 @@ require __DIR__."/../core/vendor/autoload.php";
 
 Kernel::Core();
 
+
 /** @var Illuminate\Http\Response $response */
 // $response = $kernel->handle($request = Illuminate\Http\Request::capture());
 
 // kd(get_class($kernel));
 
-define('WP_HOME', "/home");
-define('WP_SITEURL', "/app");
+define('WP_HOME', env('APP_URL')."/home");
+define('WP_SITEURL', env('APP_URL')."/app");
 
 define("WP_CONTENT_DIR", __DIR__."/home");
-define("WP_CONTENT_URL", "/home");
+define("WP_CONTENT_URL", env('APP_URL')."/home");
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */

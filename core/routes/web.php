@@ -30,6 +30,10 @@ if(!defined('ABSPATH')){
     
 }
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('copy',function(){
+    return view('copy');
 });
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
