@@ -19,6 +19,8 @@ define('LARAVEL_START', microtime(true));
 
 require __DIR__.'/core/vendor/autoload.php';
 
+define('APP_PATH', __DIR__ . '/public/shop/application/');
+
 require __DIR__ . '/public/shop/thinkphp/base.php';
 
 // 执行应用
