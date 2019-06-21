@@ -154,7 +154,7 @@ class Less {
                 $config = $this->prepareConfig($options);
                 $filename = preg_replace("/\.css$/", '.less', $filename);
                 $input_path = $filename;// is_file($path) ? $path :  $config['less_path'] . DIRECTORY_SEPARATOR . $filename . '.less';
-                $cache_key = $this->getCacheKey($filename);
+                $cache_key = $this->getCacheKey(realpath($filename));
                 $cache_value = \Less_Cache::Get([$input_path => asset('/')], $config, $this->modified_vars);
                 if($this->cache->get($cache_key) !== $cache_value || ! empty($this->parsed_less)) {
                     $this->cache->put($cache_key, $cache_value, 0);
