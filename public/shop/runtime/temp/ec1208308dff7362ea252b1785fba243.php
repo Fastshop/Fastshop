@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:41:"./application/admin/view/index/index.html";i:1540260088;s:82:"/Users/Shared/wwwroot/demo.pro/public/shop/application/admin/view/public/left.html";i:1540260088;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:41:"./application/admin/view/index/index.html";i:1561095919;s:82:"/Users/Shared/wwwroot/demo.pro/public/shop/application/admin/view/public/left.html";i:1540260088;}*/ ?>
 <!doctype html>
 <html>
 <head>
@@ -34,7 +34,7 @@
 	<div id="foldSidebar"><i class="fa fa-outdent " title="展开/收起侧边导航"></i></div>
 	<div class="admincp-name" onClick="javascript:openItem('welcome|Index');">
 		<!-- <h2 style="cursor:pointer;">TPshop3.0<br>平台系统管理中心</h2> -->
-		<img  style="width: 148px;height: 28px" src="<?php echo (isset($tpshop_config['shop_info_admin_home_logo']) && ($tpshop_config['shop_info_admin_home_logo'] !== '')?$tpshop_config['shop_info_admin_home_logo']:'/public/static/images/logo/admin_home_logo_default.png'); ?>" alt="">
+		<img  style="height: 28px" src="<?php echo (isset($tpshop_config['shop_info_admin_home_logo']) && ($tpshop_config['shop_info_admin_home_logo'] !== '')?$tpshop_config['shop_info_admin_home_logo']:'/public/static/images/logo/admin_home_logo_default.png'); ?>" alt="">
 	</div>
 	<div class="nc-module-menu">
 		<ul class="nc-row">
