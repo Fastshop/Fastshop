@@ -996,7 +996,7 @@ exit("请联系TPshop官网客服购买高级版支持此功能");
             $data['order_sn'] = $order['order_sn'];
             $data['goods_id'] = $goods_id;
             $data['addtime'] = time();
-            $data['user_id'] = $order[user_id];
+            $data['user_id'] = $order['user_id'];
             $data['remark'] = '管理员申请退换货'; // 问题描述
             M('return_goods')->add($data);
             $this->success('申请成功,现在去处理退货',U('Admin/Order/return_list'));

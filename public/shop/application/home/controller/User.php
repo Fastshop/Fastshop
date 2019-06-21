@@ -77,7 +77,7 @@ class User extends Base{
         $level = convert_arr_key($level,'level_id');
         $coupon = $logic ->get_coupon($this->user_id,'','','',$p=2);
         $order = new \app\common\model\Order();
-        $order_list = $order->where(['user_id'=>$user[user_id],'prom_type'=>['<',5]])->whereOr(['prom_type'=>7])->limit(1)->order('order_id desc')->select();
+        $order_list = $order->where(['user_id'=>$user['user_id'],'prom_type'=>['<',5]])->whereOr(['prom_type'=>7])->limit(1)->order('order_id desc')->select();
         $this->assign('coupon',$coupon['result']);
         $this->assign('level',$level);
         $this->assign('user',$user);

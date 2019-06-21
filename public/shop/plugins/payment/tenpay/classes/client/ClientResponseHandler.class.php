@@ -1,14 +1,14 @@
 <?php
 /**
- * ºóÌ¨Ó¦´ðÀà
+ * ï¿½ï¿½Ì¨Ó¦ï¿½ï¿½ï¿½ï¿½
  * ============================================================================
- * apiËµÃ÷£º
- * getKey()/setKey(),»ñÈ¡/ÉèÖÃÃÜÔ¿
- * getContent() / setContent(), »ñÈ¡/ÉèÖÃÔ­Ê¼ÄÚÈÝ
- * getParameter()/setParameter(),»ñÈ¡/ÉèÖÃ²ÎÊýÖµ
- * getAllParameters(),»ñÈ¡ËùÓÐ²ÎÊý
- * isTenpaySign(),ÊÇ·ñ²Æ¸¶Í¨Ç©Ãû,true:ÊÇ false:·ñ
- * getDebugInfo(),»ñÈ¡debugÐÅÏ¢
+ * apiËµï¿½ï¿½ï¿½ï¿½
+ * getKey()/setKey(),ï¿½ï¿½È¡/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿
+ * getContent() / setContent(), ï¿½ï¿½È¡/ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½ï¿½ï¿½ï¿½
+ * getParameter()/setParameter(),ï¿½ï¿½È¡/ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½Öµ
+ * getAllParameters(),ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½
+ * isTenpaySign(),ï¿½Ç·ï¿½Æ¸ï¿½Í¨Ç©ï¿½ï¿½,true:ï¿½ï¿½ false:ï¿½ï¿½
+ * getDebugInfo(),ï¿½ï¿½È¡debugï¿½ï¿½Ï¢
  * 
  * ============================================================================
  *
@@ -16,16 +16,16 @@
 
 class ClientResponseHandler  {
 	
-	/** ÃÜÔ¿ */
+	/** ï¿½ï¿½Ô¿ */
 	var $key;
 	
-	/** Ó¦´ðµÄ²ÎÊý */
+	/** Ó¦ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ */
 	var $parameters;
 	
-	/** debugÐÅÏ¢ */
+	/** debugï¿½ï¿½Ï¢ */
 	var $debugInfo;
 	
-	//Ô­Ê¼ÄÚÈÝ
+	//Ô­Ê¼ï¿½ï¿½ï¿½ï¿½
 	var $content;
 	
 	function __construct() {
@@ -40,21 +40,21 @@ class ClientResponseHandler  {
 	}
 		
 	/**
-	*»ñÈ¡ÃÜÔ¿
+	*ï¿½ï¿½È¡ï¿½ï¿½Ô¿
 	*/
 	function getKey() {
 		return $this->key;
 	}
 	
 	/**
-	*ÉèÖÃÃÜÔ¿
+	*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿
 	*/	
 	function setKey($key) {
 		$this->key = $key;
 	}
 	
-	//ÉèÖÃÔ­Ê¼ÄÚÈÝ£¬È·±£PHP»·¾³Ö§³Ösimplexml_load_stringÒÔ¼°iconvÕâÁ½¸öº¯Êý²Å¿ÉÒÔ
-	//Ò»°ãPHP5»·¾³ÏÂÃ»ÎÊÌâ£¬PHP4ÐèÒª¼ì²âÒ»ÏÂ»·¾³ÊÇ·ñ°²×°ÁËiconvÒÔ¼°simplexmlÄ£¿é
+	//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½ï¿½ï¿½Ý£ï¿½È·ï¿½ï¿½PHPï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½simplexml_load_stringï¿½Ô¼ï¿½iconvï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¿ï¿½ï¿½ï¿½
+	//Ò»ï¿½ï¿½PHP5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½â£¬PHP4ï¿½ï¿½Òªï¿½ï¿½ï¿½Ò»ï¿½Â»ï¿½ï¿½ï¿½ï¿½Ç·ï¿½×°ï¿½ï¿½iconvï¿½Ô¼ï¿½simplexmlÄ£ï¿½ï¿½
 	function setContent($content) {
 		$this->content = $content;
 		
@@ -63,7 +63,7 @@ class ClientResponseHandler  {
 		
 		if($xml && $xml->children()) {
 			foreach ($xml->children() as $node){
-				//ÓÐ×Ó½Úµã
+				//ï¿½ï¿½ï¿½Ó½Úµï¿½
 				if($node->children()) {
 					$k = $node->getName();
 					$nodeXml = $node->asXML();
@@ -84,8 +84,8 @@ class ClientResponseHandler  {
 		}	
 	}
 	
-	//ÉèÖÃÔ­Ê¼ÄÚÈÝ
-	//½â¾öPHP4ÀÏ»·¾³ÏÂ²»Ö§³ÖsimplexmlÒÔ¼°iconv¹¦ÄÜµÄº¯Êý
+	//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½PHP4ï¿½Ï»ï¿½ï¿½ï¿½ï¿½Â²ï¿½Ö§ï¿½ï¿½simplexmlï¿½Ô¼ï¿½iconvï¿½ï¿½ï¿½ÜµÄºï¿½ï¿½ï¿½
 	function setContent_backup($content) {
 		$this->content = $content;
 		$encode = $this->getXmlEncode($this->content);
@@ -96,12 +96,12 @@ class ClientResponseHandler  {
 		foreach ($tree['root'] as $key => $value) {
 			if($encode!="" && $encode != "UTF-8") {
 				$k = mb_convert_encoding($key, $encode, "UTF-8");
-				$v = mb_convert_encoding($value[value], $encode, "UTF-8");								
+				$v = mb_convert_encoding($value['value'], $encode, "UTF-8");
 			}
 			else 
 			{
 				$k = $key;
-				$v = $value[value];
+				$v = $value['value'];
 			}
 			$this->setParameter($k, $v);
 		}
@@ -109,27 +109,27 @@ class ClientResponseHandler  {
 	
 	
 	
-	//»ñÈ¡Ô­Ê¼ÄÚÈÝ
+	//ï¿½ï¿½È¡Ô­Ê¼ï¿½ï¿½ï¿½ï¿½
 	function getContent() {
 		return $this->content;
 	}
 	
 	/**
-	*»ñÈ¡²ÎÊýÖµ
+	*ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµ
 	*/	
 	function getParameter($parameter) {
 		return $this->parameters[$parameter];
 	}
 	
 	/**
-	*ÉèÖÃ²ÎÊýÖµ
+	*ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½Öµ
 	*/	
 	function setParameter($parameter, $parameterValue) {
 		$this->parameters[$parameter] = $parameterValue;
 	}
 	
 	/**
-	*»ñÈ¡ËùÓÐÇëÇóµÄ²ÎÊý
+	*ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½
 	*@return array
 	*/
 	function getAllParameters() {
@@ -137,9 +137,9 @@ class ClientResponseHandler  {
 	}	
 	
 	/**
-	*ÊÇ·ñ²Æ¸¶Í¨Ç©Ãû,¹æÔòÊÇ:°´²ÎÊýÃû³Æa-zÅÅÐò,Óöµ½¿ÕÖµµÄ²ÎÊý²»²Î¼ÓÇ©Ãû¡£
-	*true:ÊÇ
-	*false:·ñ
+	*ï¿½Ç·ï¿½Æ¸ï¿½Í¨Ç©ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½a-zï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¼ï¿½Ç©ï¿½ï¿½ï¿½ï¿½
+	*true:ï¿½ï¿½
+	*false:ï¿½ï¿½
 	*/	
 	function isTenpaySign() {
 		$signPars = "";
@@ -155,7 +155,7 @@ class ClientResponseHandler  {
 		
 		$tenpaySign = strtolower($this->getParameter("sign"));
 				
-		//debugÐÅÏ¢
+		//debugï¿½ï¿½Ï¢
 		$this->_setDebugInfo($signPars . " => sign:" . $sign .
 				" tenpaySign:" . $this->getParameter("sign"));
 		
@@ -164,13 +164,13 @@ class ClientResponseHandler  {
 	}
 	
 	/**
-	*»ñÈ¡debugÐÅÏ¢
+	*ï¿½ï¿½È¡debugï¿½ï¿½Ï¢
 	*/	
 	function getDebugInfo() {
 		return $this->debugInfo;
 	}
 	
-	//»ñÈ¡xml±àÂë
+	//ï¿½ï¿½È¡xmlï¿½ï¿½ï¿½ï¿½
 	function getXmlEncode($xml) {
 		$ret = preg_match ("/<?xml[^>]* encoding=\"(.*)\"[^>]* ?>/i", $xml, $arr);
 		if($ret) {
@@ -181,15 +181,15 @@ class ClientResponseHandler  {
 	}
 	
 	/**
-	*ÉèÖÃdebugÐÅÏ¢
+	*ï¿½ï¿½ï¿½ï¿½debugï¿½ï¿½Ï¢
 	*/	
 	function _setDebugInfo($debugInfo) {
 		$this->debugInfo = $debugInfo;
 	}
 	
 	/**
-	 * ÊÇ·ñ²Æ¸¶Í¨Ç©Ãû
-	 * @param signParameterArray Ç©ÃûµÄ²ÎÊýÊý×é
+	 * ï¿½Ç·ï¿½Æ¸ï¿½Í¨Ç©ï¿½ï¿½
+	 * @param signParameterArray Ç©ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * @return boolean
 	 */	
 	function _isTenpaySign($signParameterArray) {
@@ -207,7 +207,7 @@ class ClientResponseHandler  {
 		
 		$tenpaySign = strtolower($this->getParameter("sign"));
 				
-		//debugÐÅÏ¢
+		//debugï¿½ï¿½Ï¢
 		$this->_setDebugInfo($signPars . " => sign:" . $sign .
 				" tenpaySign:" . $this->getParameter("sign"));
 		

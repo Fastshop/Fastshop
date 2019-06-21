@@ -75,7 +75,7 @@ class News extends Base {
         foreach ($list as $k => $v) {
             if($v['tags']){
                 $str='';
-                $tmp=explode(',', $v[tags]);
+                $tmp=explode(',', $v['tags']);
                 foreach ($tmp as $k2 => $v2) {
                     $str.='['.$news_tag[$v2].']'.' ';
                 }
