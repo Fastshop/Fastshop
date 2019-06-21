@@ -26,7 +26,17 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
-        "almasaeed2010/adminlte": "~2.0"
+        "almasaeed2010/adminlte": "~2.0",
+        "laravel/passport": "^7.3",
+        "xethron/migrations-generator": "^2.0",
+        "zircote/swagger-php": "^3.0",
+        "predis/predis": "^1.1",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "michelf/php-markdown": "^1.8",
+        "guzzlehttp/guzzle": "^6.3",
+        "dingo/api": "^2.2",
+        "darkaonline/l5-swagger": "^5.8",
+        "barryvdh/laravel-cors": "^0.11.3"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",
@@ -51,7 +61,7 @@
         "merge-plugin": {
             "include": [
                 "module/*/composer.json",
-                "public/mall/*/composer.json"
+                "library/plugins/*/composer.json"
             ],
             "require": [
             ],
@@ -71,6 +81,9 @@
         }
     },
     "autoload": {
+        "files": [
+            "library/fixture/LaravelServiceProvider.php"
+        ],
         "exclude-from-files": [
             "laravel/framework/src/Illuminate/Foundation/helpers.php",
             "encore/laravel-admin/src/helpers.php"

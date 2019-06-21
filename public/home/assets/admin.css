@@ -1,46 +1,50 @@
 /* iCheck plugin Square skin
 ----------------------------------- */
-
 li#wp-admin-bar-site-name {
-    /* margin-left: 260px; */
-    width: 160px;
+  /* margin-left: 260px; */
+  width: 160px;
 }
-
 #wp-admin-bar-wp-logo {
-    display: none;
+  display: none;
 }
-
 #wpadminbar {
-    background: rgba(30, 140, 190, .8);
-    line-height: 42px;
-    height: 42px;
+  background: rgba(30, 140, 190, 0.8);
+  line-height: 42px;
+  height: 42px;
 }
-
 #wpadminbar * {
-    line-height: 42px;
+  line-height: 42px;
 }
-
 #wpadminbar .ab-label {
-    height: 42px;
+  height: 42px;
 }
-
-#wpadminbar .quicklinks .ab-empty-item, #wpadminbar .quicklinks a, #wpadminbar .shortlink-input {
-    height: 42px;
+#wpadminbar .quicklinks .ab-empty-item,
+#wpadminbar .quicklinks a,
+#wpadminbar .shortlink-input {
+  height: 42px;
 }
-
-#wpadminbar .ab-icon, #wpadminbar .ab-item:before, #wpadminbar > #wp-toolbar > #wp-admin-bar-root-default .ab-icon, .wp-admin-bar-arrow {
-    padding: 9px 0;
+#wpadminbar .ab-icon,
+#wpadminbar .ab-item:before,
+#wpadminbar > #wp-toolbar > #wp-admin-bar-root-default .ab-icon,
+.wp-admin-bar-arrow {
+  padding: 9px 0;
 }
-
 html.wp-toolbar {
-    padding-top: 42px;
+  padding-top: 42px;
 }
-
 #wpadminbar .quicklinks .ab-top-menu li.group a {
-    width: 5em;
-    text-align: center;
-    border-right: 1px solid #1a465d;
-    border-left: 1px solid #95b6c5;
+  width: 5em;
+  text-align: center;
+  border-right: 1px solid #1a465d;
+  border-left: 1px solid #95b6c5;
 }
-
-#adminmenu{display: none;}
+#adminmenu {
+  display: none;
+}
+div#wpbody {
+  position: relative;
+  margin-left: 160px;
+}
+#wpcontent {
+  margin-left: 0;
+}

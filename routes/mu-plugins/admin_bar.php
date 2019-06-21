@@ -1,6 +1,10 @@
 <?php
 
-function create_dwb_menu() {
+add_action('admin_bar_menu', function() {
+    if( ! is_admin()) {
+        return;
+    }
+    
     /** @var \WP_Admin_Bar $wp_admin_bar */ global $wp_admin_bar;
     
     $menu_id = 'dwb';
@@ -10,9 +14,9 @@ function create_dwb_menu() {
         //'group' => 'main',
         'meta'  => [
             "data-group" => 'main',
-            "class" => 'group-main group',
+            "class"      => 'group-main group',
         ],
-        'href' => '#',
+        'href'  => '#',
     ]);
     $wp_admin_bar->add_menu([
         //'parent' => $menu_id,
@@ -21,7 +25,7 @@ function create_dwb_menu() {
         'href'  => '#',
         'meta'  => [
             "data-group" => 'content',
-            "class" => 'group-content group',
+            "class"      => 'group-content group',
             //'target' => '_blank'
         ],
     ]);
@@ -37,6 +41,4 @@ function create_dwb_menu() {
     //     'id'    => 'dwb-pending',
     //     'href'  => 'edit-comments.php?comment_status=moderated',
     // ]);
-}
-
-add_action('admin_bar_menu', 'create_dwb_menu', 50);
+}, 50);

@@ -1,5 +1,5 @@
 <div class="wrap">
-    <iframe src="/copy"
+    <iframe src="@yield('url', $url ?: '/copy')"
             frameborder="0" id="myframe"
             style="margin:0;padding:0;left:0;top:0"
             scrolling="auto"

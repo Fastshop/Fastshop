@@ -16,5 +16,5 @@
 
 Encore\Admin\Form::forget(['map', 'editor']);
 
-Admin::css('/assets/css/admin.css?t='.filemtime(public_path("assets/css/admin.css")));
+Admin::css(['last' => Less::url('assets/css/admin.css')]);
 Admin::js('/assets/js/admin.js?t='.filemtime(public_path("assets/js/admin.js")));

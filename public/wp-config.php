@@ -22,7 +22,6 @@ require __DIR__."/../core/vendor/autoload.php";
 
 Kernel::Core();
 
-
 /** @var Illuminate\Http\Response $response */
 // $response = $kernel->handle($request = Illuminate\Http\Request::capture());
 
@@ -33,6 +32,8 @@ define('WP_SITEURL', env('APP_URL')."/app");
 
 define("WP_CONTENT_DIR", __DIR__."/home");
 define("WP_CONTENT_URL", env('APP_URL')."/home");
+
+define('WPMU_PLUGIN_DIR', base_path("../routes/mu-plugins"));
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
@@ -95,7 +96,7 @@ define('WP_DEBUG', false);
 
 /** Absolute path to the WordPress directory. */
 if( ! defined('ABSPATH')) {
-    define('ABSPATH', dirname(__FILE__).'/');
+    //define('ABSPATH', dirname(__FILE__).'/');
 }
 
 /** Sets up WordPress vars and included files. */

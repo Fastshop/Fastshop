@@ -269,11 +269,11 @@ return [
     | This value is the layout of admin pages.
     | @see https://adminlte.io/docs/2.4/layout
     |
-    | Supported: "fixed", "layout-boxed", "layout-top-nav", "sidebar-collapse",
+    | Supported: "fixed", "layout-boxed", "sidebar-collapse",
     | "sidebar-mini".
     |
     */
-    'layout' => ['sidebar-mini', /*'sidebar-collapse'*/],
+    'layout' => ['sidebar-mini', 'sidebar-collapse'],
 
     /*
     |--------------------------------------------------------------------------

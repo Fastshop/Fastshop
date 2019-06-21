@@ -13,7 +13,13 @@ $(function() {
     });
     
     
-    $('#adminmenu > .wp-first-item').addClass('group group-main');
+    //$('#adminmenu > .wp-first-item').addClass('group group-main');
+    
+    $('#adminmenu > .menu-top').each(function() {
+        if(!$(this).hasClass('group')) {
+            $(this).addClass('group group-main');
+        }
+    });
     
     var group = $('#adminmenu > .wp-has-current-submenu.group').attr('class').match(/group-\w+/)[0];
     $('#wp-admin-bar-' + group + " a").trigger("click");

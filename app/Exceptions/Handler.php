@@ -35,7 +35,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
         $_ENV = [];
-        ob_end_clean();
+        if (ob_get_length()) ob_end_clean();
     
         parent::report($exception);
     }
@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         $_ENV = [];
-        ob_end_clean();
+        if (ob_get_length()) ob_end_clean();
         return parent::render($request, $exception);
     }
 }

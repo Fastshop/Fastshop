@@ -63,6 +63,50 @@ if( ! function_exists('dd')) {
     }
 }
 
+if (! function_exists('isDingoApiRequest')) {
+    function isDingoApiRequest()
+    {
+        $requestDomain = trim(request()->root(), '/');
+        $prefix = config('api.prefix');
+        if (! empty($prefix)) {
+            $requestDomain = trim($requestDomain, '/') . '/' . trim($prefix, '/');
+        }
+        $strict = config('api.strict');
+        if ($strict) {
+            $strict = (getApiAcceptHeader() == request()->header('Accept')) ? true : false;
+        } else {
+            $strict = true; // always return true if not strict.
+        }
+        return (
+            starts_with($requestDomain, trim(getApiDomain(), '/'))
+            && (true == $strict)
+        );
+    }
+}
+if (! function_exists('getApiDomain')) {
+    function getApiDomain()
+    {
+        $uri = config('api.domain');
+        if (empty($uri)) {
+            $uri = config('app.url');
+        }
+        $prefix = config('api.prefix');
+        if (! empty($prefix)) {
+            $uri = trim($uri, '/') . '/' . trim($prefix, '/');
+        }
+        return $uri . '/';
+    }
+}
+if (! function_exists('getApiAcceptHeader')) {
+    function getApiAcceptHeader()
+    {
+        return 'application/'
+            . config('api.standardsTree') . '.'
+            . config('api.subtype') . '.'
+            . config('api.version') . '+json';
+    }
+}
+
 if( ! function_exists('app')) {
     /**
      * Get the available container instance.
