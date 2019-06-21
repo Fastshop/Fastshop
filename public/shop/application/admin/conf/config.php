@@ -7,5 +7,5 @@ return array(
     'FUNCTION_PLUGIN_PATH' => PLUGIN_PATH.'function',
 	'SHOW_PAGE_TRACE' => true,
 	'CFG_SQL_FILESIZE'=>5242880,
-    //'URL_MODEL'=>1, //
+    'URL_MODEL'=>2, //
 );

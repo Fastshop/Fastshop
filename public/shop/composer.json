@@ -17,6 +17,7 @@
     ],
     "require": {
         "php": ">=7.1",
+        "mmucklo/krumo": "^0.6.0",
         "topthink/framework": "5.0.2",
         "topthink/think-installer": "~1.0",
         "topthink/think-captcha": "~1.0",
@@ -30,6 +31,9 @@
         "tp": {
             "type": "path",
             "url": "thinkphp"
+        },
+        "local": {
+            "type": "path", "url": "../../library/vendor/*"
         }
     },
     "config": {

@@ -150,11 +150,13 @@ class File extends Driver
         if ($this->tag && !is_file($filename)) {
             $first = true;
         }
-        $data = json_encode($value);
+        $data = str_replace("index.php/", '/',  json_encode($value));
+        
         if ($this->options['data_compress'] && function_exists('gzcompress')) {
             //数据压缩
             $data = gzcompress($data, 3);
         }
+        
         $data   = "<?php\n//" . sprintf('%012d', $expire) . "\n exit();?>\n" . $data;
         $result = file_put_contents($filename, $data);
         if ($result) {
