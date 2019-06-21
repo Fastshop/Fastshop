@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use think\App;
+
 define('LARAVEL_START', microtime(true));
 
 /*
@@ -16,6 +18,11 @@ define('LARAVEL_START', microtime(true));
 */
 
 require __DIR__.'/core/vendor/autoload.php';
+
+require __DIR__ . '/public/shop/thinkphp/base.php';
+
+// 执行应用
+think\App::initCommon();
 
 require_once(dirname(__FILE__).'/public/app/wp-load.php');
 

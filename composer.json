@@ -36,7 +36,12 @@
         "guzzlehttp/guzzle": "^6.3",
         "dingo/api": "^2.2",
         "darkaonline/l5-swagger": "^5.8",
-        "barryvdh/laravel-cors": "^0.11.3"
+        "barryvdh/laravel-cors": "^0.11.3",
+        "topthink/framework": "5.0.2",
+        "topthink/think-installer": "~1.0",
+        "topthink/think-captcha": "~1.0",
+        "topthink/think-image": "~1.0",
+        "topthink/think-helper": "~1.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",
@@ -53,6 +58,7 @@
         "preferred-install": "dist"
     },
     "extra": {
+        "think-path": "public/shop/thinkphp",
         "include_files": [
             "library/helpers.php",
             "library/laravel-helpers.php",
@@ -66,7 +72,7 @@
             "require": [
             ],
             "recurse": true,
-            "replace": false,
+            "replace": true,
             "ignore-duplicates": false,
             "merge-dev": false,
             "merge-extra": true,
@@ -102,6 +108,10 @@
         }
     },
     "repositories": {
+        "think-php": {
+            "type": "path",
+            "url": "public/shop/thinkphp"
+        },
         "local": {
             "type": "path",
             "url": "library/vendor/*"
