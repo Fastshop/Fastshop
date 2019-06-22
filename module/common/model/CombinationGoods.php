@@ -13,10 +13,7 @@
  */
 namespace app\common\model;
 
-use app\common\logic\FlashSaleLogic;
-use app\common\logic\GroupBuyLogic;
 use think\Model;
-use app\common\logic\PromGoodsLogic;
 
 class CombinationGoods extends Model
 {
@@ -35,15 +32,17 @@ class CombinationGoods extends Model
     {
         return $this->hasOne('SpecGoodsPrice', 'item_id', 'item_id');
     }
+
     public function combination()
     {
-        return $this->hasOne('Combination','combination_id','combination_id');
+        return $this->hasOne('Combination', 'combination_id', 'combination_id');
     }
-    public function getIsMasterTextAttr($value,$data)
+
+    public function getIsMasterTextAttr($value, $data)
     {
-        if($data['is_master'] == 1){
+        if($data['is_master'] == 1) {
             return '主商品';
-        }else{
+        } else {
             return '副商品';
         }
     }

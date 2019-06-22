@@ -69,7 +69,7 @@ class Db
      * @access public
      * @param  mixed       $config 连接配置
      * @param  bool|string $name   连接标识 true 强制重新连接
-     * @return Connection
+     * @return Connection|\think\db\connector\Mysql
      * @throws Exception
      */
     public static function connect($config = [], $name = false)

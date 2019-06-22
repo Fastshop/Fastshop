@@ -15,7 +15,6 @@
 namespace app\common\logic;
 
 use app\common\util\TpshopException;
-use think\Model;
 use think\Db;
 
 /**
@@ -25,7 +24,6 @@ use think\Db;
  */
 class Order
 {
-
     private $order;
     private $user_id = 0;
 
@@ -59,32 +57,32 @@ class Order
      */
     public function deliveryConfirm()
     {
-        if(empty($this->order)){
+        if(empty($this->order)) {
             throw new TpshopException('订单确认收货', 0, ['status' => 0, 'msg' => '订单不存在']);
         }
-        if($this->order['order_status'] == 0){
-            throw new TpshopException("自提订单核销",0,['status' => 0, 'msg' => '系统没有确认该订单']);
+        if($this->order['order_status'] == 0) {
+            throw new TpshopException("自提订单核销", 0, ['status' => 0, 'msg' => '系统没有确认该订单']);
         }
-        if($this->order['order_status'] == 2){
-            throw new TpshopException("自提订单核销",0,['status' => 0, 'msg' => '该订单已收货']);
+        if($this->order['order_status'] == 2) {
+            throw new TpshopException("自提订单核销", 0, ['status' => 0, 'msg' => '该订单已收货']);
         }
-        if($this->order['order_status'] == 3){
-            throw new TpshopException("自提订单核销",0,['status' => 0, 'msg' => '该订单已取消']);
+        if($this->order['order_status'] == 3) {
+            throw new TpshopException("自提订单核销", 0, ['status' => 0, 'msg' => '该订单已取消']);
         }
-        if($this->order['order_status'] == 4){
-            throw new TpshopException("自提订单核销",0,['status' => 0, 'msg' => '该订单已完成']);
+        if($this->order['order_status'] == 4) {
+            throw new TpshopException("自提订单核销", 0, ['status' => 0, 'msg' => '该订单已完成']);
         }
-        if($this->order['order_status'] == 5){
-            throw new TpshopException("自提订单核销",0,['status' => 0, 'msg' => '该订单已作废']);
+        if($this->order['order_status'] == 5) {
+            throw new TpshopException("自提订单核销", 0, ['status' => 0, 'msg' => '该订单已作废']);
         }
-        if(empty($this->order['pay_time']) || $this->order['pay_status'] != 1){
+        if(empty($this->order['pay_time']) || $this->order['pay_status'] != 1) {
             throw new TpshopException('订单确认收货', 0, ['status' => 0, 'msg' => '商家未确定付款，该订单暂不能确定收货']);
         }
         $data['order_status'] = 2; // 已收货
         $data['shipping_status'] = 1; // 已发货
         $data['pay_status'] = 1; // 已付款
         $data['confirm_time'] = time(); // 收货确认时间
-        if($this->order['pay_code'] == 'cod'){
+        if($this->order['pay_code'] == 'cod') {
             $data['pay_time'] = time();
         }
         $this->order->save($data);
@@ -110,7 +108,7 @@ class Order
         $messageLogic->sendMessage();*/
 
         //分销设置
-        Db::name('rebate_log')->where("order_id", $this->order['order_id'])->save(['status'=>2,'confirm'=>time()]);
+        Db::name('rebate_log')->where("order_id", $this->order['order_id'])->save(['status' => 2, 'confirm' => time()]);
     }
 
     /**
@@ -122,14 +120,14 @@ class Order
     {
         $validate = validate('order');
         $order_id = $this->order['order_id'];
-        if (!$validate->scene('del')->check(['order_id' => $order_id])) {
+        if( !$validate->scene('del')->check(['order_id' => $order_id])) {
             throw new TpshopException('用户删除订单', 0, ['status' => 0, 'msg' => $validate->getError()]);
         }
-        if (empty($this->user_id)) {
+        if(empty($this->user_id)) {
             throw new TpshopException('用户删除订单', 0, ['status' => 0, 'msg' => '非法操作']);
         }
         $row = Db::name('order')->where(['user_id' => $this->user_id, 'order_id' => $order_id])->update(['deleted' => 1]);
-        if (!$row) {
+        if( !$row) {
             Db::name('order_goods')->where(['order_id' => $order_id])->update(['deleted' => 1]);
             throw new TpshopException('用户删除订单', 0, ['status' => 0, 'msg' => '删除失败']);
         }
@@ -142,14 +140,14 @@ class Order
      */
     public function adminDelOrder()
     {
-        Db::name('order_goods')->where('order_id',$this->order['order_id'])->delete();
+        Db::name('order_goods')->where('order_id', $this->order['order_id'])->delete();
         $this->order->delete();
     }
 
     /**
      * 订单操作记录
-     * @param $action_note|备注
-     * @param $status_desc|状态描述
+     * @param $action_note |备注
+     * @param $status_desc |状态描述
      * @param $action_user
      * @return mixed
      */

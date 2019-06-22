@@ -25,15 +25,15 @@ class WxMaterial extends Model
 
     public function getDataAttr($value)
     {
-        if (!$value) {
+        if( !$value) {
             return [];
         }
-        return json_decode($value, true) ?: [];
+        return json_decode($value, TRUE) ?: [];
     }
 
     public function setDataAttr($value)
     {
-        if (is_array($value)) {
+        if(is_array($value)) {
             return json_encode($value, JSON_UNESCAPED_UNICODE);
         }
         return $value;

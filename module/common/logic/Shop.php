@@ -15,8 +15,6 @@
 
 namespace app\common\logic;
 
-use app\common\util\TpshopException;
-use think\Model;
 use think\Db;
 
 /**
@@ -32,26 +30,28 @@ class Shop
      * @param $distance | 单位Km
      * @return mixed
      */
-    public function filterDistance($shop_list, $lng, $lat, $distance){
+    public function filterDistance($shop_list, $lng, $lat, $distance)
+    {
         if(empty($shop_list)) return [];
-        if(is_array($shop_list)){
-            foreach($shop_list as $k => $arr){
+        if(is_array($shop_list)) {
+            foreach($shop_list as $k => $arr) {
                 $dis = $this->getDistance($lat, $lng, $arr['latitude'], $arr['longitude']);
-                $shop_list[$k]['distance'] = round($dis,2);
-                $shop_list[$k]['ngt_dis'] = $distance;
-                if($dis > floatval($distance)){
-                    unset($shop_list[$k]);
-                }else{
-                    $shop_list[$k]['distance'] = round($dis, 1);
-                    $shop_list[$k]['shop_img'] = $this->getShopImg($arr['shop_id']);
+                $shop_list[ $k ]['distance'] = round($dis, 2);
+                $shop_list[ $k ]['ngt_dis'] = $distance;
+                if($dis > floatval($distance)) {
+                    unset($shop_list[ $k ]);
+                } else {
+                    $shop_list[ $k ]['distance'] = round($dis, 1);
+                    $shop_list[ $k ]['shop_img'] = $this->getShopImg($arr['shop_id']);
                 }
             }
-            $shop_list = array_sort($shop_list,'distance','asc');
-        }else{
+            $shop_list = array_sort($shop_list, 'distance', 'asc');
+        } else {
             return [];
         }
         return array_values($shop_list);
     }
+
     /**
      * 获取2点之间的距离
      * @param $lat1
@@ -79,9 +79,10 @@ class Shop
      * @param $shop_id
      * @return mixed
      */
-    function getShopImg($shop_id){
-        $image_url = Db::name('shop_images')->where('shop_id',$shop_id)->value('image_url');
-        $image_url = $image_url ?:'/public/static/images/haidilao.jpg';
+    function getShopImg($shop_id)
+    {
+        $image_url = Db::name('shop_images')->where('shop_id', $shop_id)->value('image_url');
+        $image_url = $image_url ?: '/public/static/images/haidilao.jpg';
         return $image_url;
     }
 }

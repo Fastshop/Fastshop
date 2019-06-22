@@ -8,22 +8,8 @@
 
 namespace app\common\model\saas;
 
-use think\Model;
-
 abstract class ExtendBase extends SaasModel
 {
-    public function getAmountData($mouths)
-    {
-        $pk = $this->getPk();
-        return [
-            'id'     => $this->$pk,
-            'name'   => $this['name'],
-            'amount' => $this->price * $mouths,
-            'use_time' => $mouths,
-            'use_time_unit' => TIME_MOUTH
-        ];
-    }
-
     static public function getAllExtendType()
     {
         return [
@@ -32,6 +18,18 @@ abstract class ExtendBase extends SaasModel
             EXTEND_IOS => 'iOS应用',
             EXTEND_ENTRUST => '委托服务',
             EXTEND_MINIAPP => '小程序模板',
+        ];
+    }
+
+    public function getAmountData($mouths)
+    {
+        $pk = $this->getPk();
+        return [
+            'id' => $this->$pk,
+            'name' => $this['name'],
+            'amount' => $this->price * $mouths,
+            'use_time' => $mouths,
+            'use_time_unit' => TIME_MOUTH,
         ];
     }
 }

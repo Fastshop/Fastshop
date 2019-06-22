@@ -13,10 +13,7 @@
  */
 namespace app\common\model;
 
-use app\common\logic\FlashSaleLogic;
-use app\common\logic\GroupBuyLogic;
 use think\Model;
-use app\common\logic\PromGoodsLogic;
 
 class Combination extends Model
 {
@@ -30,10 +27,12 @@ class Combination extends Model
     {
         return $this->hasMany('CombinationGoods', 'combination_id', 'combination_id')->order('is_master desc');
     }
+
     public function CombinationGoodsCount()
     {
         return $this->hasMany('CombinationGoods', 'combination_id', 'combination_id');
     }
+
     public function setStartTimeAttr($value)
     {
         return strtotime($value);

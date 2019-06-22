@@ -14,6 +14,7 @@
 
 namespace app\common\logic\saas\wechat;
 use app\common\logic\wechat\WxCode;
+use CURLFile;
 
 /**
  * 微信小程序第三方平台操作类
@@ -21,22 +22,14 @@ use app\common\logic\wechat\WxCode;
 class WxCommon
 {
     protected $errorMsg = '微信默认错误信息';  //错误字符串信息
-    protected $debug = false;   //是否开启调试
-    protected $isLogFile = true; //是否记录错误到文本
+    protected $debug = FALSE;   //是否开启调试
+    protected $isLogFile = TRUE; //是否记录错误到文本
     protected $logFile = "./wechat-debug.log"; //记录错误的文本路径
     protected $errCode = 0;
 
     public function getError()
     {
         return $this->errorMsg;
-    }
-
-    protected function setError($error)
-    {
-        if (!is_string($error)) {
-            $error = json_encode($error, JSON_UNESCAPED_UNICODE);
-        }
-        $this->errorMsg = $error;
     }
 
     public function getErrCode()
@@ -49,16 +42,60 @@ class WxCommon
         return $this->debug;
     }
 
-    public function logDebugFile($content)
+    public function toJson($data)
     {
-        if (!$this->isLogFile) {
-            return;
+        return json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * 请求并对结果进行初步检查
+     * @param string $url 请求的url
+     * @param string $method 请求的方式
+     * @param array|string $fields 请求的值
+     * @param bool $json 是否对结果进行json处理
+     * @return bool|mixed|string
+     */
+    protected function requestAndCheck($url, $method = 'GET', $fields = [], $json = TRUE)
+    {
+        $return = $this->httpRequest($url, $method, $fields);
+        if($return === FALSE) {
+            $this->setError("http请求出错！");
+            return FALSE;
         }
-        if (!is_string($content)) {
-            $encode = json_encode($content, JSON_UNESCAPED_UNICODE);
-            $encode && $content = $encode;
+
+        $wxdata = json_decode($return, TRUE);
+        if( !$json && $wxdata === NULL) {
+            return $return; //不能解码，如图片
         }
-        file_put_contents($this->logFile, date('Y-m-d H:i:s').' -- '.$content."\n", FILE_APPEND);
+
+        $this->logDebugFile(['url' => $url, 'fields' => $fields, 'wxdata' => $wxdata]);
+        if(isset($wxdata['errcode']) && $wxdata['errcode'] != 0) {
+            $this->errCode = $wxdata['errcode'];
+            $errmsg = WxCode::getItem($wxdata['errcode']);
+            if($this->debug) {
+                $this->setError("微信错误码：{$wxdata['errcode']};<br>中文信息：$errmsg<br>原信息：{$wxdata['errmsg']}<br>链接：$url");
+            } else {
+                if($errmsg === FALSE) {
+                    $errmsg = $wxdata['errmsg'];
+                    if(($pos = strpos($errmsg, ' hint')) > 0) {
+                        $errmsg = substr($errmsg, 0, $pos);
+                    }
+                }
+                $this->setError("微信提醒：{$errmsg}[{$wxdata['errcode']}]");
+            }
+            return FALSE;
+        }
+
+        if(strtoupper($method) === 'GET' && empty($wxdata)) {
+            if($this->debug) {
+                $this->setError("微信http请求返回为空！请求链接：$url");
+            } else {
+                $this->setError("微信http请求返回为空！操作失败");
+            }
+            return FALSE;
+        }
+
+        return $wxdata;
     }
 
     /**
@@ -71,49 +108,49 @@ class WxCommon
     protected function httpRequest($url, $method = 'GET', $fields = [])
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 
         $method = strtoupper($method);
-        if ($method == 'GET' && !empty($fields)) {
+        if($method == 'GET' && !empty($fields)) {
             is_array($fields) && $fields = http_build_query($fields);
-            $url = $url . (strpos($url,"?")===false ? "?" : "&") . $fields;
+            $url = $url . (strpos($url, "?") === FALSE ? "?" : "&") . $fields;
         }
         curl_setopt($ch, CURLOPT_URL, $url);
 
-        if ($method != 'GET') {
-            $hadFile = false;
-            curl_setopt($ch, CURLOPT_POST, true);
-            if (!empty($fields)) {
-                if (is_array($fields)) {
+        if($method != 'GET') {
+            $hadFile = FALSE;
+            curl_setopt($ch, CURLOPT_POST, TRUE);
+            if( !empty($fields)) {
+                if(is_array($fields)) {
                     /* 支持文件上传 */
-                    if (class_exists('\CURLFile')) {
-                        curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
-                        foreach ($fields as $key => $value) {
-                            if ($this->isPostHasFile($value)) {
-                                $fields[$key] = new \CURLFile(realpath(ltrim($value, '@')));
-                                $hadFile = true;
+                    if(class_exists('\CURLFile')) {
+                        curl_setopt($ch, CURLOPT_SAFE_UPLOAD, TRUE);
+                        foreach($fields as $key => $value) {
+                            if($this->isPostHasFile($value)) {
+                                $fields[ $key ] = new CURLFile(realpath(ltrim($value, '@')));
+                                $hadFile = TRUE;
                             }
                         }
-                    } elseif (defined('CURLOPT_SAFE_UPLOAD')) {
-                        foreach ($fields as $key => $value) {
-                            if ($this->isPostHasFile($value)) {
-                                curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-                                $hadFile = true;
+                    } elseif(defined('CURLOPT_SAFE_UPLOAD')) {
+                        foreach($fields as $key => $value) {
+                            if($this->isPostHasFile($value)) {
+                                curl_setopt($ch, CURLOPT_SAFE_UPLOAD, FALSE);
+                                $hadFile = TRUE;
                                 break;
                             }
                         }
                     }
                 }
-                $fields = (!$hadFile && is_array($fields)) ? http_build_query($fields) : $fields;
+                $fields = ( !$hadFile && is_array($fields)) ? http_build_query($fields) : $fields;
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
             }
         }
 
         /* 关闭https验证 */
-        if ("https" == substr($url, 0, 5)) {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        if("https" == substr($url, 0, 5)) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
         }
 
         $content = curl_exec($ch);
@@ -124,65 +161,29 @@ class WxCommon
 
     protected function isPostHasFile($value)
     {
-        if (is_string($value) && strpos($value, '@') === 0 && is_file(realpath(ltrim($value, '@')))) {
-            return true;
+        if(is_string($value) && strpos($value, '@') === 0 && is_file(realpath(ltrim($value, '@')))) {
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
-    /**
-     * 请求并对结果进行初步检查
-     * @param string $url 请求的url
-     * @param string $method 请求的方式
-     * @param array|string $fields 请求的值
-     * @param bool $json 是否对结果进行json处理
-     * @return bool|mixed|string
-     */
-    protected function requestAndCheck($url, $method = 'GET', $fields = [], $json = true)
+    protected function setError($error)
     {
-        $return = $this->httpRequest($url, $method, $fields);
-        if ($return === false) {
-            $this->setError("http请求出错！");
-            return false;
+        if( !is_string($error)) {
+            $error = json_encode($error, JSON_UNESCAPED_UNICODE);
         }
-
-        $wxdata = json_decode($return, true);
-        if (!$json && $wxdata === null) {
-            return $return; //不能解码，如图片
-        }
-
-        $this->logDebugFile(['url' => $url,'fields' => $fields,'wxdata' => $wxdata]);
-        if (isset($wxdata['errcode']) && $wxdata['errcode'] != 0) {
-            $this->errCode = $wxdata['errcode'];
-            $errmsg = WxCode::getItem($wxdata['errcode']);
-            if ($this->debug) {
-                $this->setError("微信错误码：{$wxdata['errcode']};<br>中文信息：$errmsg<br>原信息：{$wxdata['errmsg']}<br>链接：$url");
-            } else {
-                if ($errmsg === false) {
-                    $errmsg = $wxdata['errmsg'];
-                    if (($pos = strpos($errmsg, ' hint')) > 0) {
-                        $errmsg = substr($errmsg, 0, $pos);
-                    }
-                }
-                $this->setError("微信提醒：{$errmsg}[{$wxdata['errcode']}]");
-            }
-            return false;
-        }
-
-        if (strtoupper($method) === 'GET' && empty($wxdata)) {
-            if ($this->debug) {
-                $this->setError("微信http请求返回为空！请求链接：$url");
-            } else {
-                $this->setError("微信http请求返回为空！操作失败");
-            }
-            return false;
-        }
-
-        return $wxdata;
+        $this->errorMsg = $error;
     }
 
-    public function toJson($data)
+    public function logDebugFile($content)
     {
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
+        if( !$this->isLogFile) {
+            return;
+        }
+        if( !is_string($content)) {
+            $encode = json_encode($content, JSON_UNESCAPED_UNICODE);
+            $encode && $content = $encode;
+        }
+        file_put_contents($this->logFile, date('Y-m-d H:i:s') . ' -- ' . $content . "\n", FILE_APPEND);
     }
 }

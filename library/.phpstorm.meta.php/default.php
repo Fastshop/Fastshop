@@ -16,13 +16,9 @@ namespace PHPSTORM_META
     ]));
 
     override(\M(0), map([
-        '' => 'app\common\model\@',
+        '' => '@',
     ]));
 
-    override(\m(0), map([
-        '' => 'app\common\model\@',
-    ]));
-    
     override(\logic(0), map([
         '' => '@',
     ]));

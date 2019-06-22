@@ -14,7 +14,6 @@
 namespace app\common\model;
 
 use think\Model;
-use think\Db;
 
 class TeamGoodsItem extends Model
 {
@@ -22,10 +21,14 @@ class TeamGoodsItem extends Model
     {
         return $this->hasOne('specGoodsPrice', 'item_id', 'item_id');
     }
-    public function goods(){
+
+    public function goods()
+    {
         return $this->hasOne('goods', 'goods_id', 'goods_id');
     }
-    public function teamActivity(){
+
+    public function teamActivity()
+    {
         return $this->hasOne('teamActivity', 'team_id', 'team_id');
     }
 }

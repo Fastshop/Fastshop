@@ -13,6 +13,7 @@
  */
 namespace app\common\model;
 use think\Model;
+
 class MessagePrivate extends Model
 {
     public function userMessage()
@@ -24,24 +25,29 @@ class MessagePrivate extends Model
     {
         return time_to_str($data['send_time']);
     }
+
     public function getHomeUrlAttr($value, $data)
     {
         return '';
     }
+
     public function getFinishedAttr($value, $data)
     {
-        return false;
+        return FALSE;
     }
+
     public function getMobileUrlAttr($value, $data)
     {
         return '';
     }
+
     public function getOrderTextAttr($value, $data)
     {
         return '';
     }
+
     public function getStartTimeAttr($value, $data)
     {
-        return true;
+        return TRUE;
     }
 }

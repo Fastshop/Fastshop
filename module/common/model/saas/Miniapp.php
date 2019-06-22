@@ -13,11 +13,8 @@
 
 namespace app\common\model\saas;
 
-use think\Model;
-
 class Miniapp extends SaasModel
 {
-
     public function userMiniapps()
     {
         return $this->hasMany('UserMiniapp', 'miniapp_id', 'miniapp_id');
@@ -35,7 +32,7 @@ class Miniapp extends SaasModel
 
     public function getDomainsAttr($value)
     {
-        return json_decode($value, true);
+        return json_decode($value, TRUE);
     }
 
     public function setDomainsAttr($value)
@@ -46,7 +43,7 @@ class Miniapp extends SaasModel
 
     public function getCategoriesAttr($value)
     {
-        return json_decode($value, true);
+        return json_decode($value, TRUE);
     }
 
     public function setCategoriesAttr($value)
@@ -56,7 +53,7 @@ class Miniapp extends SaasModel
 
     public function getTestersAttr($value)
     {
-        if (!$value) {
+        if( !$value) {
             return [];
         }
         return explode(',', $value);
@@ -64,7 +61,7 @@ class Miniapp extends SaasModel
 
     public function setTestersAttr($value)
     {
-        if (!$value) {
+        if( !$value) {
             return '';
         }
         return implode(',', $value);

@@ -18,7 +18,7 @@ namespace app\common\logic\wechat;
 /**
  * 微信平台的错误吗
  */
-class WxCode 
+class WxCode
 {
     static public $map = [
         -1 => '系统繁忙',
@@ -137,10 +137,10 @@ class WxCode
      */
     static public function getItem($code)
     {
-        if (key_exists($code, self::$map)) {
-            return self::$map[$code];
+        if(key_exists($code, self::$map)) {
+            return self::$map[ $code ];
         }
-        return false;
+        return FALSE;
     }
 }
 

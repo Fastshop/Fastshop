@@ -13,15 +13,15 @@
  */
 namespace app\common\model;
 
-use think\Model;
 use think\Db;
+use think\Model;
 
 class TeamFound extends Model
 {
     public function initialize()
     {
         $team_found_num = Db::name('team_found')->where('found_end_time', '<', time())->where('status', 1)->count();
-        if ($team_found_num > 0) {
+        if($team_found_num > 0) {
             Db::name('team_found')->where('found_end_time', '<', time())->where('status', 1)->update(['status' => 3]);
         }
     }
@@ -45,6 +45,7 @@ class TeamFound extends Model
     {
         return $this->hasOne('OrderGoods', 'order_id', 'order_id');
     }
+
     //拼单节省多少钱
     public function getCutPriceAttr($value, $data)
     {
@@ -61,6 +62,6 @@ class TeamFound extends Model
     public function getStatusDescAttr($value, $data)
     {
         $status = config('TEAM_FOUND_STATUS');
-        return $status[$data['status']];
+        return $status[ $data['status'] ];
     }
 }

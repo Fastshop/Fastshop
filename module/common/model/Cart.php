@@ -14,23 +14,26 @@
 namespace app\common\model;
 use app\common\logic\FlashSaleLogic;
 use app\common\logic\GroupBuyLogic;
-use think\Model;
 use app\common\logic\PromGoodsLogic;
-class Cart extends Model {
+use think\Model;
+
+class Cart extends Model
+{
     //自定义初始化
     protected static function init()
     {
         //TODO:自定义的初始化
     }
+
     public function promGoods()
     {
-        return $this->hasOne('PromGoods', 'id', 'prom_id')->cache(true,10);
+        return $this->hasOne('PromGoods', 'id', 'prom_id')->cache(TRUE, 10);
     }
 
     public function goods()
     {
-        return $this->hasOne('Goods', 'goods_id', 'goods_id')->cache(true,10)->field('goods_id,cat_id,store_count,is_on_sale,prom_type,prom_id,weight')->bind([
-            'cat_id'	=> 'cat_id','store_count'=>'store_count','is_on_sale'=>'is_on_sale','weight'=>'weight'
+        return $this->hasOne('Goods', 'goods_id', 'goods_id')->cache(TRUE, 10)->field('goods_id,cat_id,store_count,is_on_sale,prom_type,prom_id,weight')->bind([
+            'cat_id' => 'cat_id', 'store_count' => 'store_count', 'is_on_sale' => 'is_on_sale', 'weight' => 'weight',
         ]);
     }
 
@@ -40,10 +43,9 @@ class Cart extends Model {
         return 0;
     }
 
-
     public function getSpecKeyNameArrAttr($value, $data)
     {
-        if ($data['spec_key_name']) {
+        if($data['spec_key_name']) {
             $specKeyNameArr = explode(' ', $data['spec_key_name']);
             return $specKeyNameArr;
         } else {
@@ -51,18 +53,19 @@ class Cart extends Model {
         }
     }
 
-
     public function combinationCart()
     {
         return $this->hasMany('Cart', 'combination_group_id', 'id');
     }
+
     public function combination()
     {
         return $this->hasOne('combination', 'combination_id', 'prom_id');
     }
+
     public function combinationGoods()
     {
-        return $this->hasMany('combination_goods', 'combination_id', 'prom_id')->order('is_master','desc');
+        return $this->hasMany('combination_goods', 'combination_id', 'prom_id')->order('is_master', 'desc');
     }
 
     /**
@@ -76,6 +79,7 @@ class Cart extends Model {
         $goods_fee = round($data['goods_num'] * $data['member_goods_price'], 2);
         return $goods_fee;
     }
+
     /**
      * 商品总额
      * @param $value
@@ -87,6 +91,7 @@ class Cart extends Model {
         $total_fee = round($data['goods_num'] * $data['goods_price'], 2);
         return $total_fee;
     }
+
     /**
      * 商品总额优惠
      * @param $value
@@ -107,33 +112,33 @@ class Cart extends Model {
      */
     public function getLimitNumAttr($value, $data)
     {
-        $spec_goods_price = null;
+        $spec_goods_price = NULL;
         $goods = Goods::get($data['goods_id'], '', 20);
         //有规格
-        if ($data['spec_key']) {
-            $spec_goods_price = SpecGoodsPrice::get(['goods_id'=>$data['goods_id'],'key' => $data['spec_key']]);
-            if ($data['prom_type'] == 1) {
+        if($data['spec_key']) {
+            $spec_goods_price = SpecGoodsPrice::get(['goods_id' => $data['goods_id'], 'key' => $data['spec_key']]);
+            if($data['prom_type'] == 1) {
                 $FlashSaleLogic = new FlashSaleLogic($goods, $spec_goods_price);
                 $limitNum = $FlashSaleLogic->getUserFlashResidueGoodsNum($data['user_id']);
-            } else if ($data['prom_type'] == 2) {
+            } elseif($data['prom_type'] == 2) {
                 $groupBuyLogic = new GroupBuyLogic($goods, $spec_goods_price);
                 $limitNum = $groupBuyLogic->getPromotionSurplus();//团购剩余库存
-            }else if ($data['prom_type'] == 3) {
+            } elseif($data['prom_type'] == 3) {
                 $promoGoodsLogic = new PromGoodsLogic($goods, $spec_goods_price);
                 $limitNum = $promoGoodsLogic->getPromoGoodsResidueGoodsNum($data['user_id']);
             } else {
                 $limitNum = $spec_goods_price['store_count'];
             }
-        }else{
+        } else {
             //没有规格
-            if ($data['prom_type'] == 1) {
-                $FlashSaleLogic = new FlashSaleLogic($goods, null);
+            if($data['prom_type'] == 1) {
+                $FlashSaleLogic = new FlashSaleLogic($goods, NULL);
                 $limitNum = $FlashSaleLogic->getUserFlashResidueGoodsNum($data['user_id']);
-            } else if ($data['prom_type'] == 2) {
-                $groupBuyLogic = new GroupBuyLogic($goods, null);
+            } elseif($data['prom_type'] == 2) {
+                $groupBuyLogic = new GroupBuyLogic($goods, NULL);
                 $limitNum = $groupBuyLogic->getPromotionSurplus();//团购剩余库存
-            }else if ($data['prom_type'] == 3) {
-                $promoGoodsLogic = new PromGoodsLogic($goods, null);
+            } elseif($data['prom_type'] == 3) {
+                $promoGoodsLogic = new PromGoodsLogic($goods, NULL);
                 $limitNum = $promoGoodsLogic->getPromoGoodsResidueGoodsNum($data['user_id']);
             } else {
                 $limitNum = $goods['store_count'];

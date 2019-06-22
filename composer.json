@@ -99,9 +99,18 @@
             "encore/laravel-admin/src/helpers.php"
         ],
         "psr-4": {
+            "model\\": "model/",
             "App\\": "app/",
-            "app\\": "module/"
+            "app\\": "module/",
+            "App\\Admin\\": "module/admin/src/",
+            "App\\Common\\": "module/common/src/",
+            "App\\Shop\\": "module/shop/src/",
+            "App\\Mobile\\": "module/mobile/src/",
+            "App\\Demo\\": "module/demo/src/",
+            "App\\Think\\": "module/think/src/",
+            "App\\Home\\": "module/home/src/"
         },
+
         "classmap": [
             "core/database/seeds",
             "core/database/factories"

@@ -18,13 +18,16 @@ use think\Model;
 
 class Goods extends Model
 {
-    public function specImage(){
+    public function specImage()
+    {
         return $this->hasMany('SpecImage', 'goods_id', 'goods_id');
     }
+
     public function specGoodsPrice()
     {
         return $this->hasMany('specGoodsPrice', 'goods_id', 'goods_id');
     }
+
     public function goodsImages()
     {
         return $this->hasMany('GoodsImages', 'goods_id', 'goods_id');
@@ -39,9 +42,10 @@ class Goods extends Model
     {
         return $this->hasOne('TeamActivity', 'goods_id', 'goods_id')->where('deleted', 0);
     }
+
     public function PromGoods()
     {
-        return $this->hasOne('PromGoods', 'id', 'prom_id')->cache(true, 10);
+        return $this->hasOne('PromGoods', 'id', 'prom_id')->cache(TRUE, 10);
     }
 
     public function GroupBuy()
@@ -56,7 +60,7 @@ class Goods extends Model
 
     public function getDiscountAttr($value, $data)
     {
-        if ($data['market_price'] == 0) {
+        if($data['market_price'] == 0) {
             $discount = 10;
         } else {
             $discount = round($data['shop_price'] / $data['market_price'], 2) * 10;
@@ -66,7 +70,7 @@ class Goods extends Model
 
     public function goodsAttr()
     {
-        return $this->hasMany('GoodsAttr', 'goods_id' ,'goods_id')->join('__GOODS_ATTRIBUTE__ b', '__PREFIX__goods_attr.attr_id = b.attr_id')->order('b.order desc');
+        return $this->hasMany('GoodsAttr', 'goods_id', 'goods_id')->join('__GOODS_ATTRIBUTE__ b', '__PREFIX__goods_attr.attr_id = b.attr_id')->order('b.order desc');
     }
 
     /**
@@ -79,16 +83,16 @@ class Goods extends Model
     public function getCommentStatisticsAttr($value, $data)
     {
         $comment_where = ['is_show' => 1, 'goods_id' => $data['goods_id'], 'user_id' => ['gt', 0]]; //公共条件
-//        $field = "sum(case when img !='' and img not like 'N;%' then 1 else 0 end) as img_sum,"
-//            . "sum(case when goods_rank >= 4 and goods_rank <= 5 then 1 else 0 end) as high_sum," .
-//            "sum(case when goods_rank >= 3 and goods_rank <4 then 1 else 0 end) as center_sum," .
-//            "sum(case when goods_rank < 3 then 1 else 0 end) as low_sum,count(comment_id) as total_sum";
+        //        $field = "sum(case when img !='' and img not like 'N;%' then 1 else 0 end) as img_sum,"
+        //            . "sum(case when goods_rank >= 4 and goods_rank <= 5 then 1 else 0 end) as high_sum," .
+        //            "sum(case when goods_rank >= 3 and goods_rank <4 then 1 else 0 end) as center_sum," .
+        //            "sum(case when goods_rank < 3 then 1 else 0 end) as low_sum,count(comment_id) as total_sum";
         $field = "sum(case when img !='' and img not like 'N;%' then 1 else 0 end) as img_sum,"
             . "sum(case when ceil((deliver_rank+goods_rank+service_rank)/3)= 4 or ceil((deliver_rank+goods_rank+service_rank)/3)= 5 then 1 else 0 end) as high_sum," .
             "sum(case when ceil((deliver_rank+goods_rank+service_rank)/3)= 3  then 1 else 0 end) as center_sum," .
             "sum(case when ceil((deliver_rank+goods_rank+service_rank)/3)<=2  then 1 else 0 end) as low_sum,count(comment_id) as total_sum";
         $comment_statistics = Db::name('comment')->field($field)->where($comment_where)->group('goods_id')->find();
-        if ($comment_statistics) {
+        if($comment_statistics) {
             $comment_statistics['high_rate'] = ceil($comment_statistics['high_sum'] / $comment_statistics['total_sum'] * 100); // 好评率
             $comment_statistics['center_rate'] = ceil($comment_statistics['center_sum'] / $comment_statistics['total_sum'] * 100); // 中评率
             $comment_statistics['low_rate'] = ceil($comment_statistics['low_sum'] / $comment_statistics['total_sum'] * 100); // 差评率
@@ -100,8 +104,8 @@ class Goods extends Model
 
     public function getPriceLadderAttr($value)
     {
-        if (!empty($value)) {
-            return json_decode($value, true);
+        if( !empty($value)) {
+            return json_decode($value, TRUE);
         } else {
             return [];
         }
@@ -110,52 +114,60 @@ class Goods extends Model
     public function setVirtualIndateAttr($value)
     {
         $virtual_time = strtotime($value);
-        if($virtual_time > time()){
+        if($virtual_time > time()) {
             return $virtual_time;
-        }else{
+        } else {
             return 0;
         }
     }
-    public function setExchangeIntegralAttr($value, $data){
-        if($data['is_virtual'] == 1){
+
+    public function setExchangeIntegralAttr($value, $data)
+    {
+        if($data['is_virtual'] == 1) {
             return 0;
-        }else{
+        } else {
             return $value;
         }
     }
-    public function setCatIdAttr($value, $data){
-        if($data['cat_id_3']){
+
+    public function setCatIdAttr($value, $data)
+    {
+        if($data['cat_id_3']) {
             return $data['cat_id_3'];
         }
-        if($data['cat_id_2']){
+        if($data['cat_id_2']) {
             return $data['cat_id_2'];
         }
         return $value;
     }
 
-    public function setExtendCatIdAttr($value, $data){
-        if($data['extend_cat_id_3']){
+    public function setExtendCatIdAttr($value, $data)
+    {
+        if($data['extend_cat_id_3']) {
             return $data['extend_cat_id_3'];
         }
-        if($data['extend_cat_id_2']){
+        if($data['extend_cat_id_2']) {
             return $data['extend_cat_id_2'];
         }
         return $value;
     }
-    public function setSpecTypeAttr($value, $data){
-       return $data['goods_type'];
+
+    public function setSpecTypeAttr($value, $data)
+    {
+        return $data['goods_type'];
     }
 
-    public function setPriceLadderAttr($value, $data){
-        if ($data['ladder_amount'][0] > 0) {
-            $price_ladder = array();
-            foreach ($data['ladder_amount'] as $key => $value) {
-                $price_ladder[$key]['amount'] = intval($data['ladder_amount'][$key]);
-                $price_ladder[$key]['price'] = floatval($data['ladder_price'][$key]);
+    public function setPriceLadderAttr($value, $data)
+    {
+        if($data['ladder_amount'][0] > 0) {
+            $price_ladder = [];
+            foreach($data['ladder_amount'] as $key => $value) {
+                $price_ladder[ $key ]['amount'] = intval($data['ladder_amount'][ $key ]);
+                $price_ladder[ $key ]['price'] = floatval($data['ladder_price'][ $key ]);
             }
             $price_ladder = array_values(array_sort($price_ladder, 'amount', 'asc'));
             return json_encode($price_ladder);
-        }else{
+        } else {
             return '';
         }
     }
@@ -164,17 +176,17 @@ class Goods extends Model
     public function getSpecAttr($value, $data)
     {
         $spec_goods_price_key = db('spec_goods_price')->where("goods_id", $data['goods_id'])->column('key');
-        if($spec_goods_price_key){
+        if($spec_goods_price_key) {
             $spec_goods_price_key_str = implode('_', $spec_goods_price_key);
             $spec_goods_price_key_arr = explode('_', $spec_goods_price_key_str);
             $spec_goods_price_key_arr = array_unique($spec_goods_price_key_arr);
             $spec_item_list = db('spec_item')->where('id', 'IN', $spec_goods_price_key_arr)->order('order_index asc')->select();
             $spec_ids = get_arr_column($spec_item_list, 'spec_id');
             $spec_list = db('spec')->where('id', 'IN', $spec_ids)->order('`order` desc, id asc')->select();
-            foreach($spec_list as $spec_key=>$spec_val){
-                foreach($spec_item_list as $spec_item_key=>$spec_item_val){
-                    if($spec_val['id'] == $spec_item_val['spec_id']){
-                        $spec_list[$spec_key]['spec_item'][] = $spec_item_val;
+            foreach($spec_list as $spec_key => $spec_val) {
+                foreach($spec_item_list as $spec_item_key => $spec_item_val) {
+                    if($spec_val['id'] == $spec_item_val['spec_id']) {
+                        $spec_list[ $spec_key ]['spec_item'][] = $spec_item_val;
                     }
                 }
             }
@@ -191,7 +203,7 @@ class Goods extends Model
     public function getExchangeIntegralPriceAttr($value, $data)
     {
         $point_rate = tpCache('integral.point_rate');
-        if ($point_rate) {
+        if($point_rate) {
             return $price = round($data['shop_price'] - $data['exchange_integral'] / $point_rate, 2);
         } else {
             return $price = round($data['shop_price'] - $data['exchange_integral'] / 10, 2);

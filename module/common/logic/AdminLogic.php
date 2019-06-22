@@ -27,7 +27,7 @@ class AdminLogic
 {
     public function login($username, $password)
     {
-        if (empty($username) || empty($password)) {
+        if(empty($username) || empty($password)) {
             return ['status' => 0, 'msg' => '请填写账号密码'];
         }
 
@@ -36,7 +36,7 @@ class AdminLogic
         $condition['a.user_name'] = $username;
         $condition['a.password'] = encrypt($password);
         $admin = Db::name('admin')->alias('a')->join('__ADMIN_ROLE__ ar', 'a.role_id=ar.role_id')->where($condition)->find();
-        if (!$admin) {
+        if( !$admin) {
             return ['status' => 0, 'msg' => '账号密码不正确'];
         }
 
@@ -50,7 +50,7 @@ class AdminLogic
     {
         Db::name('admin')->where('admin_id', $admin['admin_id'])->save([
             'last_login' => time(),
-            'last_ip' => req()->ip()
+            'last_ip' => req()->ip(),
         ]);
 
         $this->sessionRoleRights($admin, $actList);
@@ -64,7 +64,7 @@ class AdminLogic
 
     public function sessionRoleRights($admin, $actList)
     {
-        if (Saas::instance()->isNormalUser()) {
+        if(Saas::instance()->isNormalUser()) {
             $roleRights = Saas::instance()->getRoleRights($actList);
         } else {
             $roleRights = $actList;

@@ -13,7 +13,9 @@
  */
 namespace app\common\model;
 use think\Model;
-class FlashSale extends Model {
+
+class FlashSale extends Model
+{
     //自定义初始化
     protected static function init()
     {
@@ -22,32 +24,34 @@ class FlashSale extends Model {
 
     public function specGoodsPrice()
     {
-        return $this->hasOne('SpecGoodsPrice','item_id','item_id');
+        return $this->hasOne('SpecGoodsPrice', 'item_id', 'item_id');
     }
 
     public function goods()
     {
-        return $this->hasOne('goods','goods_id','goods_id');
+        return $this->hasOne('goods', 'goods_id', 'goods_id');
     }
+
     //剩余抢购库存
     public function getStoreCountAttr($value, $data)
     {
         return $data['goods_num'] - $data['buy_num'];
-    }  
+    }
+
     //状态描述
     public function getStatusDescAttr($value, $data)
     {
-        if($data['is_end'] == 1){
+        if($data['is_end'] == 1) {
             return '已结束';
-        }else{
-            if($data['buy_num'] >= $data['goods_num']){
+        } else {
+            if($data['buy_num'] >= $data['goods_num']) {
                 return '已售罄';
-            }else{
-                if($data['start_time'] > time()){
+            } else {
+                if($data['start_time'] > time()) {
                     return '未开始';
-                }else if ($data['start_time'] < time() && $data['end_time'] > time()) {
+                } elseif($data['start_time'] < time() && $data['end_time'] > time()) {
                     return '进行中';
-                }else{
+                } else {
                     return '已过期';
                 }
             }
@@ -62,7 +66,7 @@ class FlashSale extends Model {
      */
     public function getIsEditAttr($value, $data)
     {
-        if ($data['is_end'] == 1 || $data['start_time'] < time()){
+        if($data['is_end'] == 1 || $data['start_time'] < time()) {
             return 0;
         }
         return 1;
@@ -71,13 +75,14 @@ class FlashSale extends Model {
     /**
      * 获取商品的原始价格
      */
-    public function getShopPriceAttr($value, $data){
-        if($data['item_id']>0){
+    public function getShopPriceAttr($value, $data)
+    {
+        if($data['item_id'] > 0) {
             //获取规格价格
             $price = $this->specGoodsPrice->price;
             unset($this->specGoodsPrice);
             return $price;
-        }else{
+        } else {
             return $value;
         }
 
@@ -86,8 +91,8 @@ class FlashSale extends Model {
     /**
      * 获取抢购百分比
      */
-    public function getPercentAttr($value,$data){
-        return  round($data['buy_num'] / $data['goods_num'],2) * 100;
+    public function getPercentAttr($value, $data)
+    {
+        return round($data['buy_num'] / $data['goods_num'], 2) * 100;
     }
-
 }

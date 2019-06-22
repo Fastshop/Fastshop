@@ -23,19 +23,19 @@ class AppLogic
      */
     public function bindMiniapp($userId, $serviceId, $miniappId)
     {
-        if (!$appService = AppService::get(['service_id' => $serviceId, 'user_id' => $userId])) {
+        if( !$appService = AppService::get(['service_id' => $serviceId, 'user_id' => $userId])) {
             return ['status' => -1, 'msg' => '应用服务不存在'];
         }
-        if ($appService->end_time <= time() || $appService->status != AppService::STATUS_NORMAL) {
+        if($appService->end_time <= time() || $appService->status != AppService::STATUS_NORMAL) {
             return ['status' => -1, 'msg' => '应用服务已过期'];
         }
-        if ($appService->miniapp_id) {
+        if($appService->miniapp_id) {
             return ['status' => -1, 'msg' => '该应用已绑定过小程序'];
         }
-        if (!$miniapp = Miniapp::get(['user_id' => $userId, 'miniapp_id' => $miniappId, 'is_auth' => 1])) {
+        if( !$miniapp = Miniapp::get(['user_id' => $userId, 'miniapp_id' => $miniappId, 'is_auth' => 1])) {
             return ['status' => -1, 'msg' => '指定小程序不存在'];
         }
-        if (AppService::get(['miniapp_id' => $miniappId, 'status' => AppService::STATUS_NORMAL])) {
+        if(AppService::get(['miniapp_id' => $miniappId, 'status' => AppService::STATUS_NORMAL])) {
             return ['status' => -1, 'msg' => '小程序已被绑定过'];
         }
 
@@ -50,13 +50,13 @@ class AppLogic
      */
     public function unbindMiniapp($serviceId)
     {
-        if (!$appService = AppService::get(['service_id' => $serviceId])) {
+        if( !$appService = AppService::get(['service_id' => $serviceId])) {
             return ['status' => -1, 'msg' => '应用服务不存在'];
         }
-        if (!$appService->miniapp_id) {
+        if( !$appService->miniapp_id) {
             return ['status' => -1, 'msg' => '应用没关联过小程序'];
         }
-        if (!$miniapp = Miniapp::get(['miniapp_id' => $appService->miniapp_id, 'is_auth' => 1])) {
+        if( !$miniapp = Miniapp::get(['miniapp_id' => $appService->miniapp_id, 'is_auth' => 1])) {
             return ['status' => -1, 'msg' => '指定小程序不存在'];
         }
 
@@ -65,5 +65,4 @@ class AppLogic
 
         return ['status' => 1, 'msg' => '解绑成功'];
     }
-
 }

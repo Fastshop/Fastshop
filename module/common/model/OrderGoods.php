@@ -12,34 +12,33 @@
  * Date: 2015-09-09
  */
 namespace app\common\model;
-use think\Db;
 use think\Model;
-class OrderGoods extends Model {
 
-    protected $table='';
+class OrderGoods extends Model
+{
+    protected $table = '';
 
     //自定义初始化
-    protected function initialize()
-    {
-        parent::initialize();
-    }
 
     public function goods()
     {
-        return $this->hasOne('goods','goods_id','goods_id');
+        return $this->hasOne('goods', 'goods_id', 'goods_id');
     }
-    public function getMemberGoodsPriceAttr($value, $data){
-        if($data['prom_type'] == 4){
+
+    public function getMemberGoodsPriceAttr($value, $data)
+    {
+        if($data['prom_type'] == 4) {
             return $data['goods_price'];
-        }else{
+        } else {
             return $value;
         }
     }
 
-    public function getTotalMemberGoodsPriceAttr($value, $data){
-        if($data['prom_type'] == 4){
+    public function getTotalMemberGoodsPriceAttr($value, $data)
+    {
+        if($data['prom_type'] == 4) {
             return $data['goods_num'] * $data['goods_price'];
-        }else{
+        } else {
             return $data['goods_num'] * $data['member_goods_price'];
         }
     }
@@ -47,5 +46,10 @@ class OrderGoods extends Model {
     public function returnGoods()
     {
         return $this->hasOne('ReturnGoods', 'rec_id', 'rec_id');
+    }
+
+    protected function initialize()
+    {
+        parent::initialize();
     }
 }

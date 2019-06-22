@@ -24,7 +24,6 @@ use think\Model;
  */
 class NewsLogic extends Model
 {
-
     /**
      * 获取新闻列表
      * @param $data
@@ -43,15 +42,13 @@ class NewsLogic extends Model
             ->limit(($page - 1) * $limit, $limit)
             ->order('publish_time desc')
             ->select();
-        foreach ($list as $k => $v) {
-            $list[$k]['time'] = date('Y-m-d', $v['publish_time']);
+        foreach($list as $k => $v) {
+            $list[ $k ]['time'] = date('Y-m-d', $v['publish_time']);
         }
         $data = PageLogic::getPage($list, $page);
         return $data;
 
-
     }
-
 
     /**
      * 获取新闻详情
@@ -66,17 +63,15 @@ class NewsLogic extends Model
             ->field('article_id,title,click,thumb,description,tags,cat_name,publish_time,content')
             ->where(['open_type' => News::$OPEN_TYPE, 'is_open' => News::$OPEN_STATUS, 'article_id' => $data['id']])
             ->find();
-//      $list['addtime'] = date('Y-m-d',$list['addtime']);
-        if ($list) {
+        //      $list['addtime'] = date('Y-m-d',$list['addtime']);
+        if($list) {
             $list['content'] = htmlspecialchars_decode($list['content']);
             $list['time'] = date('Y-m-d', $list['publish_time']);
         }
-        if ($list) {
-            return array('status' => 1, 'msg' => '操作成功', 'result' => $list);
+        if($list) {
+            return ['status' => 1, 'msg' => '操作成功', 'result' => $list];
         }
-        return array('status' => 1, 'msg' => '操作成功', 'result' => array());
+        return ['status' => 1, 'msg' => '操作成功', 'result' => []];
 
     }
-
-
 }

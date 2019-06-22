@@ -27,7 +27,7 @@ class App extends ExtendBase
 
     public function getBaseTerminalsAttr($value)
     {
-        return $value ? json_decode($value, true) : [];
+        return $value ? json_decode($value, TRUE) : [];
     }
 
     public function setBaseTerminalsAttr($value)
@@ -37,7 +37,7 @@ class App extends ExtendBase
 
     public function getBaseFeaturesAttr($value)
     {
-        return $value ? json_decode($value, true) : [];
+        return $value ? json_decode($value, TRUE) : [];
     }
 
     public function setBaseFeaturesAttr($value)

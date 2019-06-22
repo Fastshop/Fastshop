@@ -24,5 +24,4 @@ use think\model;
 class UserAddressLogic extends model
 {
     protected $tableName = 'user_address';
-
 }

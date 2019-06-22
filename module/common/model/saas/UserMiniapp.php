@@ -12,7 +12,6 @@
  */
 
 namespace app\common\model\saas;
-use think\Model;
 
 class UserMiniapp extends SaasModel
 {
@@ -25,26 +24,25 @@ class UserMiniapp extends SaasModel
     const STATUS_INVALID = 5;
     const STATUS_ABANDON = 6;
 
+    public function getStatusNameAttr($value, $data)
+    {
+        $statusName = self::getAllStatus();
+        if(key_exists($data['status'], $statusName)) {
+            return $statusName[ $data['status'] ];
+        }
+        return '未知状态';
+    }
 
     static public function getAllStatus()
     {
         return [
-            self::STATUS_TEST       => '体验版',
-            self::STATUS_AUDITING   => '正在审核',
+            self::STATUS_TEST => '体验版',
+            self::STATUS_AUDITING => '正在审核',
             self::STATUS_AUDIT_DONG => '审核通过',
             self::STATUS_AUDIT_FAIL => '审核失败',
             self::STATUS_ON_RELEASE => '已上线',
-            self::STATUS_INVALID    => '已失效',
-            self::STATUS_ABANDON    => '已废弃',
+            self::STATUS_INVALID => '已失效',
+            self::STATUS_ABANDON => '已废弃',
         ];
-    }
-
-    public function getStatusNameAttr($value, $data)
-    {
-        $statusName = self::getAllStatus();
-        if (key_exists($data['status'], $statusName)) {
-            return $statusName[$data['status']];
-        }
-        return '未知状态';
     }
 }

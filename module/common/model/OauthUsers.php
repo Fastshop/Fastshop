@@ -8,10 +8,8 @@
 
 namespace app\common\model;
 
-
 use think\Model;
 
 class OauthUsers extends Model
 {
-
 }

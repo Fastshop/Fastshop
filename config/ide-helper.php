@@ -81,6 +81,7 @@ return [
 
     'model_locations' => [
         '../app',
+        '../model',
     ],
 
     /*
@@ -199,6 +200,6 @@ return [
     | magic methods and properties.
     |
     */
-    'include_class_docblocks' => TRUE,
+    'include_class_docblocks' => false,
 
 ];

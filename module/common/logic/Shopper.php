@@ -22,8 +22,8 @@
 namespace app\common\logic;
 
 use app\common\util\TpshopException;
-use think\Model;
 use think\Db;
+use think\Model;
 
 /**
  * 门店管理员类
@@ -43,22 +43,22 @@ class Shopper extends Model
     {
         $Shopper = new \app\common\model\Shopper();
         $this->shopper = $Shopper->where(['shopper_name' => $this->shopper_name])->find();
-        if(empty($this->shopper)){
-            throw new TpshopException('门店登录',0,['status' => 0, 'msg' => '门店账号不存在']);
+        if(empty($this->shopper)) {
+            throw new TpshopException('门店登录', 0, ['status' => 0, 'msg' => '门店账号不存在']);
         }
         $this->shop = $this->shopper->shop;
-        if($this->shop['deleted'] == 1){
-            throw new TpshopException('门店登录',0,['status' => 0, 'msg' => '门店已经被删除']);
+        if($this->shop['deleted'] == 1) {
+            throw new TpshopException('门店登录', 0, ['status' => 0, 'msg' => '门店已经被删除']);
         }
-        if($this->shop['shop_status'] == 0){
-            throw new TpshopException('门店登录',0,['status' => 0, 'msg' => '门店已关闭，请联系平台客服']);
+        if($this->shop['shop_status'] == 0) {
+            throw new TpshopException('门店登录', 0, ['status' => 0, 'msg' => '门店已关闭，请联系平台客服']);
         }
         $user = $this->shopper->users;
-        if(empty($user)){
-            throw new TpshopException('门店登录',0,['status' => 0, 'msg' => '门店没有绑定前台会员']);
+        if(empty($user)) {
+            throw new TpshopException('门店登录', 0, ['status' => 0, 'msg' => '门店没有绑定前台会员']);
         }
-        if($user['password'] != $password){
-            throw new TpshopException('门店登录',0,['status' => 0, 'msg' => '密码错误']);
+        if($user['password'] != $password) {
+            throw new TpshopException('门店登录', 0, ['status' => 0, 'msg' => '密码错误']);
         }
         session('shopper', $this->shopper->toArray());
         session('shopper_id', $this->shopper['shopper_id']);
@@ -70,7 +70,7 @@ class Shopper extends Model
 
     /**
      * 管理员操作记录
-     * @param $content|记录信息
+     * @param $content |记录信息
      */
     public function log($content)
     {

@@ -45,73 +45,61 @@ class PreSellLogic extends Prom
     public function initProm()
     {
         // TODO: Implement initProm() method.
-        if($this->specGoodsPrice){
+        if($this->specGoodsPrice) {
             //活动商品有规格，规格和活动是一对一
-            $this->preSell = PreSell::get($this->specGoodsPrice['prom_id'],'',false);
-        }else{
+            $this->preSell = PreSell::get($this->specGoodsPrice['prom_id'], '', FALSE);
+        } else {
             //活动商品没有规格，活动和商品是一对一
-            $this->preSell = PreSell::get($this->goods['prom_id'],'',false);
+            $this->preSell = PreSell::get($this->goods['prom_id'], '', FALSE);
         }
-        if ($this->preSell) {
+        if($this->preSell) {
             //每次初始化都检测活动是否结束，如果失效就更新活动和商品恢复成普通商品
-            if ($this->checkActivityIsEnd() && $this->preSell['is_finished'] == 0) {
-                if($this->specGoodsPrice){
+            if($this->checkActivityIsEnd() && $this->preSell['is_finished'] == 0) {
+                if($this->specGoodsPrice) {
                     Db::name('spec_goods_price')->where('item_id', $this->specGoodsPrice['item_id'])->save(['prom_type' => 0, 'prom_id' => 0]);
-                    $goodsPromCount = Db::name('spec_goods_price')->where('goods_id', $this->specGoodsPrice['goods_id'])->where('prom_type','>',0)->count('item_id');
-                    if($goodsPromCount == 0){
+                    $goodsPromCount = Db::name('spec_goods_price')->where('goods_id', $this->specGoodsPrice['goods_id'])->where('prom_type', '>', 0)->count('item_id');
+                    if($goodsPromCount == 0) {
                         Db::name('goods')->where("goods_id", $this->specGoodsPrice['goods_id'])->save(['prom_type' => 0, 'prom_id' => 0]);
                     }
                     $item_id = $this->specGoodsPrice['item_id'];
                     unset($this->specGoodsPrice);
-                    $this->specGoodsPrice = SpecGoodsPrice::get($item_id['item_id'],'',true);
-                }else{
+                    $this->specGoodsPrice = SpecGoodsPrice::get($item_id['item_id'], '', TRUE);
+                } else {
                     Db::name('goods')->where("goods_id", $this->preSell['goods_id'])->save(['prom_type' => 0, 'prom_id' => 0]);
                 }
                 $this->preSell->is_finished = 1;
                 $this->preSell->save();
                 $goods_id = $this->goods['goods_id'];
                 unset($this->goods);
-                $this->goods = Goods::get($goods_id,'',true);
+                $this->goods = Goods::get($goods_id, '', TRUE);
             }
         }
-    }
-
-    /**
-     * 活动是否正在进行
-     * @return bool
-     */
-    public function checkActivityIsAble(){
-        if(empty($this->preSell)){
-            return false;
-        }
-        if(time() > $this->preSell['sell_start_time'] && time() < $this->preSell['sell_end_time'] && $this->preSell['is_finished'] == 0){
-            return true;
-        }
-        return false;
     }
 
     /**
      * 活动是否结束
      * @return bool
      */
-    public function checkActivityIsEnd(){
-        if(empty($this->preSell)){
-            return true;
+    public function checkActivityIsEnd()
+    {
+        if(empty($this->preSell)) {
+            return TRUE;
         }
-        if($this->preSell['deposit_goods_num'] >= $this->preSell['stock_num']){
-            return true;
+        if($this->preSell['deposit_goods_num'] >= $this->preSell['stock_num']) {
+            return TRUE;
         }
-        if(time() > $this->preSell['sell_end_time']){
-            return true;
+        if(time() > $this->preSell['sell_end_time']) {
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
     /**
      * 获取单个抢购活动
      * @return static
      */
-    public function getPromModel(){
+    public function getPromModel()
+    {
         return $this->preSell;
     }
 
@@ -128,11 +116,12 @@ class PreSellLogic extends Prom
      * 获取商品转换活动商品的数据
      * @return static
      */
-    public function getActivityGoodsInfo(){
-        if($this->specGoodsPrice){
+    public function getActivityGoodsInfo()
+    {
+        if($this->specGoodsPrice) {
             //活动商品有规格，规格和活动是一对一
             $activityGoods = $this->specGoodsPrice->toArray();
-        }else{
+        } else {
             //活动商品没有规格，活动和商品是一对一
             $activityGoods = $this->goods->toArray();
         }
@@ -153,8 +142,9 @@ class PreSellLogic extends Prom
      * 这里不会用到，预售商品不走购物车
      * 该活动是否已经失效
      */
-    public function IsAble(){
-        return true;
+    public function IsAble()
+    {
+        return TRUE;
     }
 
     /**
@@ -166,65 +156,81 @@ class PreSellLogic extends Prom
     public function buyNow($goods_num)
     {
         $user = session('user');
-        if ($this->checkActivityIsEnd()) {
+        if($this->checkActivityIsEnd()) {
             throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '活动已结束', 'result' => '']);
         }
-        if (!$this->checkActivityIsAble()) {
+        if( !$this->checkActivityIsAble()) {
             throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '活动已失效', 'result' => '']);
         }
-        if($goods_num > $this->preSell['stock_num']){
-            throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '预售库存不足，剩余'.$this->preSell['stock_num'].'件', 'result' => '']);
+        if($goods_num > $this->preSell['stock_num']) {
+            throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '预售库存不足，剩余' . $this->preSell['stock_num'] . '件', 'result' => '']);
         }
         $cartInfo = [
-            'user_id'=>$user['user_id'],
-            'session_id'=>session_id(),
-            'goods_id'=>$this->goods['goods_id'],
-            'goods_sn'=>$this->goods['goods_sn'],
-            'goods_name'=>$this->goods['goods_name'],
-            'market_price'=>$this->goods['market_price'],
-            'selected'=>1,
-            'add_time'=>time(),
-            'prom_type'=>4,
-            'prom_id'=>$this->preSell['pre_sell_id'],
-            'goods_num'=>$goods_num,
+            'user_id' => $user['user_id'],
+            'session_id' => session_id(),
+            'goods_id' => $this->goods['goods_id'],
+            'goods_sn' => $this->goods['goods_sn'],
+            'goods_name' => $this->goods['goods_name'],
+            'market_price' => $this->goods['market_price'],
+            'selected' => 1,
+            'add_time' => time(),
+            'prom_type' => 4,
+            'prom_id' => $this->preSell['pre_sell_id'],
+            'goods_num' => $goods_num,
         ];
         $cartInfo['goods_price'] = $this->preSell['ing_price'];
-        if($this->preSell['deposit_price'] > 0){
+        if($this->preSell['deposit_price'] > 0) {
             $cartInfo['member_goods_price'] = $this->preSell['deposit_price'];
-        }else{
+        } else {
             $cartInfo['member_goods_price'] = $this->preSell['ing_price'];
         }
-        if($this->specGoodsPrice){
+        if($this->specGoodsPrice) {
             $cartInfo['spec_key'] = $this->specGoodsPrice['key'];
             $cartInfo['spec_key_name'] = $this->specGoodsPrice['key_name'];
             $cartInfo['bar_code'] = $this->specGoodsPrice['bar_code'];
             $cartInfo['sku'] = $this->specGoodsPrice['sku'];
-            if($goods_num > $this->specGoodsPrice['store_count']){
-                throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '商品规格库存不足，剩余'.$this->specGoodsPrice['store_count'].'件', 'result' => '']);
+            if($goods_num > $this->specGoodsPrice['store_count']) {
+                throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '商品规格库存不足，剩余' . $this->specGoodsPrice['store_count'] . '件', 'result' => '']);
             }
-        }else{
+        } else {
             $cartInfo['spec_key'] = '';
             $cartInfo['spec_key_name'] = '';
             $cartInfo['bar_code'] = '';
             $cartInfo['sku'] = $this->goods['sku'];
-            if($goods_num > $this->goods['store_count']){
-                throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '商品库存不足，剩余'.$this->goods['store_count'].'件', 'result' => '']);
+            if($goods_num > $this->goods['store_count']) {
+                throw new TpshopException('立即购买', 0, ['status' => 0, 'msg' => '商品库存不足，剩余' . $this->goods['store_count'] . '件', 'result' => '']);
             }
         }
         $cart = new Cart();
-        $cartInfo['total_fee'] = $cart->getTotalFeeAttr(null, $cartInfo);
-        $cartInfo['goods_fee'] = $cart->getGoodsFeeAttr(null, $cartInfo);
-        $cartInfo['cut_fee'] = $cart->getCutFeeAttr(null, $cartInfo);
+        $cartInfo['total_fee'] = $cart->getTotalFeeAttr(NULL, $cartInfo);
+        $cartInfo['goods_fee'] = $cart->getGoodsFeeAttr(NULL, $cartInfo);
+        $cartInfo['cut_fee'] = $cart->getCutFeeAttr(NULL, $cartInfo);
         $cartInfo['goods']['weight'] = $this->goods['weight'];
         $cartInfo['weight'] = $this->goods['weight'];
         return $cartInfo;
     }
 
-    public function getPromId(){
-        if($this->preSell){
+    /**
+     * 活动是否正在进行
+     * @return bool
+     */
+    public function checkActivityIsAble()
+    {
+        if(empty($this->preSell)) {
+            return FALSE;
+        }
+        if(time() > $this->preSell['sell_start_time'] && time() < $this->preSell['sell_end_time'] && $this->preSell['is_finished'] == 0) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function getPromId()
+    {
+        if($this->preSell) {
             return $this->preSell['pre_sell_id'];
-        }else{
-            return null;
+        } else {
+            return NULL;
         }
     }
 }

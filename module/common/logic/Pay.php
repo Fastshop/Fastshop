@@ -18,8 +18,8 @@ use app\common\model\Cart;
 use app\common\model\CouponList;
 use app\common\model\Shop;
 use app\common\util\TpshopException;
-use think\Model;
 use think\Db;
+
 /**
  * 计算价格类
  * Class CatsLogic
@@ -30,7 +30,6 @@ class Pay
     protected $payList;
     protected $userId;
     protected $user;
-
     private $totalAmount = 0;//订单总价
     private $orderAmount = 0;//应付金额
     private $shippingPrice = 0;//物流费
@@ -41,7 +40,6 @@ class Pay
     private $userMoney = 0;//使用余额
     private $payPoints = 0;//使用积分
     private $couponPrice = 0;//优惠券抵消金额
-
     private $orderPromId;//订单优惠ID
     private $orderPromAmount = 0;//订单优惠金额
     private $couponId;
@@ -53,19 +51,20 @@ class Pay
      * @return $this
      * @throws TpshopException
      */
-    public function payOrder($order_goods){
+    public function payOrder($order_goods)
+    {
         $this->payList = $order_goods;
-        $order = Db::name('order')->where('order_id',  $this->payList[0]['order_id'])->find();
-        if(empty($order)){
+        $order = Db::name('order')->where('order_id', $this->payList[0]['order_id'])->find();
+        if(empty($order)) {
             throw new TpshopException('计算订单价格', 0, ['status' => -9, 'msg' => '找不到订单数据', 'result' => '']);
         }
         $reduce = tpCache('shopping.reduce');
-        if($order['pay_status'] == 0 && $reduce == 2){
+        if($order['pay_status'] == 0 && $reduce == 2) {
             $goodsListCount = count($this->payList);
-            for ($payCursor = 0; $payCursor < $goodsListCount; $payCursor++) {
-                $goods_stock = getGoodNum($this->payList[$payCursor]['goods_id'], $this->payList[$payCursor]['spec_key']); // 最多可购买的库存数量
-                if($goods_stock <= 0 && $this->payList[$payCursor]['goods_num'] > $goods_stock){
-                    throw new TpshopException('计算订单价格', 0, ['status' => -9, 'msg' => $this->payList[$payCursor]['goods_name'].','.$this->payList[$payCursor]['spec_key_name'] . "库存不足,请重新下单", 'result' => '']);
+            for($payCursor = 0; $payCursor < $goodsListCount; $payCursor++) {
+                $goods_stock = getGoodNum($this->payList[ $payCursor ]['goods_id'], $this->payList[ $payCursor ]['spec_key']); // 最多可购买的库存数量
+                if($goods_stock <= 0 && $this->payList[ $payCursor ]['goods_num'] > $goods_stock) {
+                    throw new TpshopException('计算订单价格', 0, ['status' => -9, 'msg' => $this->payList[ $payCursor ]['goods_name'] . ',' . $this->payList[ $payCursor ]['spec_key_name'] . "库存不足,请重新下单", 'result' => '']);
                 }
             }
         }
@@ -74,15 +73,46 @@ class Pay
     }
 
     /**
+     * 初始化计算
+     */
+    private function Calculation()
+    {
+        //查出搭配购的商品
+        if($this->payList) {
+            $Cart = new Cart();
+            foreach($this->payList as $cartKey => $cartVal) {
+                if($cartVal['prom_type'] == 7) {
+                    $arr = $Cart->where(['combination_group_id' => $cartVal['id'], 'id' => ['neq', $cartVal['id']]])->select();
+                    $this->payList = array_merge($this->payList, $arr);
+                }
+            }
+        }
+
+        $goodsListCount = count($this->payList);
+
+        for($payCursor = 0; $payCursor < $goodsListCount; $payCursor++) {
+            $this->payList[ $payCursor ]['goods_fee'] = $this->payList[ $payCursor ]['goods_num'] * $this->payList[ $payCursor ]['member_goods_price'];    // 小计
+            $this->goodsPrice += $this->payList[ $payCursor ]['goods_fee']; // 商品总价
+            if(array_key_exists('market_price', $this->payList[ $payCursor ])) {
+                $this->cutFee += $this->payList[ $payCursor ]['goods_num'] * ($this->payList[ $payCursor ]['market_price'] - $this->payList[ $payCursor ]['member_goods_price']);// 共节约
+            }
+            $this->totalNum += $this->payList[ $payCursor ]['goods_num'];
+        }
+        $this->orderAmount = $this->goodsPrice;
+        $this->totalAmount = $this->goodsPrice;
+    }
+
+    /**
      * 计算购买购物车的商品
      * @param $cart_list
      * @return $this
      * @throws TpshopException
      */
-    public function payCart($cart_list){
+    public function payCart($cart_list)
+    {
         $this->payList = $cart_list;
         $goodsListCount = count($this->payList);
-        if ($goodsListCount == 0) {
+        if($goodsListCount == 0) {
             throw new TpshopException('计算订单价格', 0, ['status' => -9, 'msg' => '你的购物车没有选中商品', 'result' => '']);
         }
         $this->Calculation();
@@ -98,18 +128,18 @@ class Pay
     public function payGoodsList($goods_list)
     {
         $goodsListCount = count($goods_list);
-        if ($goodsListCount == 0) {
+        if($goodsListCount == 0) {
             throw new TpshopException('计算订单价格', 0, ['status' => -9, 'msg' => '你的购物车没有选中商品', 'result' => '']);
         }
         $discount = $this->getDiscount();
-        for ($goodsCursor = 0; $goodsCursor < $goodsListCount; $goodsCursor++) {
+        for($goodsCursor = 0; $goodsCursor < $goodsListCount; $goodsCursor++) {
             //优先使用member_goods_price，没有member_goods_price使用goods_price
-            if(empty($goods_list[$goodsCursor]['member_goods_price'])){
+            if(empty($goods_list[ $goodsCursor ]['member_goods_price'])) {
                 //积分商品不打折。因为是全积分商品打会员折扣，结算会出现负数
-                if($goods_list[$goodsCursor]['exchange_integral'] > 0){
-                    $goods_list[$goodsCursor]['member_goods_price'] = $goods_list[$goodsCursor]['goods_price'];
-                }else{
-                    $goods_list[$goodsCursor]['member_goods_price'] = $discount * $goods_list[$goodsCursor]['goods_price'];
+                if($goods_list[ $goodsCursor ]['exchange_integral'] > 0) {
+                    $goods_list[ $goodsCursor ]['member_goods_price'] = $goods_list[ $goodsCursor ]['goods_price'];
+                } else {
+                    $goods_list[ $goodsCursor ]['member_goods_price'] = $discount * $goods_list[ $goodsCursor ]['goods_price'];
                 }
 
             }
@@ -120,33 +150,16 @@ class Pay
     }
 
     /**
-     * 初始化计算
+     * 获取折扣
+     * @return int
      */
-    private function Calculation()
+    private function getDiscount()
     {
-        //查出搭配购的商品
-        if($this->payList){
-            $Cart = new Cart();
-            foreach ($this->payList as $cartKey => $cartVal) {
-                if ($cartVal['prom_type'] == 7) {
-                    $arr = $Cart->where(['combination_group_id' => $cartVal['id'], 'id' => ['neq', $cartVal['id']]])->select();
-                    $this->payList = array_merge($this->payList, $arr);
-                }
-            }
+        if(empty($this->user['discount'])) {
+            return 1;
+        } else {
+            return $this->user['discount'];
         }
-
-        $goodsListCount = count($this->payList);
-
-        for ($payCursor = 0; $payCursor < $goodsListCount; $payCursor++) {
-            $this->payList[$payCursor]['goods_fee'] = $this->payList[$payCursor]['goods_num'] * $this->payList[$payCursor]['member_goods_price'];    // 小计
-            $this->goodsPrice += $this->payList[$payCursor]['goods_fee']; // 商品总价
-            if(array_key_exists('market_price',$this->payList[$payCursor])){
-                $this->cutFee += $this->payList[$payCursor]['goods_num'] * ($this->payList[$payCursor]['market_price'] - $this->payList[$payCursor]['member_goods_price']);// 共节约
-            }
-            $this->totalNum += $this->payList[$payCursor]['goods_num'];
-        }
-        $this->orderAmount = $this->goodsPrice;
-        $this->totalAmount = $this->goodsPrice;
     }
 
     /**
@@ -159,15 +172,15 @@ class Pay
     {
         $this->userId = $user_id;
         $this->user = Db::name('users')->where(['user_id' => $this->userId])->find();
-        if(empty($this->user)){
-            throw new TpshopException("计算订单价格",0,['status' => -9, 'msg' => '未找到用户', 'result' => '']);
+        if(empty($this->user)) {
+            throw new TpshopException("计算订单价格", 0, ['status' => -9, 'msg' => '未找到用户', 'result' => '']);
         }
         return $this;
     }
 
     public function setShopById($shop_id)
     {
-        if($shop_id){
+        if($shop_id) {
             $this->shop = Shop::get($shop_id);
         }
         return $this;
@@ -175,73 +188,73 @@ class Pay
 
     /**
      * 使用积分
-     * @throws TpshopException
      * @param $pay_points
-     * @param $is_exchange|是否有使用积分兑换商品流程
+     * @param $is_exchange |是否有使用积分兑换商品流程
      * @param $port
      * @return $this
+     * @throws TpshopException
      */
-    public function usePayPoints($pay_points, $is_exchange = false, $port = "pc")
+    public function usePayPoints($pay_points, $is_exchange = FALSE, $port = "pc")
     {
-        if($pay_points > 0 && $this->orderAmount > 0){
+        if($pay_points > 0 && $this->orderAmount > 0) {
             //积分规则修改后的逻辑
             $isUseIntegral = tpCache('integral.is_use_integral');
             $isPointMinLimit = tpCache('integral.is_point_min_limit');
             $isPointRate = tpCache('integral.is_point_rate');
             $isPointUsePercent = tpCache('integral.is_point_use_percent');
             $point_rate = tpCache('integral.point_rate');
-            if($is_exchange == false){
-                if($isUseIntegral==1 && $isPointUsePercent==1) {
-                    $use_percent_point = tpCache('integral.point_use_percent')/100;
-                }else{
+            if($is_exchange == FALSE) {
+                if($isUseIntegral == 1 && $isPointUsePercent == 1) {
+                    $use_percent_point = tpCache('integral.point_use_percent') / 100;
+                } else {
                     $use_percent_point = 1;
                 }
-                if($isUseIntegral==1 && $isPointMinLimit==1) {
+                if($isUseIntegral == 1 && $isPointMinLimit == 1) {
                     $min_use_limit_point = tpCache('integral.point_min_limit');
-                }else{
+                } else {
                     $min_use_limit_point = 0;
                 }
-                if($isUseIntegral == 0 || $isPointRate != 1){
-                    throw new TpshopException("计算订单价格",0,['status' => -1, 'msg' => '该笔订单不能使用积分', 'result' => '']);
+                if($isUseIntegral == 0 || $isPointRate != 1) {
+                    throw new TpshopException("计算订单价格", 0, ['status' => -1, 'msg' => '该笔订单不能使用积分', 'result' => '']);
                 }
-                if($use_percent_point > 0 && $use_percent_point < 1){
+                if($use_percent_point > 0 && $use_percent_point < 1) {
                     //计算订单最多使用多少积分
                     $point_limit = intval($this->totalAmount * $point_rate * $use_percent_point);
-                    if($pay_points > $point_limit){
-                        if($port=="mobile"){
+                    if($pay_points > $point_limit) {
+                        if($port == "mobile") {
                             $pay_points = $point_limit;
-                        }else {
+                        } else {
                             throw new TpshopException("计算订单价格", 0, ['status' => -1, 'msg' => "该笔订单, 您使用的积分不能大于" . $point_limit, 'result' => '']);
                         }
                     }
                 }
                 //计算订单最多使用多少积分(没勾选比例的情况)
                 $next_point_limit = intval($this->totalAmount * $point_rate * $use_percent_point);
-                if($port!="mobile" && $pay_points > $next_point_limit){
+                if($port != "mobile" && $pay_points > $next_point_limit) {
                     throw new TpshopException("计算订单价格", 0, ['status' => -1, 'msg' => "该笔订单, 您使用的积分不能大于" . $next_point_limit, 'result' => '']);
                 }
 
-                if($pay_points > $this->user['pay_points']){
-                    throw new TpshopException("计算订单价格",0,['status' => -5, 'msg' => "你的账户可用积分为:" . $this->user['pay_points'], 'result' => '']);
+                if($pay_points > $this->user['pay_points']) {
+                    throw new TpshopException("计算订单价格", 0, ['status' => -5, 'msg' => "你的账户可用积分为:" . $this->user['pay_points'], 'result' => '']);
                 }
-                if ($min_use_limit_point > 0 && $this->user['pay_points'] < $min_use_limit_point) {
-                    throw new TpshopException("计算订单价格",0,['status' => -1, 'msg' => "积分小于".$min_use_limit_point."时 ，不能使用积分", 'result' => '']);
+                if($min_use_limit_point > 0 && $this->user['pay_points'] < $min_use_limit_point) {
+                    throw new TpshopException("计算订单价格", 0, ['status' => -1, 'msg' => "积分小于" . $min_use_limit_point . "时 ，不能使用积分", 'result' => '']);
                 }
-                $order_amount_pay_point = round($this->orderAmount * $point_rate,2);
+                $order_amount_pay_point = round($this->orderAmount * $point_rate, 2);
                 //$order_amount_pay_point = $this->orderAmount * $point_rate;
-                if($pay_points > $order_amount_pay_point){
+                if($pay_points > $order_amount_pay_point) {
                     $this->payPoints = $order_amount_pay_point;
-                }else{
+                } else {
                     $this->payPoints = $pay_points;
                 }
                 $this->integralMoney = $this->payPoints / $point_rate;
                 $this->orderAmount = $this->orderAmount - $this->integralMoney;
-            }else{
+            } else {
                 //积分兑换流程
-                if($pay_points <= $this->user['pay_points']){
+                if($pay_points <= $this->user['pay_points']) {
                     $this->payPoints = $pay_points;
                     $this->integralMoney = $pay_points / $point_rate;//总积分兑换成的金额
-                }else{
+                } else {
                     $this->payPoints = 0;//需要兑换的总积分
                     $this->integralMoney = 0;//总积分兑换成的金额
                 }
@@ -254,21 +267,21 @@ class Pay
 
     /**
      * 使用余额
-     * @throws TpshopException
      * @param $user_money
      * @return $this
+     * @throws TpshopException
      */
     public function useUserMoney($user_money)
     {
-        if($user_money > 0){
-            if($user_money > $this->user['user_money']){
-                throw new TpshopException("计算订单价格",0,['status' => -6, 'msg' =>  "你的账户可用余额为:" . $this->user['user_money'], 'result' => '']);
+        if($user_money > 0) {
+            if($user_money > $this->user['user_money']) {
+                throw new TpshopException("计算订单价格", 0, ['status' => -6, 'msg' => "你的账户可用余额为:" . $this->user['user_money'], 'result' => '']);
             }
-            if($this->orderAmount > 0){
-                if($user_money > $this->orderAmount){
+            if($this->orderAmount > 0) {
+                if($user_money > $this->orderAmount) {
                     $this->userMoney = $this->orderAmount;
                     $this->orderAmount = 0;
-                }else{
+                } else {
                     $this->userMoney = $user_money;
                     $this->orderAmount = $this->orderAmount - $this->userMoney;
                 }
@@ -282,7 +295,8 @@ class Pay
      * @param $cut_money
      * @return $this
      */
-    public function cutOrderAmount($cut_money){
+    public function cutOrderAmount($cut_money)
+    {
         $this->orderAmount = $this->orderAmount - $cut_money;
         return $this;
     }
@@ -292,16 +306,17 @@ class Pay
      * @param $coupon_id
      * @return $this
      */
-    public function useCouponById($coupon_id){
-        if($coupon_id > 0){
+    public function useCouponById($coupon_id)
+    {
+        if($coupon_id > 0) {
             $couponList = new CouponList();
-            $userCoupon = $couponList->where(['uid'=>$this->user['user_id'],'id'=>$coupon_id])->find();
-            if($userCoupon){
-                $coupon = Db::name('coupon')->where(['id'=>$userCoupon['cid'],'status'=>1])->find(); // 获取有效优惠券类型表
-                if($coupon){
+            $userCoupon = $couponList->where(['uid' => $this->user['user_id'], 'id' => $coupon_id])->find();
+            if($userCoupon) {
+                $coupon = Db::name('coupon')->where(['id' => $userCoupon['cid'], 'status' => 1])->find(); // 获取有效优惠券类型表
+                if($coupon) {
                     $this->couponId = $coupon_id;
-                    if ($this->orderAmount > 0) {
-                        if ($coupon['money'] > $this->orderAmount) {
+                    if($this->orderAmount > 0) {
+                        if($coupon['money'] > $this->orderAmount) {
                             $this->couponPrice = $this->orderAmount;
                             $this->orderAmount = 0;
                         } else {
@@ -318,54 +333,42 @@ class Pay
     /**
      * 配送
      * @param $district_id
-     * @throws TpshopException
      * @return $this
+     * @throws TpshopException
      */
-    public function delivery($district_id){
-        if (array_key_exists('is_virtual', $this->payList[0]) && $this->payList[0]['is_virtual'] == 0) {
-            if (empty($this->shop) && empty($district_id)) {
+    public function delivery($district_id)
+    {
+        if(array_key_exists('is_virtual', $this->payList[0]) && $this->payList[0]['is_virtual'] == 0) {
+            if(empty($this->shop) && empty($district_id)) {
                 throw new TpshopException("计算订单价格", 0, ['status' => -1, 'msg' => '请填写收货信息', 'result' => ['']]);
             }
         }
         $GoodsLogic = new GoodsLogic();
         $checkGoodsShipping = $GoodsLogic->checkGoodsListShipping($this->payList, $district_id);
-        foreach($checkGoodsShipping as $shippingKey => $shippingVal){
-            if($shippingVal['shipping_able'] != true){
-                throw new TpshopException("计算订单价格",0,['status'=>-1, 'code' => 301,
-                    'msg'=>'订单中部分商品【 '.$shippingVal['goods_name'].' 】不支持对当前地址的配送请返回购物车修改',
-                    'result'=>['goods_shipping'=>$checkGoodsShipping]]);
+        foreach($checkGoodsShipping as $shippingKey => $shippingVal) {
+            if($shippingVal['shipping_able'] != TRUE) {
+                throw new TpshopException("计算订单价格", 0, ['status' => -1, 'code' => 301,
+                    'msg' => '订单中部分商品【 ' . $shippingVal['goods_name'] . ' 】不支持对当前地址的配送请返回购物车修改',
+                    'result' => ['goods_shipping' => $checkGoodsShipping]]);
             }
         }
         //使用自提点不计算运费
-        if(!empty($this->shop)){
+        if( !empty($this->shop)) {
             return $this;
         }
         //预售活动暂不计算运费
-        if ($this->payList[0]['prom_type'] == 4) {
+        if($this->payList[0]['prom_type'] == 4) {
             return $this;
         }
         $freight_free = tpCache('shopping.freight_free'); // 全场满多少免运费
-        if($this->goodsPrice < $freight_free || $freight_free == 0){
+        if($this->goodsPrice < $freight_free || $freight_free == 0) {
             $this->shippingPrice = $GoodsLogic->getFreight($this->payList, $district_id);
             $this->orderAmount = $this->orderAmount + $this->shippingPrice;
             $this->totalAmount = $this->totalAmount + $this->shippingPrice;
-        }else{
+        } else {
             $this->shippingPrice = 0;
         }
         return $this;
-    }
-
-    /**
-     * 获取折扣
-     * @return int
-     */
-    private function getDiscount()
-    {
-        if(empty($this->user['discount'])){
-            return 1;
-        }else{
-            return $this->user['discount'];
-        }
     }
 
     /**
@@ -374,14 +377,14 @@ class Pay
     public function orderPromotion()
     {
         $time = time();
-        $order_prom_where = ['type'=>['lt',2],'end_time'=>['gt',$time],'start_time'=>['lt',$time],'money'=>['elt',$this->goodsPrice],'is_close'=>0];
+        $order_prom_where = ['type' => ['lt', 2], 'end_time' => ['gt', $time], 'start_time' => ['lt', $time], 'money' => ['elt', $this->goodsPrice], 'is_close' => 0];
         $orderProm = Db::name('prom_order')->where($order_prom_where)->order('money desc')->find();
-        if ($orderProm) {
-            if ($orderProm['type'] == 0) {
+        if($orderProm) {
+            if($orderProm['type'] == 0) {
                 $expressionAmount = round($this->goodsPrice * $orderProm['expression'] / 100, 2);//满额打折
                 $this->orderPromAmount = round($this->goodsPrice - $expressionAmount, 2);
                 $this->orderPromId = $orderProm['id'];
-            } elseif ($orderProm['type'] == 1) {
+            } elseif($orderProm['type'] == 1) {
                 $this->orderPromAmount = $orderProm['expression'];
                 $this->orderPromId = $orderProm['id'];
             }
@@ -421,7 +424,8 @@ class Pay
      * 获取实际上使用的积分抵扣金额
      * @return float
      */
-    public function getIntegralMoney(){
+    public function getIntegralMoney()
+    {
         return $this->integralMoney;
     }
 
@@ -484,6 +488,7 @@ class Pay
     {
         return $this->orderPromAmount;
     }
+
     public function getOrderPromId()
     {
         return $this->orderPromId;

@@ -22,13 +22,13 @@ use app\common\logic\team\TeamActivityLogic;
 class GoodsPromFactory
 {
     /**
-     * @param $goods|商品实例
-     * @param $spec_goods_price|规格实例
+     * @param $goods |商品实例
+     * @param $spec_goods_price |规格实例
      * @return FlashSaleLogic|GroupBuyLogic|PromGoodsLogic
      */
     public function makeModule($goods, $spec_goods_price)
     {
-        switch ($goods['prom_type']) {
+        switch($goods['prom_type']) {
             case 1:
                 return new FlashSaleLogic($goods, $spec_goods_price);
             case 2:
@@ -49,11 +49,10 @@ class GoodsPromFactory
      */
     public function checkPromType($promType)
     {
-        if (in_array($promType, array_values([1, 2, 3, 4, 6]))) {
-            return true;
+        if(in_array($promType, array_values([1, 2, 3, 4, 6]))) {
+            return TRUE;
         } else {
-            return false;
+            return FALSE;
         }
     }
-
 }

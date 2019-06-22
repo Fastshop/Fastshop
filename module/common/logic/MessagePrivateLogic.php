@@ -14,12 +14,6 @@
 
 namespace app\common\logic;
 
-
-use app\common\model\UserMessage;
-use app\common\util\TpshopException;
-use think\Model;
-use think\db;
-
 /**
  * 私信消息逻辑定义
  * Class CatsLogic
@@ -30,7 +24,8 @@ class MessagePrivateLogic extends MessageBase
     /**
      * 添加一条私信消息
      */
-    public function addMessage(){
+    public function addMessage()
+    {
         $this->message['category'] = 3;
         db('message_private')->insert($this->message);
         $message_id = db('message_private')->getLastInsID();
@@ -43,7 +38,7 @@ class MessagePrivateLogic extends MessageBase
      * 发私信
      * @param array $send_data |发送内容
      */
-    public function sendMessagePrivate($send_data=[])
+    public function sendMessagePrivate($send_data = [])
     {
         $data['send_user_id'] = 0; // 发送者
         $data['message_content'] = ''; // 内容
@@ -72,26 +67,29 @@ class MessagePrivateLogic extends MessageBase
      */
     public function checkParam()
     {
-        if (empty($this->message['send_user_id'])
+        if(empty($this->message['send_user_id'])
             || empty($this->message['message_content'])
         ) {
-            return false;
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
     /**
      * 必填
      * @param $value
      */
-    public function setSendUserId($value){
+    public function setSendUserId($value)
+    {
         $this->message['send_user_id'] = $value;
     }
+
     /**
      * 必填
      * @param $value
      */
-    public function setMessageContent($value){
+    public function setMessageContent($value)
+    {
         $this->message['message_content'] = $value;
     }
 
@@ -99,7 +97,8 @@ class MessagePrivateLogic extends MessageBase
      * 必填
      * @param $value
      */
-    public function setSendTime($value){
+    public function setSendTime($value)
+    {
         $this->message['send_time'] = $value;
     }
 }

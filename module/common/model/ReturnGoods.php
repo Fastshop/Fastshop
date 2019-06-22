@@ -9,12 +9,11 @@
 namespace app\common\model;
 use think\Model;
 
-class ReturnGoods extends Model {
-
-
-    public function getGoodsNameAttr($value, $data){
-        return db('order_goods')->where(['goods_id'=>$data['goods_id'],'order_id'=>$data['order_id']])->value('goods_name');
+class ReturnGoods extends Model
+{
+    public function getGoodsNameAttr($value, $data)
+    {
+        return db('order_goods')->where(['goods_id' => $data['goods_id'], 'order_id' => $data['order_id']])->value('goods_name');
 
     }
-
 }

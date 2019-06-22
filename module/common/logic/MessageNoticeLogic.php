@@ -15,10 +15,6 @@
 namespace app\common\logic;
 
 use app\common\model\CouponList;
-use app\common\model\UserMessage;
-use app\common\util\TpshopException;
-use think\Model;
-use think\db;
 
 /**
  * 通知消息逻辑定义
@@ -30,40 +26,14 @@ class MessageNoticeLogic extends MessageBase
     /**
      * 添加一条通知消息
      */
-    public function addMessage(){
+    public function addMessage()
+    {
         $this->message['category'] = 0;
         db('message_notice')->insert($this->message);
         $message_id = db('message_notice')->getLastInsID();
         if($message_id) {
             $this->message['message_id'] = $message_id;
         }
-    }
-    /**
-     * 发一条通知消息,数组参数如 data
-     * @param array $send_data |发送内容
-     */
-    public function sendMessageNotice($send_data=[])
-    {
-
-        $data['message_type'] = 0; // 0个人，1全体
-        $data['message_title'] = ''; //  消息标题,如果空,则用模板名称
-        $data['message_content'] = ''; // 如果空，则用模板内容
-        // type:0系统公告1降价通知2优惠券到账提醒3优惠券使用成功提醒4优惠券即将过期提醒5预售订单尾款支付提醒6提现到账提醒
-        $data['type'] = 0;
-        $data['prom_id'] = ''; // 活动id
-        $data['message_uri'] = ''; // 查看详情
-        $data['mmt_code'] = ''; // 消息模板编号
-        $data['users'] = []; // 向用户发消息
-        $data['message_val'] = []; // ['key1'=>'val','key2'=>'val']; // 模板消息变量名key和值
-        $data = array_merge($data, $send_data);
-        if (!empty($data['users'])) {
-            $where['user_id'] = ['in', $data['users']];
-            $where['email_validated'] = 1;
-            $data['email'] = db('users')->where($where)->column('email');
-        }
-        $data['category'] = 0; // 通知类型
-        $this->setSendData($data);
-        $this->sendMessage();
     }
 
     /**
@@ -75,10 +45,38 @@ class MessageNoticeLogic extends MessageBase
     public function deletedMessage($prom_id, $type)
     {
         $message_id = db('message_notice')->where(['prom_id' => $prom_id, 'type' => $type])->value('message_id');
-        if ($message_id) {
+        if($message_id) {
             db('message_notice')->where(['prom_id' => $prom_id, 'type' => $type])->delete();
             db('user_message')->where(['message_id' => $message_id, 'category' => 0])->delete();
         }
+    }
+
+    /**
+     * 提现到账消息,多次调用
+     * @param $withdrawals_id
+     * @param $uid
+     * @param $money
+     */
+    public function withdrawalsNotice($withdrawals_id, $uid, $money)
+    {
+        $this->setType(6);
+        $this->setMessageTitle('提现已到账');
+        $this->setMessageContent(''); // 空着，使用模板内容
+        $this->setPromId($withdrawals_id);
+        $this->setUsers([$uid]);
+        $this->setMessageVal(['money' => $money]);
+        $this->sendMessage();
+    }
+
+    /**
+     * 必填
+     * type: 0系统公告1降价通知2优惠券到账提醒3优惠券使用提醒4优惠券即将过期提醒5预售订单尾款支付提醒6提现到账提醒
+     * @param $value
+     */
+    public function setType($value)
+    {
+        $this->message['type'] = $value;
+        $this->message['mmt_code'] = $this->getCodeByType($value);
     }
 
     /**
@@ -88,7 +86,7 @@ class MessageNoticeLogic extends MessageBase
      */
     public function getCodeByType($type)
     {
-        switch ($type) {
+        switch($type) {
             case 0:
                 $mmt_code = 'message_notice';
                 break;
@@ -118,21 +116,14 @@ class MessageNoticeLogic extends MessageBase
     }
 
     /**
-     * 提现到账消息,多次调用
-     * @param $withdrawals_id
-     * @param $uid
-     * @param $money
+     * 可空
+     * @param $value
      */
-    public function withdrawalsNotice($withdrawals_id, $uid, $money)
+    public function setPromId($value)
     {
-        $this->setType(6);
-        $this->setMessageTitle('提现已到账');
-        $this->setMessageContent(''); // 空着，使用模板内容
-        $this->setPromId($withdrawals_id);
-        $this->setUsers([$uid]);
-        $this->setMessageVal(['money' => $money]);
-        $this->sendMessage();
+        $this->message['prom_id'] = $value;
     }
+
     /**
      * 发放优惠券到账消息
      * @param $cid
@@ -146,11 +137,39 @@ class MessageNoticeLogic extends MessageBase
         $data['message_title'] = '优惠券已到账';
 
         $name = db('coupon')->where('id', $cid)->value('name');
-        foreach ($uid_arr as $user_id) {
+        foreach($uid_arr as $user_id) {
             $data['users'] = [$user_id];
             $data['message_content'] = $name;
             $this->sendMessageNotice($data);
         }
+    }
+
+    /**
+     * 发一条通知消息,数组参数如 data
+     * @param array $send_data |发送内容
+     */
+    public function sendMessageNotice($send_data = [])
+    {
+
+        $data['message_type'] = 0; // 0个人，1全体
+        $data['message_title'] = ''; //  消息标题,如果空,则用模板名称
+        $data['message_content'] = ''; // 如果空，则用模板内容
+        // type:0系统公告1降价通知2优惠券到账提醒3优惠券使用成功提醒4优惠券即将过期提醒5预售订单尾款支付提醒6提现到账提醒
+        $data['type'] = 0;
+        $data['prom_id'] = ''; // 活动id
+        $data['message_uri'] = ''; // 查看详情
+        $data['mmt_code'] = ''; // 消息模板编号
+        $data['users'] = []; // 向用户发消息
+        $data['message_val'] = []; // ['key1'=>'val','key2'=>'val']; // 模板消息变量名key和值
+        $data = array_merge($data, $send_data);
+        if( !empty($data['users'])) {
+            $where['user_id'] = ['in', $data['users']];
+            $where['email_validated'] = 1;
+            $data['email'] = db('users')->where($where)->column('email');
+        }
+        $data['category'] = 0; // 通知类型
+        $this->setSendData($data);
+        $this->sendMessage();
     }
 
     /**
@@ -180,11 +199,11 @@ class MessageNoticeLogic extends MessageBase
     {
 
         $uid = db('coupon_list')->where('cid', $cid)->value('uid');
-        if ($uid) {
+        if($uid) {
             $where['type'] = 2;
             $where['prom_id'] = $cid;
             $message_id = db('message_notice')->where($where)->column('message_id');
-            if ($message_id) {
+            if($message_id) {
                 db('message_notice')->where($where)->delete();
                 db('user_message')->where(['message_id' => ['in', $message_id], 'category' => 0])->delete();
             }
@@ -201,8 +220,8 @@ class MessageNoticeLogic extends MessageBase
         $where_list['status'] = 0;
         $couponList = new CouponList();
         $coupon_list = $couponList->where($where_list)->select();
-        foreach ($coupon_list as $coupon) {
-            if ($coupon->coupon->is_expiring_notice == 1
+        foreach($coupon_list as $coupon) {
+            if($coupon->coupon->is_expiring_notice == 1
                 && $coupon->coupon->use_end_time > time()
                 && $coupon->coupon->status == 1) {
                 $this->couponWillExpireNotice($coupon['cid'], $user_id);
@@ -222,14 +241,14 @@ class MessageNoticeLogic extends MessageBase
         $where = [
             'message_type' => 0,
             'type' => 4,
-            'prom_id' => $cid
+            'prom_id' => $cid,
         ];
         $message_id_arr = db('message_notice')->where($where)->column('message_id');
         $where_message['category'] = 0;
         $where_message['user_id'] = $user_id;
         $where_message['message_id'] = ['in', $message_id_arr];
         $message_id = db('user_message')->where($where_message)->value('message_id');
-        if ($message_id) {
+        if($message_id) {
             return;
         }
 
@@ -250,28 +269,11 @@ class MessageNoticeLogic extends MessageBase
      */
     public function checkParam()
     {
-        if (empty($this->message['message_title']) || empty($this->message['mmt_code'])
+        if(empty($this->message['message_title']) || empty($this->message['mmt_code'])
             || empty($this->message['type']) || empty($this->message['send_time'])
         ) {
-            return false;
+            return FALSE;
         }
-        return true;
-    }
-
-    /**
-     * 必填
-     * type: 0系统公告1降价通知2优惠券到账提醒3优惠券使用提醒4优惠券即将过期提醒5预售订单尾款支付提醒6提现到账提醒
-     * @param $value
-     */
-    public function setType($value){
-        $this->message['type'] = $value;
-        $this->message['mmt_code'] = $this->getCodeByType($value);
-    }
-    /**
-     * 可空
-     * @param $value
-     */
-    public function setPromId($value){
-        $this->message['prom_id'] = $value;
+        return TRUE;
     }
 }

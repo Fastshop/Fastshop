@@ -15,15 +15,29 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel query()
  */
-class BaseModel extends Model {
-    
-    const UPDATED_AT = null;
-    const CREATED_AT = null;
-    
+class BaseModel extends Model
+{
+    const UPDATED_AT = NULL;
+    const CREATED_AT = NULL;
+
     /**
      * @return static|\Illuminate\Database\Eloquent\Builder
      */
-    public static function fn() {
+    public static function fn()
+    {
         return new TableField();
+    }
+
+    /**
+     * @return \think\db\Query
+     * @throws \ReflectionException
+     */
+    public function tp()
+    {
+        $name = $this->table;
+        $shortClass = (new \ReflectionClass($this))->getShortName();
+        $basename = preg_replace("/^tp_/", '', $this->table);
+        $modelClass = str_replace('_', '', ucwords($basename, '_'));
+        return D($basename)->data($this->toArray());
     }
 }

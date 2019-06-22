@@ -13,7 +13,6 @@
  */
 namespace app\common\model;
 
-use think\Db;
 use think\Model;
 
 class Region extends Model
@@ -23,5 +22,4 @@ class Region extends Model
     {
         //TODO:自定义的初始化
     }
-
 }

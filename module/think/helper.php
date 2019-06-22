@@ -29,13 +29,12 @@ use think\Request;
 use think\Response;
 use think\Session;
 use think\Url;
-use think\View;
 
-if (!function_exists('load_trait')) {
+if( !function_exists('load_trait')) {
     /**
      * 快速导入Traits PHP5.5以上无需调用
-     * @param string    $class trait库
-     * @param string    $ext 类库后缀
+     * @param string $class trait库
+     * @param string $ext 类库后缀
      * @return boolean
      */
     function load_trait($class, $ext = EXT)
@@ -44,14 +43,12 @@ if (!function_exists('load_trait')) {
     }
 }
 
-if (!function_exists('exception')) {
+if( !function_exists('exception')) {
     /**
      * 抛出异常处理
-     *
-     * @param string    $msg  异常消息
-     * @param integer   $code 异常代码 默认为0
-     * @param string    $exception 异常类
-     *
+     * @param string $msg 异常消息
+     * @param integer $code 异常代码 默认为0
+     * @param string $exception 异常类
      * @throws Exception
      */
     function exception($msg, $code = 0, $exception = '')
@@ -61,17 +58,17 @@ if (!function_exists('exception')) {
     }
 }
 
-if (!function_exists('debug')) {
+if( !function_exists('debug')) {
     /**
      * 记录时间（微秒）和内存使用情况
-     * @param string            $start 开始标签
-     * @param string            $end 结束标签
-     * @param integer|string    $dec 小数位 如果是m 表示统计内存占用
+     * @param string $start 开始标签
+     * @param string $end 结束标签
+     * @param integer|string $dec 小数位 如果是m 表示统计内存占用
      * @return mixed
      */
     function debug($start, $end = '', $dec = 6)
     {
-        if ('' == $end) {
+        if('' == $end) {
             Debug::remark($start);
         } else {
             return 'm' == $dec ? Debug::getRangeMem($start, $end) : Debug::getRangeTime($start, $end, $dec);
@@ -79,12 +76,12 @@ if (!function_exists('debug')) {
     }
 }
 
-if (!function_exists('lang')) {
+if( !function_exists('lang')) {
     /**
      * 获取语言变量值
-     * @param string    $name 语言变量名
-     * @param array     $vars 动态变量值
-     * @param string    $lang 语言
+     * @param string $name 语言变量名
+     * @param array $vars 动态变量值
+     * @param string $lang 语言
      * @return mixed
      */
     function lang($name, $vars = [], $lang = '')
@@ -93,17 +90,17 @@ if (!function_exists('lang')) {
     }
 }
 
-if (!function_exists('config')) {
+if( !function_exists('config')) {
     /**
      * 获取和设置配置参数
-     * @param string|array  $name 参数名
-     * @param mixed         $value 参数值
-     * @param string        $range 作用域
+     * @param string|array $name 参数名
+     * @param mixed $value 参数值
+     * @param string $range 作用域
      * @return mixed
      */
-    function config($name = '', $value = null, $range = '')
+    function config($name = '', $value = NULL, $range = '')
     {
-        if (is_null($value) && is_string($name)) {
+        if(is_null($value) && is_string($name)) {
             return 0 === strpos($name, '?') ? Config::has(substr($name, 1), $range) : Config::get($name, $range);
         } else {
             return Config::set($name, $value, $range);
@@ -111,32 +108,32 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('input')) {
+if( !function_exists('input')) {
     /**
      * 获取输入数据 支持默认值和过滤
-     * @param string    $key 获取的变量名
-     * @param mixed     $default 默认值
-     * @param string    $filter 过滤方法
+     * @param string $key 获取的变量名
+     * @param mixed $default 默认值
+     * @param string $filter 过滤方法
      * @return mixed
      */
-    function input($key = '', $default = null, $filter = '')
+    function input($key = '', $default = NULL, $filter = '')
     {
-        if (0 === strpos($key, '?')) {
+        if(0 === strpos($key, '?')) {
             $key = substr($key, 1);
-            $has = true;
+            $has = TRUE;
         }
-        if ($pos = strpos($key, '.')) {
+        if($pos = strpos($key, '.')) {
             // 指定参数来源
             list($method, $key) = explode('.', $key, 2);
-            if (!in_array($method, ['get', 'post', 'put', 'patch', 'delete', 'route', 'param', 'request', 'session', 'cookie', 'server', 'env', 'path', 'file'])) {
-                $key    = $method . '.' . $key;
+            if( !in_array($method, ['get', 'post', 'put', 'patch', 'delete', 'route', 'param', 'request', 'session', 'cookie', 'server', 'env', 'path', 'file'])) {
+                $key = $method . '.' . $key;
                 $method = 'param';
             }
         } else {
             // 默认为自动判断
             $method = 'param';
         }
-        if (isset($has)) {
+        if(isset($has)) {
             return req()->has($key, $method, $default);
         } else {
             return req()->$method($key, $default, $filter);
@@ -144,11 +141,11 @@ if (!function_exists('input')) {
     }
 }
 
-if (!function_exists('widget')) {
+if( !function_exists('widget')) {
     /**
      * 渲染输出Widget
-     * @param string    $name Widget名称
-     * @param array     $data 传入的参数
+     * @param string $name Widget名称
+     * @param array $data 传入的参数
      * @return mixed
      */
     function widget($name, $data = [])
@@ -157,83 +154,83 @@ if (!function_exists('widget')) {
     }
 }
 
-if (!function_exists('model')) {
+if( !function_exists('model')) {
     /**
      * 实例化Model
-     * @param string    $name Model名称
-     * @param string    $layer 业务层名称
-     * @param bool      $appendSuffix 是否添加类名后缀
+     * @param string $name Model名称
+     * @param string $layer 业务层名称
+     * @param bool $appendSuffix 是否添加类名后缀
      * @return \think\Model
      */
-    function model($name = '', $layer = 'model', $appendSuffix = false)
+    function model($name = '', $layer = 'model', $appendSuffix = FALSE)
     {
         return Loader::model($name, $layer, $appendSuffix);
     }
 }
 
-if (!function_exists('validate')) {
+if( !function_exists('validate')) {
     /**
      * 实例化验证器
-     * @param string    $name 验证器名称
-     * @param string    $layer 业务层名称
-     * @param bool      $appendSuffix 是否添加类名后缀
+     * @param string $name 验证器名称
+     * @param string $layer 业务层名称
+     * @param bool $appendSuffix 是否添加类名后缀
      * @return \think\Validate
      */
-    function validate($name = '', $layer = 'validate', $appendSuffix = false)
+    function validate($name = '', $layer = 'validate', $appendSuffix = FALSE)
     {
         return Loader::validate($name, $layer, $appendSuffix);
     }
 }
 
-if (!function_exists('db')) {
+if( !function_exists('db')) {
     /**
      * 实例化数据库类
-     * @param string        $name 操作的数据表名称（不含前缀）
-     * @param array|string  $config 数据库配置参数
-     * @param bool          $force 是否强制重新连接
+     * @param string $name 操作的数据表名称（不含前缀）
+     * @param array|string $config 数据库配置参数
+     * @param bool $force 是否强制重新连接
      * @return \think\db\Query
      */
-    function db($name = '', $config = [], $force = false)
+    function db($name = '', $config = [], $force = FALSE)
     {
         return Db::connect($config, $force)->name($name);
     }
 }
 
-if (!function_exists('controller')) {
+if( !function_exists('controller')) {
     /**
      * 实例化控制器 格式：[模块/]控制器
-     * @param string    $name 资源地址
-     * @param string    $layer 控制层名称
-     * @param bool      $appendSuffix 是否添加类名后缀
+     * @param string $name 资源地址
+     * @param string $layer 控制层名称
+     * @param bool $appendSuffix 是否添加类名后缀
      * @return \think\Controller
      */
-    function controller($name, $layer = 'controller', $appendSuffix = false)
+    function controller($name, $layer = 'controller', $appendSuffix = FALSE)
     {
         return Loader::controller($name, $layer, $appendSuffix);
     }
 }
 
-if (!function_exists('action')) {
+if( !function_exists('action')) {
     /**
      * 调用模块的操作方法 参数格式 [模块/控制器/]操作
-     * @param string        $url 调用地址
-     * @param string|array  $vars 调用参数 支持字符串和数组
-     * @param string        $layer 要调用的控制层名称
-     * @param bool          $appendSuffix 是否添加类名后缀
+     * @param string $url 调用地址
+     * @param string|array $vars 调用参数 支持字符串和数组
+     * @param string $layer 要调用的控制层名称
+     * @param bool $appendSuffix 是否添加类名后缀
      * @return mixed
      */
-    function action($url, $vars = [], $layer = 'controller', $appendSuffix = false)
+    function action($url, $vars = [], $layer = 'controller', $appendSuffix = FALSE)
     {
         return Loader::action($url, $vars, $layer, $appendSuffix);
     }
 }
 
-if (!function_exists('import')) {
+if( !function_exists('import')) {
     /**
      * 导入所需的类库 同java的Import 本函数有缓存功能
-     * @param string    $class 类库命名空间字符串
-     * @param string    $baseUrl 起始路径
-     * @param string    $ext 导入的文件扩展名
+     * @param string $class 类库命名空间字符串
+     * @param string $baseUrl 起始路径
+     * @param string $ext 导入的文件扩展名
      * @return boolean
      */
     function import($class, $baseUrl = '', $ext = EXT)
@@ -242,11 +239,11 @@ if (!function_exists('import')) {
     }
 }
 
-if (!function_exists('vendor')) {
+if( !function_exists('vendor')) {
     /**
      * 快速导入第三方框架类库 所有第三方框架的类库文件统一放到 系统的Vendor目录下面
-     * @param string    $class 类库
-     * @param string    $ext 类库后缀
+     * @param string $class 类库
+     * @param string $ext 类库后缀
      * @return boolean
      */
     function vendor($class, $ext = EXT)
@@ -255,36 +252,36 @@ if (!function_exists('vendor')) {
     }
 }
 
-if (!function_exists('dump')) {
+if( !function_exists('dump')) {
     /**
      * 浏览器友好的变量输出
-     * @param mixed     $var 变量
-     * @param boolean   $echo 是否输出 默认为true 如果为false 则返回输出字符串
-     * @param string    $label 标签 默认为空
+     * @param mixed $var 变量
+     * @param boolean $echo 是否输出 默认为true 如果为false 则返回输出字符串
+     * @param string $label 标签 默认为空
      * @return void|string
      */
-    function dump($var, $echo = true, $label = null)
+    function dump($var, $echo = TRUE, $label = NULL)
     {
         return Debug::dump($var, $echo, $label);
     }
 }
 
-if (!function_exists('url')) {
+if( !function_exists('url')) {
     /**
      * Url生成
-     * @param string        $url 路由地址
-     * @param string|array  $vars 变量
-     * @param bool|string   $suffix 生成的URL后缀
-     * @param bool|string   $domain 域名
+     * @param string $url 路由地址
+     * @param string|array $vars 变量
+     * @param bool|string $suffix 生成的URL后缀
+     * @param bool|string $domain 域名
      * @return string
      */
-    function url($url = '', $vars = '', $suffix = true, $domain = false)
+    function url($url = '', $vars = '', $suffix = TRUE, $domain = FALSE)
     {
         return Url::build($url, $vars, $suffix, $domain);
     }
 }
 
-if (!function_exists('session')) {
+if( !function_exists('session')) {
     /**
      * Session管理
      * @param string|array $name session名称，如果为数组表示进行session设置
@@ -293,18 +290,18 @@ if (!function_exists('session')) {
      * @return mixed
      * @throws \think\Exception
      */
-    function session($name, $value = '', $prefix = null)
+    function session($name, $value = '', $prefix = NULL)
     {
-        if (is_array($name)) {
+        if(is_array($name)) {
             // 初始化
             Session::init($name);
-        } elseif (is_null($name)) {
+        } elseif(is_null($name)) {
             // 清除
-            Session::clear('' === $value ? null : $value);
-        } elseif ('' === $value) {
+            Session::clear('' === $value ? NULL : $value);
+        } elseif('' === $value) {
             // 判断或获取
             return 0 === strpos($name, '?') ? Session::has(substr($name, 1), $prefix) : Session::get($name, $prefix);
-        } elseif (is_null($value)) {
+        } elseif(is_null($value)) {
             // 删除
             return Session::delete($name, $prefix);
         } else {
@@ -314,26 +311,26 @@ if (!function_exists('session')) {
     }
 }
 
-if (!function_exists('cookie')) {
+if( !function_exists('cookie')) {
     /**
      * Cookie管理
-     * @param string|array  $name cookie名称，如果为数组表示进行cookie设置
-     * @param mixed         $value cookie值
-     * @param mixed         $option 参数
+     * @param string|array $name cookie名称，如果为数组表示进行cookie设置
+     * @param mixed $value cookie值
+     * @param mixed $option 参数
      * @return mixed
      */
-    function cookie($name, $value = '', $option = null)
+    function cookie($name, $value = '', $option = NULL)
     {
-        if (is_array($name)) {
+        if(is_array($name)) {
             // 初始化
             Cookie::init($name);
-        } elseif (is_null($name)) {
+        } elseif(is_null($name)) {
             // 清除
             Cookie::clear($value);
-        } elseif ('' === $value) {
+        } elseif('' === $value) {
             // 获取
             return 0 === strpos($name, '?') ? Cookie::has(substr($name, 1), $option) : Cookie::get($name, $option);
-        } elseif (is_null($value)) {
+        } elseif(is_null($value)) {
             // 删除
             return Cookie::delete($name);
         } else {
@@ -343,46 +340,46 @@ if (!function_exists('cookie')) {
     }
 }
 
-if (!function_exists('cache')) {
+if( !function_exists('cache')) {
     /**
      * 缓存管理
-     * @param mixed     $name 缓存名称，如果为数组表示进行缓存设置
-     * @param mixed     $value 缓存值
-     * @param mixed     $options 缓存参数
-     * @param string    $tag 缓存标签
+     * @param mixed $name 缓存名称，如果为数组表示进行缓存设置
+     * @param mixed $value 缓存值
+     * @param mixed $options 缓存参数
+     * @param string $tag 缓存标签
      * @return mixed
      */
-    function cache($name, $value = '', $options = null, $tag = null)
+    function cache($name, $value = '', $options = NULL, $tag = NULL)
     {
-        if (is_array($options)) {
+        if(is_array($options)) {
             // 缓存操作的同时初始化
             $cache = Cache::connect($options);
-        } elseif (is_array($name)) {
+        } elseif(is_array($name)) {
             // 缓存初始化
             return Cache::connect($name);
         } else {
             $cache = Cache::init();
         }
 
-        if (is_null($name)) {
+        if(is_null($name)) {
             return $cache->clear($value);
-        } elseif ('' === $value) {
+        } elseif('' === $value) {
             // 获取缓存
             return 0 === strpos($name, '?') ? $cache->has(substr($name, 1)) : $cache->get($name);
-        } elseif (is_null($value)) {
+        } elseif(is_null($value)) {
             // 删除缓存
             return $cache->rm($name);
-        } elseif (0 === strpos($name, '?') && '' !== $value) {
-            $expire = is_numeric($options) ? $options : null;
+        } elseif(0 === strpos($name, '?') && '' !== $value) {
+            $expire = is_numeric($options) ? $options : NULL;
             return $cache->remember(substr($name, 1), $value, $expire);
         } else {
             // 缓存数据
-            if (is_array($options)) {
-                $expire = isset($options['expire']) ? $options['expire'] : null; //修复查询缓存无法设置过期时间
+            if(is_array($options)) {
+                $expire = isset($options['expire']) ? $options['expire'] : NULL; //修复查询缓存无法设置过期时间
             } else {
-                $expire = is_numeric($options) ? $options : null; //默认快捷缓存设置过期时间
+                $expire = is_numeric($options) ? $options : NULL; //默认快捷缓存设置过期时间
             }
-            if (is_null($tag)) {
+            if(is_null($tag)) {
                 return $cache->set($name, $value, $expire);
             } else {
                 return $cache->tag($tag)->set($name, $value, $expire);
@@ -391,16 +388,16 @@ if (!function_exists('cache')) {
     }
 }
 
-if (!function_exists('trace')) {
+if( !function_exists('trace')) {
     /**
      * 记录日志信息
-     * @param mixed     $log log信息 支持字符串和数组
-     * @param string    $level 日志级别
+     * @param mixed $log log信息 支持字符串和数组
+     * @param string $level 日志级别
      * @return void|array
      */
     function trace($log = '[think]', $level = 'log')
     {
-        if ('[think]' === $log) {
+        if('[think]' === $log) {
             return Log::getLog();
         } else {
             Log::record($log, $level);
@@ -408,7 +405,7 @@ if (!function_exists('trace')) {
     }
 }
 
-if (!function_exists('req')) {
+if( !function_exists('req')) {
     /**
      * 获取当前Request对象实例
      * @return Request
@@ -419,13 +416,13 @@ if (!function_exists('req')) {
     }
 }
 
-if (!function_exists('tp_response')) {
+if( !function_exists('tp_response')) {
     /**
      * 创建普通 Response 对象实例
-     * @param mixed      $data   输出数据
-     * @param int|string $code   状态码
-     * @param array      $header 头信息
-     * @param string     $type
+     * @param mixed $data 输出数据
+     * @param int|string $code 状态码
+     * @param array $header 头信息
+     * @param string $type
      * @return Response
      */
     function tp_response($data = [], $code = 200, $header = [], $type = 'html')
@@ -434,13 +431,13 @@ if (!function_exists('tp_response')) {
     }
 }
 
-if (!function_exists('tp_view')) {
+if( !function_exists('tp_view')) {
     /**
      * 渲染模板输出
-     * @param string    $template 模板文件
-     * @param array     $vars 模板变量
-     * @param array     $replace 模板替换
-     * @param integer   $code 状态码
+     * @param string $template 模板文件
+     * @param array $vars 模板变量
+     * @param array $replace 模板替换
+     * @param integer $code 状态码
      * @return \think\response\View
      */
     function tp_view($template = '', $vars = [], $replace = [], $code = 200)
@@ -449,13 +446,13 @@ if (!function_exists('tp_view')) {
     }
 }
 
-if (!function_exists('json')) {
+if( !function_exists('json')) {
     /**
      * 获取\think\response\Json对象实例
-     * @param mixed   $data 返回的数据
+     * @param mixed $data 返回的数据
      * @param integer $code 状态码
-     * @param array   $header 头部
-     * @param array   $options 参数
+     * @param array $header 头部
+     * @param array $options 参数
      * @return \think\response\Json
      */
     function json($data = [], $code = 200, $header = [], $options = [])
@@ -464,13 +461,13 @@ if (!function_exists('json')) {
     }
 }
 
-if (!function_exists('jsonp')) {
+if( !function_exists('jsonp')) {
     /**
      * 获取\think\response\Jsonp对象实例
-     * @param mixed   $data    返回的数据
-     * @param integer $code    状态码
-     * @param array   $header 头部
-     * @param array   $options 参数
+     * @param mixed $data 返回的数据
+     * @param integer $code 状态码
+     * @param array $header 头部
+     * @param array $options 参数
      * @return \think\response\Jsonp
      */
     function jsonp($data = [], $code = 200, $header = [], $options = [])
@@ -479,13 +476,13 @@ if (!function_exists('jsonp')) {
     }
 }
 
-if (!function_exists('xml')) {
+if( !function_exists('xml')) {
     /**
      * 获取\think\response\Xml对象实例
-     * @param mixed   $data    返回的数据
-     * @param integer $code    状态码
-     * @param array   $header  头部
-     * @param array   $options 参数
+     * @param mixed $data 返回的数据
+     * @param integer $code 状态码
+     * @param array $header 头部
+     * @param array $options 参数
      * @return \think\response\Xml
      */
     function xml($data = [], $code = 200, $header = [], $options = [])
@@ -494,46 +491,46 @@ if (!function_exists('xml')) {
     }
 }
 
-if (!function_exists('redirect')) {
+if( !function_exists('redirect')) {
     /**
      * 获取\think\response\Redirect对象实例
-     * @param mixed         $url 重定向地址 支持Url::build方法的地址
+     * @param mixed $url 重定向地址 支持Url::build方法的地址
      * @param array|integer $params 额外参数
-     * @param integer       $code 状态码
-     * @param array         $with 隐式传参
+     * @param integer $code 状态码
+     * @param array $with 隐式传参
      * @return \think\response\Redirect
      */
     function redirect($url = [], $params = [], $code = 302, $with = [])
     {
-        if (is_integer($params)) {
-            $code   = $params;
+        if(is_integer($params)) {
+            $code = $params;
             $params = [];
         }
         return Response::create($url, 'redirect', $code)->params($params)->with($with);
     }
 }
 
-if (!function_exists('abort')) {
+if( !function_exists('abort')) {
     /**
      * 抛出HTTP异常
-     * @param integer|Response      $code 状态码 或者 Response对象实例
-     * @param string                $message 错误信息
-     * @param array                 $header 参数
+     * @param integer|Response $code 状态码 或者 Response对象实例
+     * @param string $message 错误信息
+     * @param array $header 参数
      */
-    function abort($code, $message = null, $header = [])
+    function abort($code, $message = NULL, $header = [])
     {
-        if ($code instanceof Response) {
+        if($code instanceof Response) {
             throw new HttpResponseException($code);
         } else {
-            throw new HttpException($code, $message, null, $header);
+            throw new HttpException($code, $message, NULL, $header);
         }
     }
 }
 
-if (!function_exists('halt')) {
+if( !function_exists('halt')) {
     /**
      * 调试变量并且中断输出
-     * @param mixed      $var 调试变量或者信息
+     * @param mixed $var 调试变量或者信息
      */
     function halt($var)
     {
@@ -542,11 +539,11 @@ if (!function_exists('halt')) {
     }
 }
 
-if (!function_exists('token')) {
+if( !function_exists('token')) {
     /**
      * 生成表单令牌
      * @param string $name 令牌名称
-     * @param mixed  $type 令牌生成方法
+     * @param mixed $type 令牌生成方法
      * @return string
      */
     function token($name = '__token__', $type = 'md5')
@@ -556,7 +553,7 @@ if (!function_exists('token')) {
     }
 }
 
-if (!function_exists('load_relation')) {
+if( !function_exists('load_relation')) {
     /**
      * 延迟预载入关联查询
      * @param mixed $resultSet 数据集
@@ -566,14 +563,14 @@ if (!function_exists('load_relation')) {
     function load_relation($resultSet, $relation)
     {
         $item = current($resultSet);
-        if ($item instanceof Model) {
+        if($item instanceof Model) {
             $item->eagerlyResultSet($resultSet, $relation);
         }
         return $resultSet;
     }
 }
 
-if (!function_exists('collection')) {
+if( !function_exists('collection')) {
     /**
      * 数组转换为数据集对象
      * @param array $resultSet 数据集数组
@@ -582,7 +579,7 @@ if (!function_exists('collection')) {
     function collection($resultSet)
     {
         $item = current($resultSet);
-        if ($item instanceof Model) {
+        if($item instanceof Model) {
             return \think\model\Collection::make($resultSet);
         } else {
             return \think\Collection::make($resultSet);
@@ -590,57 +587,55 @@ if (!function_exists('collection')) {
     }
 }
 
-
-if (!function_exists('M')) {
+if( !function_exists('M')) {
     /**
      * 采有TP5最新助手函数特性实现函数简写方式 M
-     * @param string $name 表名     
+     * @param string $name 表名
      * @return \think\db\Query
      */
     function M($name = '')
     {
-        if(!empty($name))
-        {
-            //if(class_exists($name) && \Str::)
+        if( !empty($name)) {
+            if(class_exists($name) && strpos($name, '\\')) {
+                return new $name;
+            }
+
             return Db::name($name);
-        }                    
+        }
     }
 }
 
-if (!function_exists('D')) {
+if( !function_exists('D')) {
     /**
      * 采有TP5最新助手函数特性实现函数简写方式 D
-     * @param string $name 表名     
+     * @param string $name 表名
      * @return Query
      */
     function D($name = '')
-    {               
+    {
         $name = Loader::parseName($name, 1); // 转换驼峰式命名
-        if(is_file(APP_PATH."/".MODULE_NAME."/model/$name.php")){
-            $class = '\app\\'.MODULE_NAME.'\model\\'.$name;
-        }elseif(is_file(APP_PATH."/home/model/$name.php")){
-            $class = '\app\home\model\\'.$name;
-        }elseif(is_file(APP_PATH."/mobile/model/$name.php")){
-            $class = '\app\mobile\model\\'.$name;
-        }elseif(is_file(APP_PATH."/api/model/$name.php")){            
-            $class = '\app\api\model\\'.$name;     
-        }elseif(is_file(APP_PATH."/admin/model/$name.php")){
-            $class = '\app\admin\model\\'.$name;
-        }elseif(is_file(APP_PATH."/common/model/$name.php")){
-            $class = '\app\common\model\\'.$name;
+        if(is_file(APP_PATH . "/" . MODULE_NAME . "/model/$name.php")) {
+            $class = '\app\\' . MODULE_NAME . '\model\\' . $name;
+        } elseif(is_file(APP_PATH . "/home/model/$name.php")) {
+            $class = '\app\home\model\\' . $name;
+        } elseif(is_file(APP_PATH . "/mobile/model/$name.php")) {
+            $class = '\app\mobile\model\\' . $name;
+        } elseif(is_file(APP_PATH . "/api/model/$name.php")) {
+            $class = '\app\api\model\\' . $name;
+        } elseif(is_file(APP_PATH . "/admin/model/$name.php")) {
+            $class = '\app\admin\model\\' . $name;
+        } elseif(is_file(APP_PATH . "/common/model/$name.php")) {
+            $class = '\app\common\model\\' . $name;
         }
-        if($class)
-        {
+        if($class) {
             return new $class();
-        }            
-        elseif(!empty($name))
-        {          
+        } elseif( !empty($name)) {
             return Db::name($name);
-        }                    
+        }
     }
 }
 
-if (!function_exists('U')) {
+if( !function_exists('U')) {
     /**
      * 采有TP5最新助手函数特性实现函数简写方式 M
      * URL组装 支持不同URL模式
@@ -650,43 +645,45 @@ if (!function_exists('U')) {
      * @param boolean $domain 是否显示域名
      * @return string
      */
-    function  U($url='',$vars='',$suffix=true,$domain=false) 
+    function U($url = '', $vars = '', $suffix = TRUE, $domain = FALSE)
     {
-       return Url::build($url, $vars, $suffix, $domain);
+        return Url::build($url, $vars, $suffix, $domain);
     }
 }
- 
-if (!function_exists('S')) {
+
+if( !function_exists('S')) {
     /**
-     * 采有TP5最新助手函数特性实现函数简写方式 S 
-    * @param mixed $name 缓存名称，如果为数组表示进行缓存设置
-    * @param mixed $value 缓存值
-    * @param mixed $options 缓存参数
-    * @return mixed
-    */
-   function S($name,$value='',$options=null) {
-       if(!empty($value))
-            Cache::set($name,$value,$options);
-       else
-           return Cache::get($name);
-   }
+     * 采有TP5最新助手函数特性实现函数简写方式 S
+     * @param mixed $name 缓存名称，如果为数组表示进行缓存设置
+     * @param mixed $value 缓存值
+     * @param mixed $options 缓存参数
+     * @return mixed
+     */
+    function S($name, $value = '', $options = NULL)
+    {
+        if( !empty($value))
+            Cache::set($name, $value, $options);
+        else
+            return Cache::get($name);
+    }
 }
 
-if (!function_exists('C')) {
-/**
- * 采有TP5最新助手函数特性实现函数简写方式 S 
- * 获取和设置配置参数 支持批量定义
- * @param string|array $name 配置变量
- * @param mixed $value 配置值
- * @param mixed $default 默认值
- * @return mixed
- */
-    function C($name=null, $value=null,$default=null) {
+if( !function_exists('C')) {
+    /**
+     * 采有TP5最新助手函数特性实现函数简写方式 S
+     * 获取和设置配置参数 支持批量定义
+     * @param string|array $name 配置变量
+     * @param mixed $value 配置值
+     * @param mixed $default 默认值
+     * @return mixed
+     */
+    function C($name = NULL, $value = NULL, $default = NULL)
+    {
         return config($name);
-   }   
+    }
 }
 
-if (!function_exists('I')) {
+if( !function_exists('I')) {
     /**
      * 采有TP5最新助手函数特性实现函数简写方式 I
      * 获取输入参数 支持过滤和默认值
@@ -702,36 +699,36 @@ if (!function_exists('I')) {
      * @param mixed $datas 要获取的额外数据源
      * @return mixed
      */
-    function I($name,$default='',$filter='htmlspecialchars',$datas=null) {
-     
-        $value = input($name,'',$filter);        
-        if($value !== null && $value !== ''){
+    function I($name, $default = '', $filter = 'htmlspecialchars', $datas = NULL)
+    {
+
+        $value = input($name, '', $filter);
+        if($value !== NULL && $value !== '') {
             return $value;
         }
-        if(strstr($name, '.'))  
-        {
+        if(strstr($name, '.')) {
             $name = explode('.', $name);
-            $value = input(end($name),'',$filter);           
-            if($value !== null && $value !== '')
-                return $value;            
-        }  
-        return $default;        
-    } 
+            $value = input(end($name), '', $filter);
+            if($value !== NULL && $value !== '')
+                return $value;
+        }
+        return $default;
+    }
 }
-	
-    
-    if (!function_exists('F')) {
-       /**
-        * 采有TP5最新助手函数特性实现函数简写方式 F
-       * @param mixed $name 缓存名称，如果为数组表示进行缓存设置
-       * @param mixed $value 缓存值
-       * @param mixed $path 缓存参数
-       * @return mixed
-       */
-      function F($name,$value='',$path='') {
-          if(!empty($value))
-               Cache::set($name,$value);
-          else
-              return Cache::get($name);
-      }
-   }
+
+if( !function_exists('F')) {
+    /**
+     * 采有TP5最新助手函数特性实现函数简写方式 F
+     * @param mixed $name 缓存名称，如果为数组表示进行缓存设置
+     * @param mixed $value 缓存值
+     * @param mixed $path 缓存参数
+     * @return mixed
+     */
+    function F($name, $value = '', $path = '')
+    {
+        if( !empty($value))
+            Cache::set($name, $value);
+        else
+            return Cache::get($name);
+    }
+}

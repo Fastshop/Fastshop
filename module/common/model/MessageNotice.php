@@ -12,8 +12,9 @@
  * Date: 2018-6-27
  */
 namespace app\common\model;
-use think\Model;
 use think\Db;
+use think\Model;
+
 class MessageNotice extends Model
 {
     public function userMessage()
@@ -25,39 +26,44 @@ class MessageNotice extends Model
     {
         return time_to_str($data['send_time']);
     }
+
     public function getHomeUrlAttr($value, $data)
     {
         return '';
     }
+
     public function getFinishedAttr($value, $data)
     {
-        $return_flag =  false;
-        switch ($data['mmt_code']) {
+        $return_flag = FALSE;
+        switch($data['mmt_code']) {
             // 优惠券
             case 'coupon_will_expire_notice':
             case 'coupon_use_notice':
             case 'coupon_get_notice':
                 $return_arr = Db::name('coupon')->field('use_end_time,status')->where('id', $data['prom_id'])->find();
-                if (time() > $return_arr['use_end_time'] or $return_arr['status'] == 2) {
-                    $return_flag =  true;
+                if(time() > $return_arr['use_end_time'] or $return_arr['status'] == 2) {
+                    $return_flag = TRUE;
                 }
                 break;
             default:
-                $return_flag = false;
+                $return_flag = FALSE;
                 break;
         }
         return $return_flag;
     }
+
     public function getMobileUrlAttr($value, $data)
     {
         return '';
     }
+
     public function getOrderTextAttr($value, $data)
     {
         return '';
     }
+
     public function getStartTimeAttr($value, $data)
     {
-        return true;
+        return TRUE;
     }
 }

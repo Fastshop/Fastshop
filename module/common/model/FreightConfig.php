@@ -13,7 +13,6 @@
  */
 namespace app\common\model;
 
-use think\Db;
 use think\Model;
 
 class FreightConfig extends Model
@@ -28,5 +27,4 @@ class FreightConfig extends Model
     {
         return $this->hasMany('FreightRegion', 'config_id', 'config_id');
     }
-
 }

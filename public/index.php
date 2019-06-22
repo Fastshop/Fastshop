@@ -7,6 +7,8 @@
  * @author   Taylor Otwell <taylor@laravel.com>
  */
 
+use think\App;
+
 define('LARAVEL_START', microtime(true));
 
 /*
@@ -24,10 +26,14 @@ define('LARAVEL_START', microtime(true));
 require __DIR__.'/../core/vendor/autoload.php';
 
 define('APP_PATH', __DIR__.'/../module/');
+define('MODULE_NAME','common');
+
 require_once __DIR__.'/../module/think/base.php';
+think\App::initCommon();
 
+//kd(function_exists('D'));
 
-require_once(dirname(__FILE__).'/app/wp-load.php');
+require_once(__DIR__ .'/app/wp-load.php');
 
 // Set up the WordPress query.
 wp();

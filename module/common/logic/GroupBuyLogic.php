@@ -14,11 +14,10 @@
 
 namespace app\common\logic;
 
+use app\common\model\Goods;
 use app\common\model\GroupBuy;
 use app\common\model\SpecGoodsPrice;
-use app\common\model\Goods;
 use app\common\util\TpshopException;
-use think\Model;
 use think\db;
 
 /**
@@ -32,30 +31,30 @@ class GroupBuyLogic extends Prom
     protected $goods;//商品模型
     protected $specGoodsPrice;//商品规格模型
 
-    public function __construct($goods,$specGoodsPrice)
+    public function __construct($goods, $specGoodsPrice)
     {
         parent::__construct();
         $this->goods = $goods;
         $this->specGoodsPrice = $specGoodsPrice;
-        if($this->specGoodsPrice){
+        if($this->specGoodsPrice) {
             //活动商品有规格，规格和活动是一对一
             $this->GroupBuy = GroupBuy::get($specGoodsPrice['prom_id']);
-        }else{
+        } else {
             //活动商品没有规格，活动和商品是一对一
             $this->GroupBuy = GroupBuy::get($this->goods['prom_id']);
         }
-        if ($this->GroupBuy) {
+        if($this->GroupBuy) {
             //每次初始化都检测活动是否失效，如果失效就更新活动和商品恢复成普通商品
-            if ($this->checkActivityIsEnd() && $this->GroupBuy['is_end'] == 0) {
-                if($this->specGoodsPrice){
+            if($this->checkActivityIsEnd() && $this->GroupBuy['is_end'] == 0) {
+                if($this->specGoodsPrice) {
                     Db::name('spec_goods_price')->where('item_id', $this->specGoodsPrice['item_id'])->save(['prom_type' => 0, 'prom_id' => 0]);
-                    $goodsPromCount = Db::name('spec_goods_price')->where('goods_id', $this->specGoodsPrice['goods_id'])->where('prom_type','>',0)->count('item_id');
-                    if($goodsPromCount == 0){
+                    $goodsPromCount = Db::name('spec_goods_price')->where('goods_id', $this->specGoodsPrice['goods_id'])->where('prom_type', '>', 0)->count('item_id');
+                    if($goodsPromCount == 0) {
                         Db::name('goods')->where("goods_id", $this->specGoodsPrice['goods_id'])->save(['prom_type' => 0, 'prom_id' => 0]);
                     }
                     unset($this->specGoodsPrice);
                     $this->specGoodsPrice = SpecGoodsPrice::get($specGoodsPrice['item_id']);
-                }else{
+                } else {
                     Db::name('goods')->where("goods_id", $this->GroupBuy['goods_id'])->save(['prom_type' => 0, 'prom_id' => 0]);
                 }
                 $this->GroupBuy->is_end = 1;
@@ -65,51 +64,47 @@ class GroupBuyLogic extends Prom
             }
         }
     }
-    /**
-     * 获取团购剩余库存
-     */
-    public function getPromotionSurplus(){
-        return $this->GroupBuy['goods_num'] - $this->GroupBuy['buy_num'];
-    }
-    public function getPromModel(){
-        return $this->GroupBuy;
-    }
-    /**
-     * 获取虚拟参与人数
-     * @return number
-     */
-    public function getVirtualNum(){
-        return $this->GroupBuy['virtual_num'] + $this->GroupBuy['buy_num'];
-    }
-    /**
-     * 活动是否正在进行
-     * @return bool
-     */
-    public function checkActivityIsAble(){
-        if (empty($this->GroupBuy)) {
-            return false;
-        }
-        if(time() > $this->GroupBuy['start_time'] && time() < $this->GroupBuy['end_time' ] && $this->GroupBuy['is_end'] == 0){
-            return true;
-        }
-        return false;
-    }
+
     /**
      * 活动是否结束
      * @return bool
      */
-    public function checkActivityIsEnd(){
-        if(empty($this->GroupBuy)){
-            return true;
+    public function checkActivityIsEnd()
+    {
+        if(empty($this->GroupBuy)) {
+            return TRUE;
         }
-        if($this->GroupBuy['buy_num'] >= $this->GroupBuy['goods_num']){
-            return true;
+        if($this->GroupBuy['buy_num'] >= $this->GroupBuy['goods_num']) {
+            return TRUE;
         }
-        if(time() > $this->GroupBuy['end_time']){
-            return true;
+        if(time() > $this->GroupBuy['end_time']) {
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
+
+    /**
+     * 获取团购剩余库存
+     */
+    public function getPromotionSurplus()
+    {
+        return $this->GroupBuy['goods_num'] - $this->GroupBuy['buy_num'];
+    }
+
+    public function getPromModel()
+    {
+        return $this->GroupBuy;
+    }
+
+    /**
+     * 获取虚拟参与人数
+     * @return number
+     */
+    public function getVirtualNum()
+    {
+        return $this->GroupBuy['virtual_num'] + $this->GroupBuy['buy_num'];
+    }
+
     /**
      * 获取商品原始数据
      * @return Goods
@@ -118,15 +113,17 @@ class GroupBuyLogic extends Prom
     {
         return $this->goods;
     }
+
     /**
      * 获取商品转换活动商品的数据
      * @return static
      */
-    public function getActivityGoodsInfo(){
-        if($this->specGoodsPrice){
+    public function getActivityGoodsInfo()
+    {
+        if($this->specGoodsPrice) {
             //活动商品有规格，规格和活动是一对一
             $activityGoods = $this->specGoodsPrice;
-        }else{
+        } else {
             //活动商品没有规格，活动和商品是一对一
             $activityGoods = $this->goods;
         }
@@ -143,20 +140,21 @@ class GroupBuyLogic extends Prom
     /**
      * 该活动是否已经失效
      */
-    public function IsAble(){
-        if(empty($this->GroupBuy)){
-            return false;
+    public function IsAble()
+    {
+        if(empty($this->GroupBuy)) {
+            return FALSE;
         }
-        if($this->GroupBuy['buy_num'] >= $this->GroupBuy['goods_num']){
-            return false;
+        if($this->GroupBuy['buy_num'] >= $this->GroupBuy['goods_num']) {
+            return FALSE;
         }
-        if(time() > $this->GroupBuy['end_time']){
-            return false;
+        if(time() > $this->GroupBuy['end_time']) {
+            return FALSE;
         }
-        if($this->GroupBuy['is_end'] == 1){
-            return false;
+        if($this->GroupBuy['is_end'] == 1) {
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
     /**
@@ -165,15 +163,16 @@ class GroupBuyLogic extends Prom
      * @return mixed
      * @throws TpshopException
      */
-    public function buyNow($buyGoods){
+    public function buyNow($buyGoods)
+    {
         //活动是否已经结束
-        if($this->GroupBuy['is_end'] == 1 || empty($this->GroupBuy)){
-            throw new TpshopException('团购商品立即购买',0,['status' => 0, 'msg' => '团购活动已结束', 'result' => '']);
+        if($this->GroupBuy['is_end'] == 1 || empty($this->GroupBuy)) {
+            throw new TpshopException('团购商品立即购买', 0, ['status' => 0, 'msg' => '团购活动已结束', 'result' => '']);
         }
-        if($this->checkActivityIsAble()){
+        if($this->checkActivityIsAble()) {
             $groupBuyPurchase = $this->GroupBuy['goods_num'] - $this->GroupBuy['buy_num'];//团购剩余库存
-            if($buyGoods['goods_num'] > $groupBuyPurchase){
-                throw new TpshopException('团购商品立即购买',0,['status' => 0, 'msg' => '商品库存不足，剩余'.$groupBuyPurchase, 'result' => '']);
+            if($buyGoods['goods_num'] > $groupBuyPurchase) {
+                throw new TpshopException('团购商品立即购买', 0, ['status' => 0, 'msg' => '商品库存不足，剩余' . $groupBuyPurchase, 'result' => '']);
             }
             $buyGoods['member_goods_price'] = $this->GroupBuy['price'];
             $buyGoods['prom_type'] = 2;
@@ -182,4 +181,18 @@ class GroupBuyLogic extends Prom
         return $buyGoods;
     }
 
+    /**
+     * 活动是否正在进行
+     * @return bool
+     */
+    public function checkActivityIsAble()
+    {
+        if(empty($this->GroupBuy)) {
+            return FALSE;
+        }
+        if(time() > $this->GroupBuy['start_time'] && time() < $this->GroupBuy['end_time'] && $this->GroupBuy['is_end'] == 0) {
+            return TRUE;
+        }
+        return FALSE;
+    }
 }

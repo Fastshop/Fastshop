@@ -1,7 +1,7 @@
 <?php
 /**
- * @author Moshihui 
- * @email moshihui@gmail.com 
+ * @author Moshihui
+ * @email moshihui@gmail.com
  * @qq 86146002
  */
 
@@ -20,34 +20,26 @@
 namespace app\common\logic;
 
 use think\Cache;
-use think\Db;
 use think\Config;
+use think\Db;
+use think\Loader;
 use think\Session;
+use traits\controller\Jump;
 
-\think\Loader::import('controller/Jump', TRAIT_PATH, EXT);
+Loader::import('controller/Jump', TRAIT_PATH, EXT);
 
 class Saas
 {
-    use \traits\controller\Jump;
-
+    use Jump;
     /**
      * @var self
      */
-    static private $instance = null;
-
-    private $isSaas = false;
-    private $isBaseUser = false;
+    static private $instance = NULL;
+    private $isSaas = FALSE;
+    private $isBaseUser = FALSE;
     private $app = []; //本应用配置
     private $saas = []; //saas总配置
     private $loginUrl = ''; //登录链接
-
-    public static function instance()
-    {
-        if (!self::$instance) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
 
     private function __construct()
     {
@@ -55,17 +47,15 @@ class Saas
         $this->isBaseUser = (SAAS_BASE_USER === 1);
         $this->app = $GLOBALS['SAAS_CONFIG'];
         $this->saas = $GLOBALS['SAAS'];
-        $this->loginUrl = SITE_URL.'/admin/admin/login';
+        $this->loginUrl = SITE_URL . '/admin/admin/login';
     }
 
-    public function isSaas()
+    public static function instance()
     {
-        return $this->isSaas;
-    }
-
-    public function isNormalUser()
-    {
-        return $this->isSaas && !$this->isBaseUser;
+        if( !self::$instance) {
+            self::$instance = new self;
+        }
+        return self::$instance;
     }
 
     public function isBaseUser()
@@ -76,8 +66,8 @@ class Saas
     public function getRoleRights($actList)
     {
         $module = req()->module();
-        $limitRights = $this->app['right'][$module];
-        if ($actList === 'all') {
+        $limitRights = $this->app['right'][ $module ];
+        if($actList === 'all') {
             $roleRights = implode(',', $limitRights);;
         } else {
             $roleRights = explode(',', $actList);
@@ -89,24 +79,24 @@ class Saas
 
     public function checkApiRight($terminal)
     {
-        if (!$this->isSaas()) {
+        if( !$this->isSaas()) {
             return;
         }
 
         $return = ['status' => 1, 'msg' => '检查成功'];
-        switch ($terminal) {
+        switch($terminal) {
             case 'miniapp':
-                if (empty($this->app['miniapp_enable'])) {
+                if(empty($this->app['miniapp_enable'])) {
                     $return = ['status' => -1, 'msg' => '小程序版已过期'];
                 }
                 break;
             case 'android':
-                if (empty($this->app['android_enable'])) {
+                if(empty($this->app['android_enable'])) {
                     $return = ['status' => -1, 'msg' => '安卓版已过期'];
                 }
                 break;
             case 'ios':
-                if (empty($this->app['android_enable'])) {
+                if(empty($this->app['android_enable'])) {
                     $return = ['status' => -1, 'msg' => '苹果版已过期'];
                 }
                 break;
@@ -114,9 +104,14 @@ class Saas
                 $return = ['status' => -1, 'msg' => '接口没访问权限'];
         }
 
-        if ($return['status'] != 1) {
+        if($return['status'] != 1) {
             ajaxReturn($return);
         }
+    }
+
+    public function isSaas()
+    {
+        return $this->isSaas;
     }
 
     /**
@@ -124,22 +119,22 @@ class Saas
      */
     public function checkSso()
     {
-        if (!$this->isSaas()) {
+        if( !$this->isSaas()) {
             return;
         }
 
         //过滤不需要登陆的行为
         $action = req()->action();
-        if (!in_array($action, ['login', 'vertify', 'forget_pwd'])) {
-            if (!session('admin_id')) {
+        if( !in_array($action, ['login', 'vertify', 'forget_pwd'])) {
+            if( !session('admin_id')) {
                 $this->redirectSso();
             }
-        } elseif ($action == 'login' && req()->isGet()) {
+        } elseif($action == 'login' && req()->isGet()) {
             $isLogin = input('is_login', 0);
-            if ($isLogin != 1) {
+            if($isLogin != 1) {
                 $msg = input('err_msg');
                 $msg && $this->error($msg, $this->loginUrl);
-                if (!session('had_redirect_sso')) {
+                if( !session('had_redirect_sso')) {
                     session('had_redirect_sso', 1);
                     $this->redirectSso();
                 } else {
@@ -147,7 +142,7 @@ class Saas
                 }
             } else {
                 session('had_redirect_sso', 0);
-                if (!$ssoToken = input('sso_token', '')) {
+                if( !$ssoToken = input('sso_token', '')) {
                     $this->error('平台已退出登录', $this->loginUrl);
                 }
 
@@ -164,23 +159,6 @@ class Saas
         }
     }
 
-    private function verifySsoToken($ssoToken)
-    {
-        $params = http_build_query([
-            'service_domain' => $this->app['domain'],
-            'app_domain' => $this->saas['main_domain'],
-            'sso_token' => $ssoToken,
-        ]);
-        $verifyUrl = 'http://'.$this->saas['saas_domain'].'/client/sso/verify_token?'.$params;
-        $result = httpRequest($verifyUrl);
-        if (!$result = json_decode($result, true)) {
-            $this->error('请求验证sso令牌失败', $this->loginUrl);
-        }
-        if ($result['status'] != 1) {
-            $this->error($result['msg'], $this->loginUrl);
-        }
-    }
-
     private function redirectSso()
     {
         $params = http_build_query([
@@ -188,7 +166,29 @@ class Saas
             'app_domain' => $this->saas['main_domain'],
             'redirect' => urlencode($this->loginUrl),
         ]);
-        $this->redirect('http://'.$this->saas['saas_domain'].'/client/sso/check_login?'.$params);
+        $this->redirect('http://' . $this->saas['saas_domain'] . '/client/sso/check_login?' . $params);
+    }
+
+    private function verifySsoToken($ssoToken)
+    {
+        $params = http_build_query([
+            'service_domain' => $this->app['domain'],
+            'app_domain' => $this->saas['main_domain'],
+            'sso_token' => $ssoToken,
+        ]);
+        $verifyUrl = 'http://' . $this->saas['saas_domain'] . '/client/sso/verify_token?' . $params;
+        $result = httpRequest($verifyUrl);
+        if( !$result = json_decode($result, TRUE)) {
+            $this->error('请求验证sso令牌失败', $this->loginUrl);
+        }
+        if($result['status'] != 1) {
+            $this->error($result['msg'], $this->loginUrl);
+        }
+    }
+
+    private function getSsoTokenKey()
+    {
+        return 'sso_token';//一个应用子站只有一个ssoToken,因为只有一个admin
     }
 
     /**
@@ -196,14 +196,14 @@ class Saas
      */
     public function ssoAdmin($username, $password)
     {
-        if (!$this->isSaas()) {
+        if( !$this->isSaas()) {
             return;
         }
 
         $condition['a.admin_id'] = 1;
         $condition['a.user_name'] = $username;
         $admin = Db::name('admin')->alias('a')->join('__ADMIN_ROLE__ ar', 'a.role_id=ar.role_id')->where($condition)->find();
-        if (!$admin) {
+        if( !$admin) {
             return;
         }
 
@@ -213,30 +213,25 @@ class Saas
             'redirect' => urlencode($this->loginUrl),
             'password' => encrypt($password),
         ]);
-        ajaxReturn(['status' => 1, 'url' => 'http://'.$this->saas['saas_domain'].'/client/sso/login?'.$params]);
-    }
-
-    private function getSsoTokenKey()
-    {
-        return 'sso_token';//一个应用子站只有一个ssoToken,因为只有一个admin
+        ajaxReturn(['status' => 1, 'url' => 'http://' . $this->saas['saas_domain'] . '/client/sso/login?' . $params]);
     }
 
     public function ssoLogout($ssoToken)
     {
-        if (!$ssoToken) {
+        if( !$ssoToken) {
             return ['status' => -1, 'msg' => '令牌为空'];
         }
 
         $key = $this->getSsoTokenKey();
         $config = Cache::get($key);
-        if (!$config) {
+        if( !$config) {
             return ['status' => 1, 'msg' => '子站没有令牌'];
         }
-        if ($config['sso_token'] !== $ssoToken) {
+        if($config['sso_token'] !== $ssoToken) {
             return ['status' => -1, 'msg' => '令牌不正确'];
         }
 
-        if ($config['session_id']) {
+        if($config['session_id']) {
             session_id($config['session_id']);
             Session::start();
             Session::clear();
@@ -251,23 +246,23 @@ class Saas
 
     public function handleLogout($adminId)
     {
-        if (!$this->isSaas() || $adminId != 1) {
+        if( !$this->isSaas() || $adminId != 1) {
             return;
         }
 
         $key = $this->getSsoTokenKey();
-        if (!$config = Cache::get($key)) {
+        if( !$config = Cache::get($key)) {
             return;
         }
         Cache::rm($key);
 
-        if ($config['sso_token']) {
-            $logoutUrl = 'http://'.$this->saas['saas_domain'].'/client/sso/logout?sso_token='.$config['sso_token'];
+        if($config['sso_token']) {
+            $logoutUrl = 'http://' . $this->saas['saas_domain'] . '/client/sso/logout?sso_token=' . $config['sso_token'];
             $result = httpRequest($logoutUrl);
-            if (!$result = json_decode($result, true)) {
+            if( !$result = json_decode($result, TRUE)) {
                 $this->error('saas平台退出失败');
             }
-            if ($result['status'] != 1) {
+            if($result['status'] != 1) {
                 $this->error($result['msg']);
             }
         }
@@ -275,46 +270,51 @@ class Saas
 
     public function initSaas()
     {
-        if (!$this->isSaas()) {
+        if( !$this->isSaas()) {
             return;
         }
 
         $database = Config::get('database');
         $saas = $this->app;
         Config::set('database', array_merge($database, $saas['database'] ?: []));
-        Config::set('session.prefix', 'tp_'.$saas['domain']);
-        Config::set('cookie.prefix', 'tp_'.$saas['domain']);
+        Config::set('session.prefix', 'tp_' . $saas['domain']);
+        Config::set('cookie.prefix', 'tp_' . $saas['domain']);
 
         $this->checkPrivilege();
     }
 
     private function checkPrivilege()
     {
-        if (!$this->isNormalUser()) {
+        if( !$this->isNormalUser()) {
             return;
         }
 
-        $module     = req()->module();
+        $module = req()->module();
         $controller = req()->controller();
-        $action     = req()->action();
+        $action = req()->action();
 
-        if ($controller == 'Sso') {
+        if($controller == 'Sso') {
             return;
         }
 
-        $actList = $this->app['right'][$module];
-        $right = Db::name('system_menu')->whereIn("id", $actList)->getField('right', true);
+        $actList = $this->app['right'][ $module ];
+        $right = Db::name('system_menu')->whereIn("id", $actList)->getField('right', TRUE);
         $roleRight = '';
-        foreach ($right as $val) {
-            $roleRight .= $val.',';
+        foreach($right as $val) {
+            $roleRight .= $val . ',';
         }
         $roleRight = explode(',', $roleRight);
-//        if (!in_array($controller . '@' . $action, $roleRight)) {
-//            if (req()->isAjax() || input('is_ajax') || input('is_json') || strpos($action, 'ajax') !== false) {
-//                ajaxReturn(['status' => -1, 'msg' => '您暂没有权限操作', 'result' => '']);
-//            } else {
-//                $this->error('您暂没有权限操作', null, '', 1000);
-//            }
-//        }
+        //        if (!in_array($controller . '@' . $action, $roleRight)) {
+        //            if (req()->isAjax() || input('is_ajax') || input('is_json') || strpos($action, 'ajax') !== false) {
+        //                ajaxReturn(['status' => -1, 'msg' => '您暂没有权限操作', 'result' => '']);
+        //            } else {
+        //                $this->error('您暂没有权限操作', null, '', 1000);
+        //            }
+        //        }
+    }
+
+    public function isNormalUser()
+    {
+        return $this->isSaas && !$this->isBaseUser;
     }
 }

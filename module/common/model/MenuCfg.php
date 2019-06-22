@@ -13,7 +13,9 @@
  */
 namespace app\common\model;
 use think\Model;
-class MenuCfg extends Model {
+
+class MenuCfg extends Model
+{
     //自定义初始化
     protected static function init()
     {

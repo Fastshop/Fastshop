@@ -32,7 +32,7 @@ class PreSell
 
     public function setPreSellById($pre_sell_id)
     {
-        if($pre_sell_id > 0){
+        if($pre_sell_id > 0) {
             $this->pre_sell_id = $pre_sell_id;
             $this->preSell = PreSellModel::get($pre_sell_id);
         }
@@ -45,21 +45,21 @@ class PreSell
 
     public function doOrderPayAfter()
     {
-        $orderGoods = Db::name('order_goods')->where(['order_id'=>$this->order['order_id']])->find();
+        $orderGoods = Db::name('order_goods')->where(['order_id' => $this->order['order_id']])->find();
         //支付尾款
-        if($this->order['pay_status'] == 2){
+        if($this->order['pay_status'] == 2) {
             $this->order['pay_status'] = 1;
             $this->order['pay_time'] = time();
             $this->order->save();
         }
-        if($this->order['pay_status'] == 0){
-            if($this->preSell['deposit_price'] > 0){
+        if($this->order['pay_status'] == 0) {
+            if($this->preSell['deposit_price'] > 0) {
                 //付订金
                 $OrderLogic = new OrderLogic();
                 $this->order['order_sn'] = $OrderLogic->get_order_sn();
                 $this->order['pay_status'] = 2;
                 $this->order['paid_money'] = $this->preSell['deposit_price'] * $orderGoods['goods_num'];
-            }else{
+            } else {
                 //全额
                 $this->order['pay_status'] = 1;
             }

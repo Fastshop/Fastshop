@@ -12,5 +12,4 @@ use think\Model;
 
 class WxTplMsg extends Model
 {
-
 }

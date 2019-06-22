@@ -13,28 +13,27 @@
  */
 namespace app\common\model;
 
-use think\Db;
 use think\Model;
 
 class UserMsgTpl extends Model
 {
     public function getEditButtonAttr($value, $data)
     {
-        if (strpos($data['mmt_code'], 'activity')){
-            return false;
+        if(strpos($data['mmt_code'], 'activity')) {
+            return FALSE;
         }
-        $return_flag = true;
-        switch ($data['mmt_code']) {
+        $return_flag = TRUE;
+        switch($data['mmt_code']) {
             case 'coupon_will_expire_notice':
             case 'coupon_use_notice':
             case 'coupon_get_notice':
             case 'deliver_goods_logistics':
             case 'evaluate_logistics':
             case 'virtual_order_logistics':
-                $return_flag = false;
+                $return_flag = FALSE;
                 break;
             default:
-                $return_flag = true;
+                $return_flag = TRUE;
                 break;
         }
         return $return_flag;

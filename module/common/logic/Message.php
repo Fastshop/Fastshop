@@ -35,26 +35,26 @@ class Message
     public function __construct($userId = 0)
     {
 
-        if(empty($userId)){
+        if(empty($userId)) {
             $user_info = session('user');
             $this->userId = $user_info['user_id'];
-        }else{
+        } else {
             $this->userId = $userId;
         }
     }
-
 
     /**
      * 获取用户未查看的消息个数 pc和手机用
      * @return array
      */
-    public function getUserMessageCount(){
-        $where = array(
+    public function getUserMessageCount()
+    {
+        $where = [
             'user_id' => $this->userId,
             'is_see' => 0,
             'deleted' => 0,
-            'category' => 0
-        );
+            'category' => 0,
+        ];
         // 通知消息未查看数
         $data['message_notice_no_read'] = db("user_message")->where($where)->count();
         // 活动消息未查看数
@@ -73,15 +73,75 @@ class Message
      * 未查看的消息总数 pc和手机用
      * @return int|string
      */
-    public function getUserMessageNoReadCount(){
+    public function getUserMessageNoReadCount()
+    {
         $this->checkPublicMessage();
-        $where = array(
+        $where = [
             'user_id' => $this->userId,
             'is_see' => 0,
-            'deleted' => 0
-        );
+            'deleted' => 0,
+        ];
         $message_no_read = db("user_message")->where($where)->count();
         return $message_no_read;
+    }
+
+    /**
+     * 查询系统全体消息，如有将其插入用户信息表
+     * pc和移动用
+     */
+    public function checkPublicMessage()
+    {
+        $user_info = session('user');
+        $this->checkUserMessage($user_info['user_id']);
+    }
+
+    /**
+     * 查询系统全体消息，如有将其插入用户信息表，也用于api接口
+     * @param $user_id
+     */
+    public function checkUserMessage($user_id)
+    {
+        static $fun = FALSE;
+        if($fun) return; // 防止重复调用
+        $fun = TRUE;
+        $user_info = Db::name('users')->where('user_id', $user_id)->find();
+        if($user_info) {
+            // 通知
+            $user_message = Db::name('user_message')->where(['user_id' => $user_info['user_id'], 'category' => 0])->select();
+            $message_where = [
+                'message_type' => 1,
+                'send_time' => ['gt', $user_info['reg_time']],
+            ];
+            if( !empty($user_message)) {
+                $user_id_array = get_arr_column($user_message, 'message_id');
+                $message_where['message_id'] = ['NOT IN', $user_id_array];
+            }
+            $message_notice_no_read = Db::name('message_notice')->field('message_id')->order('send_time ASC')->where($message_where)->select();
+            foreach($message_notice_no_read as $key) {
+                DB::name('user_message')->insert(['user_id' => $user_info['user_id'], 'message_id' => $key['message_id'], 'category' => 0]);
+            }
+
+            // 活动
+            $user_message = Db::name('user_message')->where(['user_id' => $user_info['user_id'], 'category' => 1])->select();
+            $message_where = [
+                //'send_time' => array('gt', $user_info['reg_time']),
+                'end_time' => ['gt', time()] // 只要活动没有结束
+            ];
+            if( !empty($user_message)) {
+                $user_id_array = get_arr_column($user_message, 'message_id');
+                $message_where['message_id'] = ['NOT IN', $user_id_array];
+            }
+            $message_activity_no_read = Db::name('message_activity')->field('message_id')->order('send_time ASC')->where($message_where)->select();
+            foreach($message_activity_no_read as $key) {
+                DB::name('user_message')->insert(['user_id' => $user_info['user_id'], 'message_id' => $key['message_id'], 'category' => 1]);
+            }
+
+            // 优惠券过期消息
+            $messageFactory = new MessageFactory();
+            $messageLogic = $messageFactory->makeModule(['category' => 0]);
+            $messageLogic->couponWillExpire($user_id);
+        }
+
     }
 
     /**
@@ -90,10 +150,10 @@ class Message
      * @param $type | 消息类型
      * @return array
      */
-    public function sortMessageListBySendTime($rec_id,$type)
+    public function sortMessageListBySendTime($rec_id, $type)
     {
-        if (empty($rec_id)) return [];
-        switch ($type){
+        if(empty($rec_id)) return [];
+        switch($type) {
             case 0:
                 $name = 'MessageNotice';
                 break;
@@ -110,10 +170,10 @@ class Message
         $userMessage = new UserMessage();
         $list = $userMessage->with($name)->select($rec_id);
         $data = [];
-        foreach ($list as $user){
-            $data[] = $user->appendRelationAttr($name,['send_time','send_time_text','finished', 'order_text','mobile_url','home_url','start_time'])->toArray();
+        foreach($list as $user) {
+            $data[] = $user->appendRelationAttr($name, ['send_time', 'send_time_text', 'finished', 'order_text', 'mobile_url', 'home_url', 'start_time'])->toArray();
         }
-        $data = array_sort($data,'send_time');
+        $data = array_sort($data, 'send_time');
         return $data;
     }
 
@@ -123,14 +183,15 @@ class Message
      * @param $type | 消息类型
      * @return array|false|\PDOStatement|string|\think\Model
      */
-    public function getMessageDetails($rec_id, $type){
-        $where = ['rec_id'=>$rec_id];
+    public function getMessageDetails($rec_id, $type)
+    {
+        $where = ['rec_id' => $rec_id];
         $userMessage = new UserMessage();
         $data = $userMessage->where($where)->find();
-        if ($data && $data['is_see'] == 0) {
+        if($data && $data['is_see'] == 0) {
             $this->setMessageForRead($data['rec_id']);
         }
-        switch ($type){
+        switch($type) {
             case 0:
                 $name = 'MessageNotice';
                 $category_name = '通知消息';
@@ -156,89 +217,28 @@ class Message
     }
 
     /**
-     * 查询系统全体消息，如有将其插入用户信息表
-     * pc和移动用
-     */
-    public function checkPublicMessage()
-    {
-        $user_info = session('user');
-        $this->checkUserMessage($user_info['user_id']);
-    }
-
-
-    /**
-     * 查询系统全体消息，如有将其插入用户信息表，也用于api接口
-     * @param $user_id
-     */
-    public function checkUserMessage($user_id)
-    {
-        static $fun = false;
-        if ($fun) return; // 防止重复调用
-        $fun = true;
-        $user_info = Db::name('users')->where('user_id', $user_id)->find();
-        if ($user_info) {
-            // 通知
-            $user_message = Db::name('user_message')->where(array('user_id' => $user_info['user_id'], 'category' => 0))->select();
-            $message_where = array(
-                'message_type' => 1,
-                'send_time' => array('gt', $user_info['reg_time']),
-            );
-            if (!empty($user_message)) {
-                $user_id_array = get_arr_column($user_message, 'message_id');
-                $message_where['message_id'] = array('NOT IN', $user_id_array);
-            }
-            $message_notice_no_read = Db::name('message_notice')->field('message_id')->order('send_time ASC')->where($message_where)->select();
-            foreach ($message_notice_no_read as $key) {
-                DB::name('user_message')->insert(['user_id' => $user_info['user_id'], 'message_id' => $key['message_id'], 'category' => 0]);
-            }
-
-            // 活动
-            $user_message = Db::name('user_message')->where(array('user_id' => $user_info['user_id'], 'category' => 1))->select();
-            $message_where = array(
-                //'send_time' => array('gt', $user_info['reg_time']),
-                'end_time' => array('gt', time()) // 只要活动没有结束
-            );
-            if (!empty($user_message)) {
-                $user_id_array = get_arr_column($user_message, 'message_id');
-                $message_where['message_id'] = array('NOT IN', $user_id_array);
-            }
-            $message_activity_no_read = Db::name('message_activity')->field('message_id')->order('send_time ASC')->where($message_where)->select();
-            foreach ($message_activity_no_read as $key) {
-                DB::name('user_message')->insert(['user_id' => $user_info['user_id'], 'message_id' => $key['message_id'], 'category' => 1]);
-            }
-
-            // 优惠券过期消息
-            $messageFactory = new MessageFactory();
-            $messageLogic = $messageFactory->makeModule(['category' => 0]);
-            $messageLogic->couponWillExpire($user_id);
-        }
-
-    }
-
-
-    /**
      * 设置用户消息已读
      * @param $rec_id |数组多条|指定某个|空的则全部
      * @return array
      */
     public function setMessageForRead($rec_id)
     {
-        if (!empty($this->userId)) {
+        if( !empty($this->userId)) {
             $data['is_see'] = 1;
             $set_where['user_id'] = $this->userId;
 
-            if (strpos($rec_id, ',')) {
+            if(strpos($rec_id, ',')) {
                 $rec_id = explode(',', $rec_id);
-                $set_where['rec_id'] = ['in',$rec_id];
-            } elseif (!empty($rec_id)) {
+                $set_where['rec_id'] = ['in', $rec_id];
+            } elseif( !empty($rec_id)) {
                 $set_where['rec_id'] = $rec_id;
             }
             $result = db('user_message')->where($set_where)->update($data);
-            if ($result) {
-                return ['status'=>1,'msg'=>'操作成功'];
+            if($result) {
+                return ['status' => 1, 'msg' => '操作成功'];
             }
         }
-        return ['status'=>-1,'msg'=>'操做失败'];
+        return ['status' => -1, 'msg' => '操做失败'];
     }
 
     /**
@@ -249,26 +249,25 @@ class Message
      */
     public function deletedMessage($rec_id, $type)
     {
-        if (!empty($this->userId)) {
+        if( !empty($this->userId)) {
             $data['deleted'] = 1;
             $set_where['user_id'] = $this->userId;
-            if (strpos($rec_id, ',')) {
+            if(strpos($rec_id, ',')) {
                 $rec_id = explode(',', $rec_id);
-                $set_where['rec_id'] = ['in',$rec_id];
-            } elseif (!empty($rec_id)) {
+                $set_where['rec_id'] = ['in', $rec_id];
+            } elseif( !empty($rec_id)) {
                 $set_where['rec_id'] = $rec_id;
-            } else{
-                if (empty($rec_id)) {
+            } else {
+                if(empty($rec_id)) {
                     // 手机端清空消息
                     $set_where['category'] = $type;
                 }
             }
             $result = db('user_message')->where($set_where)->update($data);
-            if ($result) {
-                return ['status'=>1,'msg'=>'操作成功'];
+            if($result) {
+                return ['status' => 1, 'msg' => '操作成功'];
             }
         }
-        return ['status'=>-1,'msg'=>'操做失败'];
-    }    
-
+        return ['status' => -1, 'msg' => '操做失败'];
+    }
 }

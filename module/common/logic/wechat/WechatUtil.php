@@ -16,8 +16,9 @@
 
 namespace app\common\logic\wechat;
 
-use think\Db;
+use app\common\util\XML;
 use think\Cache;
+use think\Db;
 
 /**
  * 说明：此类只进行微信公众号的接口封装，不实现业务逻辑！
@@ -26,63 +27,25 @@ use think\Cache;
  */
 class WechatUtil extends WxCommon
 {
-    private $config = [];    //微信公众号配置
-    private $tagsMap = null; //粉丝标签映射
-    private $events = [];
-
+    const EVENT_ALL = 0;    //微信公众号配置
+    const EVENT_TEXT = 1; //粉丝标签映射
+const EVENT_SUBSCRIBE = 2;
     //事件类型
-    const EVENT_ALL = 0; //有事件就处理
-    const EVENT_TEXT = 1; //文本输入事件
-    const EVENT_SUBSCRIBE = 2; //关注事件
-    const EVENT_UNSUBSCRIBE = 3; //取消关注事件
-    const EVENT_SCAN = 4; //已关注的扫描二维码事件
-    const EVENT_LOCATION = 5; //上报二维码时间
-    const EVENT_CLICK = 6; //点击菜单事件
-    const EVENT_VIEW = 7; //点击菜单跳转链接事件
+    const EVENT_UNSUBSCRIBE = 3; //有事件就处理
+    const EVENT_SCAN = 4; //文本输入事件
+    const EVENT_LOCATION = 5; //关注事件
+    const EVENT_CLICK = 6; //取消关注事件
+    const EVENT_VIEW = 7; //已关注的扫描二维码事件
+    private $config = []; //上报二维码时间
+    private $tagsMap = NULL; //点击菜单事件
+        private $events = []; //点击菜单跳转链接事件
 
-
-    public function __construct($config = null)
+    public function __construct($config = NULL)
     {
-        if ($config === null) {
+        if($config === NULL) {
             $config = Db::name('wx_user')->find();
         }
         $this->config = $config;
-    }
-
-    /**
-     * 获取access_token
-     * @return string
-     */
-    public function getAccessToken()
-    {
-        $wechat = $this->config;
-        if (empty($wechat)) {
-            $this->setError("公众号不存在！");
-            return false;
-        }
-
-        //判断是否过了缓存期
-        $expire_time = $wechat['web_expires'];
-        if ($expire_time > time()) {
-            return $wechat['web_access_token'];
-        }
-
-        $appid = $wechat['appid'];
-        $appsecret = $wechat['appsecret'];
-        $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$appsecret}";
-        $return = $this->requestAndCheck($url, 'GET');
-        if (!isset($return['access_token'])) {
-            $this->config['web_expires'] = 0;
-            Db::name('wx_user')->where('id', $wechat['id'])->save(['web_expires' => 0]);
-            return false;
-        }
-
-        $web_expires = time() + 7000; // 提前200秒过期
-        Db::name('wx_user')->where('id', $wechat['id'])->save(['web_access_token'=>$return['access_token'], 'web_expires'=>$web_expires]);
-        $this->config['web_access_token'] = $return['access_token'];
-        $this->config['web_expires'] = $web_expires;
-
-        return $return['access_token'];
     }
 
     /**
@@ -91,18 +54,18 @@ class WechatUtil extends WxCommon
      * @param string $access_token 如果为null，自动获取
      * @return array|bool
      */
-    public function getFanInfo($openid, $access_token = null)
+    public function getFanInfo($openid, $access_token = NULL)
     {
-        if (null === $access_token) {
-            if (!$access_token = $this->getAccessToken()) {
-                return false;
+        if(NULL === $access_token) {
+            if( !$access_token = $this->getAccessToken()) {
+                return FALSE;
             }
         }
 
-        $url ="https://api.weixin.qq.com/cgi-bin/user/info?access_token={$access_token}&openid={$openid}&lang=zh_CN";
+        $url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={$access_token}&openid={$openid}&lang=zh_CN";
         $return = $this->requestAndCheck($url, 'GET');
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         /* $wxdata[]元素：
@@ -126,58 +89,52 @@ class WechatUtil extends WxCommon
     }
 
     /**
+     * 获取access_token
+     * @return string
+     */
+    public function getAccessToken()
+    {
+        $wechat = $this->config;
+        if(empty($wechat)) {
+            $this->setError("公众号不存在！");
+            return FALSE;
+        }
+
+        //判断是否过了缓存期
+        $expire_time = $wechat['web_expires'];
+        if($expire_time > time()) {
+            return $wechat['web_access_token'];
+        }
+
+        $appid = $wechat['appid'];
+        $appsecret = $wechat['appsecret'];
+        $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$appsecret}";
+        $return = $this->requestAndCheck($url, 'GET');
+        if( !isset($return['access_token'])) {
+            $this->config['web_expires'] = 0;
+            Db::name('wx_user')->where('id', $wechat['id'])->save(['web_expires' => 0]);
+            return FALSE;
+        }
+
+        $web_expires = time() + 7000; // 提前200秒过期
+        Db::name('wx_user')->where('id', $wechat['id'])->save(['web_access_token' => $return['access_token'], 'web_expires' => $web_expires]);
+        $this->config['web_access_token'] = $return['access_token'];
+        $this->config['web_expires'] = $web_expires;
+
+        return $return['access_token'];
+    }
+
+    /**
      * sex_id 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
      */
     public function sexName($sex_id)
     {
-        if ($sex_id == 1) {
+        if($sex_id == 1) {
             return '男';
-        } else if ($sex_id == 2) {
+        } elseif($sex_id == 2) {
             return '女';
         }
         return '未知';
-    }
-
-    /**
-     * 获取粉丝标签
-     * @return mixed
-     */
-    public function getAllFanTags()
-    {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
-        }
-
-        $url = "https://api.weixin.qq.com/cgi-bin/tags/get?access_token={$access_token}";
-        $return = $this->requestAndCheck($url, 'GET');
-        if ($return === false) {
-            return false;
-        }
-
-        //$wxdata数据样例：{"tags":[{"id":1,"name":"每天一罐可乐星人","count":0/*此标签下粉丝数*/}, ...]}
-        return $return['tags'];
-    }
-
-    /**
-     * 获取所有用户标签
-     * @return array|bool
-     */
-    public function getAllFanTagsMap()
-    {
-        if ($this->tagsMap !== null) {
-            return $this->tagsMap;
-        }
-
-        $user_tags = $this->getAllFanTags();
-        if ($user_tags === false) {
-            return false;
-        }
-
-        $this->tagsMap = [];
-        foreach ($user_tags as $tag) {
-            $this->tagsMap[$tag['id']] = $this->tagsMap[$tag['name']];
-        }
-        return $this->tagsMap;
     }
 
     /**
@@ -188,19 +145,61 @@ class WechatUtil extends WxCommon
      */
     public function getFanTagNames($tagid_list)
     {
-        if ($this->tagsMap === null) {
+        if($this->tagsMap === NULL) {
             $tagsMap = $this->getAllFanTagsMap();
-            if ($tagsMap === false) {
-                return false;
+            if($tagsMap === FALSE) {
+                return FALSE;
             }
             $this->tagsMap = $tagsMap;
         }
 
         $tag_names = [];
-        foreach ($tagid_list as $tag) {
-            $tag_names[] = $this->tagsMap[$tag];
+        foreach($tagid_list as $tag) {
+            $tag_names[] = $this->tagsMap[ $tag ];
         }
         return $tag_names;
+    }
+
+    /**
+     * 获取所有用户标签
+     * @return array|bool
+     */
+    public function getAllFanTagsMap()
+    {
+        if($this->tagsMap !== NULL) {
+            return $this->tagsMap;
+        }
+
+        $user_tags = $this->getAllFanTags();
+        if($user_tags === FALSE) {
+            return FALSE;
+        }
+
+        $this->tagsMap = [];
+        foreach($user_tags as $tag) {
+            $this->tagsMap[ $tag['id'] ] = $this->tagsMap[ $tag['name'] ];
+        }
+        return $this->tagsMap;
+    }
+
+    /**
+     * 获取粉丝标签
+     * @return mixed
+     */
+    public function getAllFanTags()
+    {
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
+        }
+
+        $url = "https://api.weixin.qq.com/cgi-bin/tags/get?access_token={$access_token}";
+        $return = $this->requestAndCheck($url, 'GET');
+        if($return === FALSE) {
+            return FALSE;
+        }
+
+        //$wxdata数据样例：{"tags":[{"id":1,"name":"每天一罐可乐星人","count":0/*此标签下粉丝数*/}, ...]}
+        return $return['tags'];
     }
 
     /**
@@ -208,16 +207,16 @@ class WechatUtil extends WxCommon
      * @param string $next_openid 下一次拉取的起始id的前一个id
      * @return array|bool
      */
-    public function getFanIdList($next_openid='')
+    public function getFanIdList($next_openid = '')
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
-        $url ="https://api.weixin.qq.com/cgi-bin/user/get?access_token={$access_token}&next_openid={$next_openid}";//重头开始拉取，一次最多拉取10000个
+        $url = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={$access_token}&next_openid={$next_openid}";//重头开始拉取，一次最多拉取10000个
         $return = $this->requestAndCheck($url, 'GET');
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         //$list[]元素：
@@ -234,18 +233,18 @@ class WechatUtil extends WxCommon
      */
     public function setFanRemark($openid, $remark)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
-        $post = $this->toJson(['openid '=> $openid, 'remark' => $remark]);
-        $url ="https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token={$access_token}";
+        $post = $this->toJson(['openid ' => $openid, 'remark' => $remark]);
+        $url = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     /*
@@ -253,112 +252,6 @@ class WechatUtil extends WxCommon
      * 文档：https://mp.weixin.qq.com/wiki?action=doc&id=mp1421140547#2
      * @param $type string (text,news,image,voice,video,music,mpnews,wxcard)
      */
-    public function sendMsgToOne($openid, $type, $content)
-    {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
-        }
-
-        $data = [
-            'touser' => $openid,
-            'msgtype' => $type,
-        ];
-
-        if ($type == 'text') {
-            $data[$type]['content'] = $content; //text
-        } elseif (in_array($type, ['image', 'voice', 'mpnews'])) {
-            $data[$type]['media_id'] = $content; //media_id
-        } elseif ($type == 'wxcard') {
-            $data[$type]['card_id'] = $content; //card_id
-        } elseif ($type == 'news') {
-            //$content = [{
-            //     "title":"Happy Day",
-            //     "description":"Is Really A Happy Day",
-            //     "url":"URL",
-            //     "picurl":"PIC_URL"
-            //}, ...]
-            $data[$type]['articles'] = $content;
-        } elseif ($type == 'video') {
-            //$content = {
-            //    "media_id":"MEDIA_ID",
-            //    "thumb_media_id":"MEDIA_ID",
-            //    "title":"TITLE",
-            //    "description":"DESCRIPTION"
-            //}
-            $data[$type] = $content;
-        } elseif ($type == 'music') {
-            //$content = {
-            //    "title":"MUSIC_TITLE",
-            //    "description":"MUSIC_DESCRIPTION",
-            //    "musicurl":"MUSIC_URL",
-            //    "hqmusicurl":"HQ_MUSIC_URL",
-            //    "thumb_media_id":"THUMB_MEDIA_ID"
-            //}
-            $data[$type] = $content;
-        }
-
-        $post = $this->toJson($data);
-        $url ="https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$access_token}";
-        $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * 指定一部分人群发消息，只有服务号可用
-     * @param array|string $openids
-     * @param $type string (text,image,voice,mpvideo,mpnews,wxcard)
-     * @return boolean|array
-     */
-    public function sendMsgToMass($openids, $type, $content)
-    {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
-        }
-
-        if (is_string($openids)) {
-            $openids = explode(',', $openids);
-        }
-        $data = [
-            'touser' => $openids,
-            'msgtype' => $type,
-        ];
-
-        if ($type == 'text') {
-            $data[$type]['content'] = $content; //text
-        } elseif (in_array($type, ['image', 'voice'])) {
-            $data[$type]['media_id'] = $content; //media_id
-        } elseif ($type == 'mpnews') {
-            $data[$type]['media_id'] = $content; //media_id
-            $data[$type]['send_ignore_reprint'] = 1;//图文消息被判定为转载时，是否继续群发。 1为继续群发（转载），0为停止群发
-        } elseif ($type == 'wxcard') {
-            $data[$type]['card_id'] = $content; //card_id
-        } elseif ($type == 'mpvideo') {
-            //$content = {
-            //    "media_id":"MEDIA_ID",
-            //    "title":"TITLE",
-            //    "thumb_media_id":"MEDIA_ID",
-            //    "description":"DESCRIPTION"
-            //}
-            $data[$type] = $content;
-        }
-
-        $post = $this->toJson($data);
-        $url ="https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token={$access_token}";
-        $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
-        }
-
-        return [
-            'type' => $return['type'],//媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb），次数为news，即图文消息
-            'msg_id' => $return['type'], //消息发送任务的ID
-            'msg_data_id' => $return['msg_data_id'],//消息的数据ID,可以用于在图文分析数据接口中，获取到对应的图文消息的数据
-        ];
-    }
 
     /**
      * 给同一标签的所有粉丝发消息
@@ -369,8 +262,8 @@ class WechatUtil extends WxCommon
      */
     public function sendMsgToAll($tag_id, $type, $content)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $data = [
@@ -378,30 +271,30 @@ class WechatUtil extends WxCommon
             'msgtype' => $type,
         ];
 
-        if ($type == 'text') {
-            $data[$type]['content'] = $content; //text
-        } elseif (in_array($type, ['image', 'voice'])) {
-            $data[$type]['media_id'] = $content; //media_id
-        } elseif ($type == 'mpnews') {
-            $data[$type]['media_id'] = $content; //media_id
-            $data[$type]['send_ignore_reprint'] = 1;//图文消息被判定为转载时，是否继续群发。 1为继续群发（转载），0为停止群发
-        } elseif ($type == 'wxcard') {
-            $data[$type]['card_id'] = $content; //card_id
-        } elseif ($type == 'mpvideo') {
+        if($type == 'text') {
+            $data[ $type ]['content'] = $content; //text
+        } elseif(in_array($type, ['image', 'voice'])) {
+            $data[ $type ]['media_id'] = $content; //media_id
+        } elseif($type == 'mpnews') {
+            $data[ $type ]['media_id'] = $content; //media_id
+            $data[ $type ]['send_ignore_reprint'] = 1;//图文消息被判定为转载时，是否继续群发。 1为继续群发（转载），0为停止群发
+        } elseif($type == 'wxcard') {
+            $data[ $type ]['card_id'] = $content; //card_id
+        } elseif($type == 'mpvideo') {
             //$content = {
             //    "media_id":"MEDIA_ID",
             //    "title":"TITLE",
             //    "thumb_media_id":"MEDIA_ID",
             //    "description":"DESCRIPTION"
             //}
-            $data[$type] = $content;
+            $data[ $type ] = $content;
         }
 
         $post = $this->toJson($data);
-        $url ="https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         return [
@@ -420,23 +313,130 @@ class WechatUtil extends WxCommon
      */
     public function sendMsg($openids, $type, $content)
     {
-        if (empty($openids)) {
-            return true;
+        if(empty($openids)) {
+            return TRUE;
         }
-        if (is_string($openids)) {
+        if(is_string($openids)) {
             $openids = explode(',', $openids);
         }
 
-        if (count($openids) > 1) {
+        if(count($openids) > 1) {
             $result = $this->sendMsgToMass($openids, $type, $content);
         } else {
             $result = $this->sendMsgToOne($openids[0], $type, $content);
         }
-        if ($result === false) {
-            return false;
+        if($result === FALSE) {
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
+    }
+
+    /**
+     * 指定一部分人群发消息，只有服务号可用
+     * @param array|string $openids
+     * @param $type string (text,image,voice,mpvideo,mpnews,wxcard)
+     * @return boolean|array
+     */
+    public function sendMsgToMass($openids, $type, $content)
+    {
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
+        }
+
+        if(is_string($openids)) {
+            $openids = explode(',', $openids);
+        }
+        $data = [
+            'touser' => $openids,
+            'msgtype' => $type,
+        ];
+
+        if($type == 'text') {
+            $data[ $type ]['content'] = $content; //text
+        } elseif(in_array($type, ['image', 'voice'])) {
+            $data[ $type ]['media_id'] = $content; //media_id
+        } elseif($type == 'mpnews') {
+            $data[ $type ]['media_id'] = $content; //media_id
+            $data[ $type ]['send_ignore_reprint'] = 1;//图文消息被判定为转载时，是否继续群发。 1为继续群发（转载），0为停止群发
+        } elseif($type == 'wxcard') {
+            $data[ $type ]['card_id'] = $content; //card_id
+        } elseif($type == 'mpvideo') {
+            //$content = {
+            //    "media_id":"MEDIA_ID",
+            //    "title":"TITLE",
+            //    "thumb_media_id":"MEDIA_ID",
+            //    "description":"DESCRIPTION"
+            //}
+            $data[ $type ] = $content;
+        }
+
+        $post = $this->toJson($data);
+        $url = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token={$access_token}";
+        $return = $this->requestAndCheck($url, 'POST', $post);
+        if($return === FALSE) {
+            return FALSE;
+        }
+
+        return [
+            'type' => $return['type'],//媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb），次数为news，即图文消息
+            'msg_id' => $return['type'], //消息发送任务的ID
+            'msg_data_id' => $return['msg_data_id'],//消息的数据ID,可以用于在图文分析数据接口中，获取到对应的图文消息的数据
+        ];
+    }
+
+    public function sendMsgToOne($openid, $type, $content)
+    {
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
+        }
+
+        $data = [
+            'touser' => $openid,
+            'msgtype' => $type,
+        ];
+
+        if($type == 'text') {
+            $data[ $type ]['content'] = $content; //text
+        } elseif(in_array($type, ['image', 'voice', 'mpnews'])) {
+            $data[ $type ]['media_id'] = $content; //media_id
+        } elseif($type == 'wxcard') {
+            $data[ $type ]['card_id'] = $content; //card_id
+        } elseif($type == 'news') {
+            //$content = [{
+            //     "title":"Happy Day",
+            //     "description":"Is Really A Happy Day",
+            //     "url":"URL",
+            //     "picurl":"PIC_URL"
+            //}, ...]
+            $data[ $type ]['articles'] = $content;
+        } elseif($type == 'video') {
+            //$content = {
+            //    "media_id":"MEDIA_ID",
+            //    "thumb_media_id":"MEDIA_ID",
+            //    "title":"TITLE",
+            //    "description":"DESCRIPTION"
+            //}
+            $data[ $type ] = $content;
+        } elseif($type == 'music') {
+            //$content = {
+            //    "title":"MUSIC_TITLE",
+            //    "description":"MUSIC_DESCRIPTION",
+            //    "musicurl":"MUSIC_URL",
+            //    "hqmusicurl":"HQ_MUSIC_URL",
+            //    "thumb_media_id":"THUMB_MEDIA_ID"
+            //}
+            $data[ $type ] = $content;
+        }
+
+        $post = $this->toJson($data);
+        $url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$access_token}";
+        $return = $this->requestAndCheck($url, 'POST', $post);
+        if($return === FALSE) {
+            return FALSE;
+        }
+
+        return TRUE;
     }
 
     /**
@@ -447,24 +447,24 @@ class WechatUtil extends WxCommon
      * @param array $param 目前是video类型需要
      * @return {"media_id":MEDIA_ID,"url":URL}
      */
-    public function uploadMaterial($path, $type, $param=[])
+    public function uploadMaterial($path, $type, $param = [])
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
-        $post_arr = ['media' => '@'.$path];
-        if ($type == 'video') {
+        $post_arr = ['media' => '@' . $path];
+        if($type == 'video') {
             $post_arr['description'] = $this->toJson([
                 'title' => $param['title'],
                 'introduction' => $param['introduction'],
             ]);
         }
 
-        $url ="https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$access_token}&type={$type}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$access_token}&type={$type}";
         $return = $this->requestAndCheck($url, 'POST', $post_arr);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         return $return;
@@ -491,15 +491,15 @@ class WechatUtil extends WxCommon
      */
     public function uploadNews($articles)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson(["articles" => $articles]);
-        $url ="https://api.weixin.qq.com/cgi-bin/material/add_news?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         return $return['media_id'];
@@ -513,15 +513,15 @@ class WechatUtil extends WxCommon
      */
     public function uploadNewsImage($path)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
-        $post_arr = ["media"=>'@'.$path];
-        $url ="https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$access_token}";
+        $post_arr = ["media" => '@' . $path];
+        $url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post_arr);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         return $return['url'];
@@ -536,15 +536,15 @@ class WechatUtil extends WxCommon
      */
     public function uploadTempMaterial($path, $type = 'image')
     {
-        if (!($access_token = $this->getAccessToken())) {
-            return false;
+        if( !($access_token = $this->getAccessToken())) {
+            return FALSE;
         }
 
-        $post_arr = ['media' => '@'.$path];
-        $url ="https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$access_token}&type={$type}";
+        $post_arr = ['media' => '@' . $path];
+        $url = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$access_token}&type={$type}";
         $return = $this->requestAndCheck($url, 'POST', $post_arr);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         return $return;
@@ -555,37 +555,37 @@ class WechatUtil extends WxCommon
      * 文档：https://mp.weixin.qq.com/wiki?action=doc&id=mp1444738732&t=0.5904919423628598
      * @param string $mediaId MEDIA_ID
      * @param array $article INDEX
-    {
-    "title": TITLE,
-    "thumb_media_id": THUMB_MEDIA_ID,
-    "author": AUTHOR,
-    "digest": DIGEST,
-    "show_cover_pic": SHOW_COVER_PIC(0 / 1),
-    "content": CONTENT,
-    "content_source_url": CONTENT_SOURCE_URL
-    }
+     * {
+     * "title": TITLE,
+     * "thumb_media_id": THUMB_MEDIA_ID,
+     * "author": AUTHOR,
+     * "digest": DIGEST,
+     * "show_cover_pic": SHOW_COVER_PIC(0 / 1),
+     * "content": CONTENT,
+     * "content_source_url": CONTENT_SOURCE_URL
+     * }
      * @param number $index 要更新的文章在图文消息中的位置（多图文消息时，此字段才有意义），第一篇为0
      * @return boolean
      */
     public function updateNews($mediaId, $article, $index = 0)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson([
             'media_id' => $mediaId,
             'index' => $index,
-            'articles' => $article
+            'articles' => $article,
         ]);
 
-        $url ="https://api.weixin.qq.com/cgi-bin/material/update_news?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -596,23 +596,23 @@ class WechatUtil extends WxCommon
     public function getNews($mediaId)
     {
         $wxdata = $this->getMaterial($mediaId);
-        if ($wxdata === false) {
-            return false;
+        if($wxdata === FALSE) {
+            return FALSE;
         }
 
-//    [
-//        [
-//        title 图文消息的标题
-//        thumb_media_id	图文消息的封面图片素材id（必须是永久mediaID）
-//        show_cover_pic	是否显示封面，0为false，即不显示，1为true，即显示
-//        author	作者
-//        digest	图文消息的摘要，仅有单图文消息才有摘要，多图文此处为空
-//        content	图文消息的具体内容，支持HTML标签，必须少于2万字符，小于1M，且此处会去除JS
-//        url	图文页的URL
-//        content_source_url	图文消息的原文地址，即点击“阅读原文”后的URL
-//        ],
-//        //多图文消息有多篇文章
-//     ]
+        //    [
+        //        [
+        //        title 图文消息的标题
+        //        thumb_media_id	图文消息的封面图片素材id（必须是永久mediaID）
+        //        show_cover_pic	是否显示封面，0为false，即不显示，1为true，即显示
+        //        author	作者
+        //        digest	图文消息的摘要，仅有单图文消息才有摘要，多图文此处为空
+        //        content	图文消息的具体内容，支持HTML标签，必须少于2万字符，小于1M，且此处会去除JS
+        //        url	图文页的URL
+        //        content_source_url	图文消息的原文地址，即点击“阅读原文”后的URL
+        //        ],
+        //        //多图文消息有多篇文章
+        //     ]
         return $wxdata['news_item'];
     }
 
@@ -620,25 +620,25 @@ class WechatUtil extends WxCommon
      * 获取媒质素材
      * @param string $mediaId
      * @return boolean
-    array video返回{
-    "title":TITLE,
-    "description":DESCRIPTION,
-    "down_url":DOWN_URL,
-    }
+     * array video返回{
+     * "title":TITLE,
+     * "description":DESCRIPTION,
+     * "down_url":DOWN_URL,
+     * }
      */
     public function getMaterial($mediaId)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson(['media_id' => $mediaId]);
-        $url ="https://api.weixin.qq.com/cgi-bin/material/get_material?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/get_material?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
     /**
@@ -648,38 +648,38 @@ class WechatUtil extends WxCommon
      */
     public function delMaterial($mediaId)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson(['media_id' => $mediaId]);
-        $url ="https://api.weixin.qq.com/cgi-bin/material/del_material?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/del_material?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
      * 获取素材总数
      * @return array|bool
-    //voice_count	语音总数量
-    //video_count	视频总数量
-    //image_count	图片总数量
-    //news_count	图文总数量
+     * //voice_count    语音总数量
+     * //video_count    视频总数量
+     * //image_count    图片总数量
+     * //news_count    图文总数量
      */
     public function getMaterialCount()
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
-        $url ="https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'GET');
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         return $return;
@@ -694,20 +694,20 @@ class WechatUtil extends WxCommon
      */
     public function getMaterialList($type, $offset, $count)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson([
             'type' => $type,
             'offset' => $offset,
-            'count' => $count
+            'count' => $count,
         ]);
 
-        $url ="https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         /* 返回图文消息结构 */
@@ -760,32 +760,32 @@ class WechatUtil extends WxCommon
      */
     public function createTempQrcode($expire, $scene_id)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson([
             'expire_seconds' => $expire,
-            'action_name'    => 'QR_SCENE',
-            'action_info'    => [
+            'action_name' => 'QR_SCENE',
+            'action_info' => [
                 'scene' => [
-                    'scene_id' => $scene_id
-                ]
-            ]
+                    'scene_id' => $scene_id,
+                ],
+            ],
         ]);
 
-        $url ="https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
-//        返回数据格式：
-//        {
-//            "ticket":"gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
-//            "expire_seconds":60,
-//            "url":"http:\/\/weixin.qq.com\/q\/kZgfwMTm72WWPkovabbI"
-//        }
+        //        返回数据格式：
+        //        {
+        //            "ticket":"gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
+        //            "expire_seconds":60,
+        //            "url":"http:\/\/weixin.qq.com\/q\/kZgfwMTm72WWPkovabbI"
+        //        }
 
         return $return;
     }
@@ -796,14 +796,14 @@ class WechatUtil extends WxCommon
      */
     public function getAllTemplateMsg()
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
-        $url ="https://api.weixin.qq.com/cgi-bin/material/get_all_private_template?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/material/get_all_private_template?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'GET');
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
 
         //返回数据格式：
@@ -825,15 +825,15 @@ class WechatUtil extends WxCommon
      */
     public function addTemplateMsg($template_sn)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson(['template_id_short' => $template_sn]);
-        $url ="https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
         return $return['template_id'];
     }
@@ -845,58 +845,58 @@ class WechatUtil extends WxCommon
      */
     public function delTemplateMsg($template_id)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson(['template_id' => $template_id]);
-        $url ="https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
     public function sendTemplateMsg($openid, $template_id, $url, $data)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson([
             "touser" => $openid,
             "template_id" => $template_id,
             "url" => $url, //模板跳转链接
-//            "miniprogram" => [ //小程序跳转配置
-//                "appid" => "xiaochengxuappid12345",
-//                "pagepath" => "index?foo=bar"
-//            ],
+            //            "miniprogram" => [ //小程序跳转配置
+            //                "appid" => "xiaochengxuappid12345",
+            //                "pagepath" => "index?foo=bar"
+            //            ],
             "data" => $data, //模板数据
-//            [
-//                "first" =>  [
-//                    "value" => "恭喜你购买成功！",
-//                    "color" => "#173177"
-//                ],
-//                "keynote1" => [
-//                    "value" => "巧克力",
-//                    "color" => "#173177"
-//                ],
-//                "remark" => [
-//                    "value" => "欢迎再次购买！",
-//                    "color" => "#173177"
-//                ]
-//            ]
+            //            [
+            //                "first" =>  [
+            //                    "value" => "恭喜你购买成功！",
+            //                    "color" => "#173177"
+            //                ],
+            //                "keynote1" => [
+            //                    "value" => "巧克力",
+            //                    "color" => "#173177"
+            //                ],
+            //                "remark" => [
+            //                    "value" => "欢迎再次购买！",
+            //                    "color" => "#173177"
+            //                ]
+            //            ]
         ]);
         //注：url和miniprogram都是非必填字段，若都不传则模板无跳转；若都传，会优先跳转至小程序。
         //开发者可根据实际需要选择其中一种跳转方式即可。当用户的微信客户端版本不支持跳小程序时，将会跳转至url
 
-        $url ="https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
     /**
@@ -907,45 +907,17 @@ class WechatUtil extends WxCommon
      */
     public function createMenu($data)
     {
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
         }
 
         $post = $this->toJson($data);
-        $url ="https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$access_token}";
+        $url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={$access_token}";
         $return = $this->requestAndCheck($url, 'POST', $post);
-        if ($return === false) {
-            return false;
+        if($return === FALSE) {
+            return FALSE;
         }
-        return true;
-    }
-
-    /**
-     * 获取ticket。 jsapi_ticket是公众号用于调用微信JS接口的临时票据
-     * 文档 https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
-     * @param string $type ticket类型（jsapi,wx_card）
-     * @return bool
-     */
-    public function getTicket($type = 'jsapi')
-    {
-        $key = 'weixin_ticket_'.$type;
-        $ticket = Cache::get($key);
-        if (!empty($ticket)) {
-            return $ticket;
-        }
-
-        if (!$access_token = $this->getAccessToken()) {
-            return false;
-        }
-
-        $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={$access_token}&type={$type}";
-        $return = $this->requestAndCheck($url, 'GET');
-        if ($return === false) {
-            return false;
-        }
-
-        Cache::set($key, $return['ticket'], 7000);
-        return $return['ticket'];
+        return TRUE;
     }
 
     /**
@@ -956,13 +928,13 @@ class WechatUtil extends WxCommon
     public function getSignPackage($url = '')
     {
         $ticket = $this->getTicket();
-        if ($ticket === false) {
-            return false;
+        if($ticket === FALSE) {
+            return FALSE;
         }
 
         // 注意 URL 一定要动态获取，不能 hardcode.
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        $url = $url ?: $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $protocol = ( !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $url = $url ?: $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $timestamp = time();
         $nonceStr = $this->createNonceStr();
 
@@ -976,9 +948,37 @@ class WechatUtil extends WxCommon
             "timestamp" => $timestamp,
             "url" => $url,
             "rawString" => $string,
-            "signature" => $signature
+            "signature" => $signature,
         ];
         return $signPackage;
+    }
+
+    /**
+     * 获取ticket。 jsapi_ticket是公众号用于调用微信JS接口的临时票据
+     * 文档 https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+     * @param string $type ticket类型（jsapi,wx_card）
+     * @return bool
+     */
+    public function getTicket($type = 'jsapi')
+    {
+        $key = 'weixin_ticket_' . $type;
+        $ticket = Cache::get($key);
+        if( !empty($ticket)) {
+            return $ticket;
+        }
+
+        if( !$access_token = $this->getAccessToken()) {
+            return FALSE;
+        }
+
+        $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={$access_token}&type={$type}";
+        $return = $this->requestAndCheck($url, 'GET');
+        if($return === FALSE) {
+            return FALSE;
+        }
+
+        Cache::set($key, $return['ticket'], 7000);
+        return $return['ticket'];
     }
 
     /**
@@ -990,10 +990,71 @@ class WechatUtil extends WxCommon
     {
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $str = "";
-        for ($i = 0; $i < $length; $i++) {
+        for($i = 0; $i < $length; $i++) {
             $str .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
         }
         return $str;
+    }
+
+    /**
+     * 订阅消息事件
+     * @param $event_type
+     * @param $callback
+     */
+    public function registerMsgEvent($event_type, $callback)
+    {
+        $this->events[ $event_type ] = $callback;
+    }
+
+    /**
+     * 处理消息事件
+     */
+    public function handleMsgEvent()
+    {
+        $msg = $this->getPushMessage();
+        if( !$msg) {
+            exit($this->getError());
+        }
+
+        // 先处理全局事件
+        if(isset($this->events[ self::EVENT_ALL ]) && is_callable($this->events[ self::EVENT_ALL ])) {
+            $this->events[self::EVENT_ALL]($msg);
+        }
+
+        static $event_parse = [
+            self::EVENT_TEXT => ['MsgType' => 'text'],
+            self::EVENT_SUBSCRIBE => ['MsgType' => 'event', 'Event' => 'subscribe'],
+            self::EVENT_UNSUBSCRIBE => ['MsgType' => 'event', 'Event' => 'unsubscribe'],
+            self::EVENT_SCAN => ['MsgType' => 'event', 'Event' => 'SCAN'],
+            self::EVENT_LOCATION => ['MsgType' => 'event', 'Event' => 'LOCATION'],
+            self::EVENT_CLICK => ['MsgType' => 'event', 'Event' => 'CLICK'],
+            self::EVENT_VIEW => ['MsgType' => 'event', 'Event' => 'VIEW'],
+        ];
+
+        // 找出注册的事件并处理
+        foreach($this->events as $event => $callback) {
+            if( !isset($event_parse[ $event ])) {
+                continue;
+            }
+
+            $find_event = TRUE;
+            foreach($event_parse[ $event ] as $key => $word) {
+                if($msg[ $key ] !== $word) {
+                    $find_event = FALSE;
+                    break;
+                }
+            }
+            if( !$find_event) {
+                continue;
+            }
+
+            is_callable($callback) && $callback($msg);
+            break;
+        }
+
+        if($msg == '1' || $msg[ $key ] == 'LOCATION') return;
+        $return = $this->createReplyMsgOfText($msg['ToUserName'], $msg['FromUserName'], '你已关注公众号');
+        exit($return);
     }
 
     /**
@@ -1006,76 +1067,15 @@ class WechatUtil extends WxCommon
 
         $this->logDebugFile($content);
 
-        $message = \app\common\util\XML::parse($content);
-        if (empty($message)) {
+        $message = XML::parse($content);
+        if(empty($message)) {
             $this->setError('推送消息为空！');
-            return false;
+            return FALSE;
         }
 
         $this->logDebugFile($message);
 
         return $message;
-    }
-
-    /**
-     * 订阅消息事件
-     * @param $event_type
-     * @param $callback
-     */
-    public function registerMsgEvent($event_type, $callback)
-    {
-        $this->events[$event_type] = $callback;
-    }
-
-    /**
-     * 处理消息事件
-     */
-    public function handleMsgEvent()
-    {
-        $msg = $this->getPushMessage();
-        if (!$msg) {
-            exit($this->getError());
-        }
-
-        // 先处理全局事件
-        if (isset($this->events[self::EVENT_ALL]) && is_callable($this->events[self::EVENT_ALL])) {
-            $this->events[self::EVENT_ALL]($msg);
-        }
-
-        static $event_parse = [
-            self::EVENT_TEXT        => ['MsgType' => 'text'],
-            self::EVENT_SUBSCRIBE   => ['MsgType' => 'event', 'Event' => 'subscribe'],
-            self::EVENT_UNSUBSCRIBE => ['MsgType' => 'event', 'Event' => 'unsubscribe'],
-            self::EVENT_SCAN        => ['MsgType' => 'event', 'Event' => 'SCAN'],
-            self::EVENT_LOCATION    => ['MsgType' => 'event', 'Event' => 'LOCATION'],
-            self::EVENT_CLICK       => ['MsgType' => 'event', 'Event' => 'CLICK'],
-            self::EVENT_VIEW        => ['MsgType' => 'event', 'Event' => 'VIEW'],
-        ];
-
-        // 找出注册的事件并处理
-        foreach ($this->events as $event => $callback) {
-            if ( ! isset($event_parse[$event])) {
-                continue;
-            }
-
-            $find_event = true;
-            foreach ($event_parse[$event] as $key => $word) {
-                if ($msg[$key] !== $word) {
-                    $find_event = false;
-                    break;
-                }
-            }
-            if ( ! $find_event) {
-                continue;
-            }
-
-            is_callable($callback) && $callback($msg);
-            break;
-        }
-        
-        if($msg=='1' || $msg[$key] == 'LOCATION') return;
-        $return= $this->createReplyMsgOfText($msg['ToUserName'], $msg['FromUserName'], '你已关注公众号');
-        exit($return);
     }
 
     /**
@@ -1133,14 +1133,14 @@ class WechatUtil extends WxCommon
     {
         $articles = array_slice($articles, 0, 7);//最多支持7个
         $num = count($articles);
-        if (!$num) {
+        if( !$num) {
             return '';
         }
 
         $itemTpl = '';
-        foreach ($articles as $item) {
+        foreach($articles as $item) {
             $itemTpl .=
-            "<item>
+                "<item>
             <Title><![CDATA[{$item['title']}]]></Title> 
             <Description><![CDATA[{$item['description']}]]></Description>
             <PicUrl><![CDATA[{$item['picurl']}]]></PicUrl>

@@ -13,7 +13,9 @@
  */
 namespace app\common\model;
 use think\Model;
-class Invoice extends Model {
+
+class Invoice extends Model
+{
     //自定义初始化
     protected static function init()
     {
@@ -32,7 +34,7 @@ class Invoice extends Model {
 
     public function getInvoiceTypeAttr($value, $data)
     {
-        $invoice_type=C('INVOUCE_TYPE');
+        $invoice_type = C('INVOUCE_TYPE');
         $order_invoice_type = $data['invoice_type'];
         return $invoice_type["$order_invoice_type"];
     }

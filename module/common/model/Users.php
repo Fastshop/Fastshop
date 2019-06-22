@@ -40,10 +40,11 @@ class Users extends Model
      * @param $data
      * @return float|int
      */
-    public function getRebateMoneyAttr($value, $data){
-        $sum_money = DB::name('rebate_log')->where(['status' => 3,'user_id'=>$data['user_id']])->sum('money');
+    public function getRebateMoneyAttr($value, $data)
+    {
+        $sum_money = DB::name('rebate_log')->where(['status' => 3, 'user_id' => $data['user_id']])->sum('money');
         $rebate_money = empty($sum_money) ? (float)0 : $sum_money;
-        return  $rebate_money;
+        return $rebate_money;
     }
 
     /**
@@ -52,9 +53,10 @@ class Users extends Model
      * @param $data
      * @return mixed
      */
-    public function getFisrtLeaderNumAttr($value, $data){
-        $fisrt_leader = Users::where(['first_leader'=>$data['user_id']])->count();
-        return  $fisrt_leader;
+    public function getFisrtLeaderNumAttr($value, $data)
+    {
+        $fisrt_leader = Users::where(['first_leader' => $data['user_id']])->count();
+        return $fisrt_leader;
     }
 
     /**
@@ -63,9 +65,10 @@ class Users extends Model
      * @param $data
      * @return mixed
      */
-    public function getSecondLeaderNumAttr($value, $data){
-        $second_leader = Users::where(['second_leader'=>$data['user_id']])->count();
-        return  $second_leader;
+    public function getSecondLeaderNumAttr($value, $data)
+    {
+        $second_leader = Users::where(['second_leader' => $data['user_id']])->count();
+        return $second_leader;
     }
 
     /**
@@ -74,9 +77,9 @@ class Users extends Model
      * @param $data
      * @return mixed
      */
-    public function getThirdLeaderNumAttr($value, $data){
-        $third_leader = Users::where(['third_leader'=>$data['user_id']])->count();
-        return  $third_leader;
+    public function getThirdLeaderNumAttr($value, $data)
+    {
+        $third_leader = Users::where(['third_leader' => $data['user_id']])->count();
+        return $third_leader;
     }
-
 }

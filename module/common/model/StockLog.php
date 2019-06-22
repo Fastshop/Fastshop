@@ -16,5 +16,4 @@ use think\Model;
 
 class StockLog extends Model
 {
-
 }
