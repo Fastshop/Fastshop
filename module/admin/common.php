@@ -49,7 +49,7 @@ function getAdminInfo($admin_id)
     return D('admin')->where("admin_id", $admin_id)->find();
 }
 
-function tpversion()
+function tp_version()
 {
     return;
 
@@ -125,6 +125,10 @@ function format_bytes($size, $delimiter = '')
 /**
  * 根据id获取地区名字
  * @param $regionId id
+ * @return
+ * @throws \think\db\exception\DataNotFoundException
+ * @throws \think\db\exception\ModelNotFoundException
+ * @throws \think\exception\DbException
  */
 function getRegionName($regionId)
 {

@@ -13,7 +13,7 @@
 // 定义项目路径
 // define('APP_PATH', __DIR__ . '/application/');
 
-define('APP_PATH', realpath(__DIR__.'/../../module/shop')."/" );
+define('APP_PATH', realpath(__DIR__.'/../../module/')."/" );
 
 // 加载框架引导文件
 require './../../module/think/console.php';

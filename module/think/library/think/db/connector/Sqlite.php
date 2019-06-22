@@ -19,20 +19,7 @@ use think\db\Connection;
  */
 class Sqlite extends Connection
 {
-
     protected $builder = '\\think\\db\\builder\\Sqlite';
-
-    /**
-     * 解析pdo连接的dsn信息
-     * @access protected
-     * @param array $config 连接信息
-     * @return string
-     */
-    protected function parseDsn($config)
-    {
-        $dsn = 'sqlite:' . $config['database'];
-        return $dsn;
-    }
 
     /**
      * 取得数据表的字段信息
@@ -43,17 +30,17 @@ class Sqlite extends Connection
     public function getFields($tableName)
     {
         list($tableName) = explode(' ', $tableName);
-        $sql             = 'PRAGMA table_info( ' . $tableName . ' )';
+        $sql = 'PRAGMA table_info( ' . $tableName . ' )';
 
-        $pdo    = $this->query($sql, [], false, true);
+        $pdo = $this->query($sql, [], FALSE, TRUE);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
-        $info   = [];
-        if ($result) {
-            foreach ($result as $key => $val) {
-                $val                = array_change_key_case($val);
-                $info[$val['name']] = [
-                    'name'    => $val['name'],
-                    'type'    => $val['type'],
+        $info = [];
+        if($result) {
+            foreach($result as $key => $val) {
+                $val = array_change_key_case($val);
+                $info[ $val['name'] ] = [
+                    'name' => $val['name'],
+                    'type' => $val['type'],
                     'notnull' => 1 === $val['notnull'],
                     'default' => $val['dflt_value'],
                     'primary' => '1' == $val['pk'],
@@ -77,13 +64,25 @@ class Sqlite extends Connection
             . "UNION ALL SELECT name FROM sqlite_temp_master "
             . "WHERE type='table' ORDER BY name";
 
-        $pdo    = $this->query($sql, [], false, true);
+        $pdo = $this->query($sql, [], FALSE, TRUE);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
-        $info   = [];
-        foreach ($result as $key => $val) {
-            $info[$key] = current($val);
+        $info = [];
+        foreach($result as $key => $val) {
+            $info[ $key ] = current($val);
         }
         return $info;
+    }
+
+    /**
+     * 解析pdo连接的dsn信息
+     * @access protected
+     * @param array $config 连接信息
+     * @return string
+     */
+    protected function parseDsn($config)
+    {
+        $dsn = 'sqlite:' . $config['database'];
+        return $dsn;
     }
 
     /**
@@ -99,6 +98,6 @@ class Sqlite extends Connection
 
     protected function supportSavepoint()
     {
-        return true;
+        return TRUE;
     }
 }

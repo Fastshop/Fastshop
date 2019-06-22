@@ -21,25 +21,11 @@ class Sqlsrv extends Connection
 {
     // PDO连接参数
     protected $params = [
-        PDO::ATTR_CASE              => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE           => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_STRINGIFY_FETCHES => false,
+        PDO::ATTR_CASE => PDO::CASE_NATURAL,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_STRINGIFY_FETCHES => FALSE,
     ];
     protected $builder = '\\think\\db\\builder\\Sqlsrv';
-    /**
-     * 解析pdo连接的dsn信息
-     * @access protected
-     * @param array $config 连接信息
-     * @return string
-     */
-    protected function parseDsn($config)
-    {
-        $dsn = 'sqlsrv:Database=' . $config['database'] . ';Server=' . $config['hostname'];
-        if (!empty($config['hostport'])) {
-            $dsn .= ',' . $config['hostport'];
-        }
-        return $dsn;
-    }
 
     /**
      * 取得数据表的字段信息
@@ -50,7 +36,7 @@ class Sqlsrv extends Connection
     public function getFields($tableName)
     {
         list($tableName) = explode(' ', $tableName);
-        $sql             = "SELECT   column_name,   data_type,   column_default,   is_nullable
+        $sql = "SELECT   column_name,   data_type,   column_default,   is_nullable
         FROM    information_schema.tables AS t
         JOIN    information_schema.columns AS c
         ON  t.table_catalog = c.table_catalog
@@ -58,31 +44,31 @@ class Sqlsrv extends Connection
         AND t.table_name    = c.table_name
         WHERE   t.table_name = '$tableName'";
 
-        $pdo    = $this->query($sql, [], false, true);
+        $pdo = $this->query($sql, [], FALSE, TRUE);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
-        $info   = [];
-        if ($result) {
-            foreach ($result as $key => $val) {
-                $val                       = array_change_key_case($val);
-                $info[$val['column_name']] = [
-                    'name'    => $val['column_name'],
-                    'type'    => $val['data_type'],
-                    'notnull' => (bool) ('' === $val['is_nullable']), // not null is empty, null is yes
+        $info = [];
+        if($result) {
+            foreach($result as $key => $val) {
+                $val = array_change_key_case($val);
+                $info[ $val['column_name'] ] = [
+                    'name' => $val['column_name'],
+                    'type' => $val['data_type'],
+                    'notnull' => (bool)('' === $val['is_nullable']), // not null is empty, null is yes
                     'default' => $val['column_default'],
-                    'primary' => false,
-                    'autoinc' => false,
+                    'primary' => FALSE,
+                    'autoinc' => FALSE,
                 ];
             }
         }
         $sql = "SELECT column_name FROM information_schema.key_column_usage WHERE table_name='$tableName'";
         // 调试开始
-        $this->debug(true);
+        $this->debug(TRUE);
         $pdo = $this->linkID->query($sql);
         // 调试结束
-        $this->debug(false, $sql);
+        $this->debug(FALSE, $sql);
         $result = $pdo->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            $info[$result['column_name']]['primary'] = true;
+        if($result) {
+            $info[ $result['column_name'] ]['primary'] = TRUE;
         }
         return $this->fieldCase($info);
     }
@@ -100,13 +86,28 @@ class Sqlsrv extends Connection
             WHERE TABLE_TYPE = 'BASE TABLE'
             ";
 
-        $pdo    = $this->query($sql, [], false, true);
+        $pdo = $this->query($sql, [], FALSE, TRUE);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
-        $info   = [];
-        foreach ($result as $key => $val) {
-            $info[$key] = current($val);
+        $info = [];
+        foreach($result as $key => $val) {
+            $info[ $key ] = current($val);
         }
         return $info;
+    }
+
+    /**
+     * 解析pdo连接的dsn信息
+     * @access protected
+     * @param array $config 连接信息
+     * @return string
+     */
+    protected function parseDsn($config)
+    {
+        $dsn = 'sqlsrv:Database=' . $config['database'] . ';Server=' . $config['hostname'];
+        if( !empty($config['hostport'])) {
+            $dsn .= ',' . $config['hostport'];
+        }
+        return $dsn;
     }
 
     /**

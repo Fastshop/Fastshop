@@ -14,7 +14,7 @@
                 "App\\Admin\\Providers\\AdminServiceProvider"
             ],
             "aliases": {
-                
+                "AdminCp": "Facades\\App\\Admin\\AdminCp"
             }
         }
     },

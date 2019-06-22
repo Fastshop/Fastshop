@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -16,8 +22,15 @@ namespace app\admin\logic;
 
 use think\Model;
 use think\Db;
+
+class UpgradeLogic {
+    public function __call($name, $arguments)
+    {
+        // TODO: Implement __call() method.
+    }
+}
  
-class UpgradeLogic extends Model
+class UpgradeLogic_bak extends Model
 {
     public $app_path;
     public $version_txt_path;
@@ -38,9 +51,11 @@ class UpgradeLogic extends Model
    }       
    /**
     * 检查是否有更新包
-    * @return type 提示语
+    * @return mixed type 提示语
     */
-    public  function checkVersion() { 
+    public  function checkVersion() {
+
+        return false;
         
         //echo "if(strtolower(".CONTROLLER_NAME.") == 'index' && strtolower(".ACTION_NAME.") == 'index')";
         if(strtolower(CONTROLLER_NAME) == 'index' && strtolower(ACTION_NAME) == 'index')  
@@ -69,6 +84,7 @@ class UpgradeLogic extends Model
      * 一键更新
      */
     public  function OneKeyUpgrade(){
+        return false;
         error_reporting(0);//关闭所有错误报告                
         $allow_url_fopen = ini_get('allow_url_fopen');
         if(!$allow_url_fopen)        
@@ -164,6 +180,8 @@ class UpgradeLogic extends Model
     
     // 升级记录 log 日志
     public  function UpgradeLog($to_key_num){
+
+        return FALSE;
                 
         $vaules = array(                
                 'domain'=>$_SERVER['HTTP_HOST'], //用户域名                
@@ -178,4 +196,3 @@ class UpgradeLogic extends Model
          file_get_contents($url);                    
     }
 } 
-?>

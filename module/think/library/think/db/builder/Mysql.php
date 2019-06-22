@@ -19,51 +19,50 @@ use think\Exception;
  */
 class Mysql extends Builder
 {
-
     protected $insertAllSql = '%INSERT% INTO %TABLE% (%FIELD%) VALUES %DATA% %COMMENT%';
-    protected $updateSql    = 'UPDATE %TABLE% %JOIN% SET %SET% %WHERE% %ORDER%%LIMIT% %LOCK%%COMMENT%';
+    protected $updateSql = 'UPDATE %TABLE% %JOIN% SET %SET% %WHERE% %ORDER%%LIMIT% %LOCK%%COMMENT%';
 
     /**
      * 生成insertall SQL
      * @access public
-     * @param array     $dataSet 数据集
-     * @param array     $options 表达式
-     * @param bool      $replace 是否replace
+     * @param array $dataSet 数据集
+     * @param array $options 表达式
+     * @param bool $replace 是否replace
      * @return string
      * @throws Exception
      */
-    public function insertAll($dataSet, $options = [], $replace = false)
+    public function insertAll($dataSet, $options = [], $replace = FALSE)
     {
         // 获取合法的字段
-        if ('*' == $options['field']) {
+        if('*' == $options['field']) {
             $fields = array_keys($this->query->getFieldsType($options['table']));
         } else {
             $fields = $options['field'];
         }
 
-        foreach ($dataSet as $data) {
-            foreach ($data as $key => $val) {
-                if (!in_array($key, $fields, true)) {
-                    if ($options['strict']) {
+        foreach($dataSet as $data) {
+            foreach($data as $key => $val) {
+                if( !in_array($key, $fields, TRUE)) {
+                    if($options['strict']) {
                         throw new Exception('fields not exists:[' . $key . ']');
                     }
-                    unset($data[$key]);
-                } elseif (is_null($val)) {
-                    $data[$key] = 'NULL';
-                } elseif (is_scalar($val)) {
-                    $data[$key] = $this->parseValue($val, $key);
-                } elseif (is_object($val) && method_exists($val, '__toString')) {
+                    unset($data[ $key ]);
+                } else if(is_null($val)) {
+                    $data[ $key ] = 'NULL';
+                } else if(is_scalar($val)) {
+                    $data[ $key ] = $this->parseValue($val, $key);
+                } else if(is_object($val) && method_exists($val, '__toString')) {
                     // 对象数据写入
-                    $data[$key] = $val->__toString();
+                    $data[ $key ] = $val->__toString();
                 } else {
                     // 过滤掉非标量数据
-                    unset($data[$key]);
+                    unset($data[ $key ]);
                 }
             }
-            $value    = array_values($data);
+            $value = array_values($data);
             $values[] = '( ' . implode(',', $value) . ' )';
 
-            if (!isset($insertFields)) {
+            if( !isset($insertFields)) {
                 $insertFields = array_map([$this, 'parseKey'], array_keys($data));
             }
         }
@@ -83,30 +82,30 @@ class Mysql extends Builder
      * 字段和表名处理
      * @access protected
      * @param string $key
-     * @param array  $options
+     * @param array $options
      * @return string
      */
     protected function parseKey($key, $options = [])
     {
         $key = trim($key);
-        if (strpos($key, '$.') && false === strpos($key, '(')) {
+        if(strpos($key, '$.') && FALSE === strpos($key, '(')) {
             // JSON字段支持
             list($field, $name) = explode('$.', $key);
-            $key                = 'json_extract(' . $field . ', \'$.' . $name . '\')';
-        } elseif (strpos($key, '.') && !preg_match('/[,\'\"\(\)`\s]/', $key)) {
+            $key = 'json_extract(' . $field . ', \'$.' . $name . '\')';
+        } else if(strpos($key, '.') && !preg_match('/[,\'\"\(\)`\s]/', $key)) {
             list($table, $key) = explode('.', $key, 2);
-            if ('__TABLE__' == $table) {
+            if('__TABLE__' == $table) {
                 $table = $this->query->getTable();
             }
-            if (isset($options['alias'][$table])) {
-                $table = $options['alias'][$table];
+            if(isset($options['alias'][ $table ])) {
+                $table = $options['alias'][ $table ];
             }
         }
-        if (!preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
+        if( !preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
             $key = '`' . $key . '`';
         }
-        if (isset($table)) {
-            if (strpos($table, '.')) {
+        if(isset($table)) {
+            if(strpos($table, '.')) {
                 $table = str_replace('.', '`.`', $table);
             }
             $key = '`' . $table . '`.' . $key;
@@ -123,5 +122,4 @@ class Mysql extends Builder
     {
         return 'rand()';
     }
-
 }

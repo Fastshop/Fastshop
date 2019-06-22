@@ -287,10 +287,11 @@ if (!function_exists('url')) {
 if (!function_exists('session')) {
     /**
      * Session管理
-     * @param string|array  $name session名称，如果为数组表示进行session设置
-     * @param mixed         $value session值
-     * @param string        $prefix 前缀
+     * @param string|array $name session名称，如果为数组表示进行session设置
+     * @param mixed $value session值
+     * @param string $prefix 前缀
      * @return mixed
+     * @throws \think\Exception
      */
     function session($name, $value = '', $prefix = null)
     {
@@ -599,7 +600,8 @@ if (!function_exists('M')) {
     function M($name = '')
     {
         if(!empty($name))
-        {          
+        {
+            //if(class_exists($name) && \Str::)
             return Db::name($name);
         }                    
     }

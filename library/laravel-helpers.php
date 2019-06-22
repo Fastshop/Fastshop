@@ -813,12 +813,11 @@ if (! function_exists('secure_url')) {
 if (! function_exists('session')) {
     /**
      * Get / set the specified session value.
-     *
      * If an array is passed as the key, we will assume you want to set an array of values.
-     *
-     * @param  array|string|null  $key
-     * @param  mixed  $default
+     * @param array|string|null $key
+     * @param mixed $default
      * @return mixed|\Illuminate\Session\Store|\Illuminate\Session\SessionManager
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function session($key = null, $default = null)
     {
@@ -837,9 +836,9 @@ if (! function_exists('session')) {
 if (! function_exists('storage_path')) {
     /**
      * Get the path to the storage folder.
-     *
-     * @param  string  $path
+     * @param string $path
      * @return string
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function storage_path($path = '')
     {

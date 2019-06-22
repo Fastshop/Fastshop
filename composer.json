@@ -59,7 +59,6 @@
     },
     "config": {
         "vendor-dir": "core/vendor/",
-        "optimize-autoloader": true,
         "preferred-install": "dist"
     },
     "extra": {

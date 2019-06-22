@@ -7,11 +7,10 @@
 
 namespace app\demo\controller;
 
-
-use app\common\logic\Shop;
 use App\Http\Controllers\Controller;
+use Tool;
 
-class DemoTestController extends Controller
+class TestsController extends Controller
 {
     public function index()
     {
@@ -21,5 +20,16 @@ class DemoTestController extends Controller
     function getTest()
     {
         kd(__METHOD__);
+    }
+
+    public function tables(){
+        return Tool::getAllTableNames();
+    }
+
+    function menu()
+    {
+        require_once APP_PATH . "admin/common.php";
+        $menu = getMenuArr();
+        kd($menu);
     }
 }
