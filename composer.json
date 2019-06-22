@@ -37,7 +37,6 @@
         "dingo/api": "^2.2",
         "darkaonline/l5-swagger": "^5.8",
         "barryvdh/laravel-cors": "^0.11.3",
-        "topthink/framework": "5.0.2",
         "ext-simplexml": "*",
         "laravel-admin-ext/helpers": "^1.1",
         "laravel-admin-ext/log-viewer": "^1.0",
