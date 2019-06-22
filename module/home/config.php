@@ -35,7 +35,7 @@ return [
         'default_theme' => 'default',
     ],
     'view_replace_str' => [
-        '__PUBLIC__' => '/assets/vendor',
+        '__PUBLIC__' => '/public',
         '__STATIC__' => '/assets/static',
         '__ROOT__' => ''
     ]

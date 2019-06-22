@@ -26,7 +26,7 @@ return [
         'default_theme' => 'default',
     ],
     'view_replace_str' => [
-        '__PUBLIC__' => '/assets/vendor',
+        '__PUBLIC__' => '/public',
         '__ROOT__' => '',
         // '__STATIC__' => '/template/pc/default/Static',
     ],
