@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -44,7 +50,7 @@ class AdminLogic
     {
         Db::name('admin')->where('admin_id', $admin['admin_id'])->save([
             'last_login' => time(),
-            'last_ip' => request()->ip()
+            'last_ip' => req()->ip()
         ]);
 
         $this->sessionRoleRights($admin, $actList);

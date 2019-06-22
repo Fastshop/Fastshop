@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Encore\Admin\Reporter\Reporter;
 
 class Handler extends ExceptionHandler
 {
@@ -36,6 +37,10 @@ class Handler extends ExceptionHandler
     {
         $_ENV = [];
         if (ob_get_length()) ob_end_clean();
+
+        if ($this->shouldReport($exception)) {
+            Reporter::report($exception);
+        }
     
         parent::report($exception);
     }

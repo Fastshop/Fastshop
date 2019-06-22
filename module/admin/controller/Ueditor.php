@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -151,9 +157,9 @@ class Ueditor extends Base
 	//上传文件
 	private function upFile($fieldName)
     {
-		$file = request()->file('file');
+		$file = req()->file('file');
 		if(empty($file)){
-			$file = request()->file('upfile');
+			$file = req()->file('upfile');
 		}
 		if (empty($file)) {
 			$state = "ERROR";
@@ -446,12 +452,12 @@ class Ueditor extends Base
         $path = htmlspecialchars($dir, ENT_QUOTES);
         //$input_file ['upfile'] = $info['Filedata'];  一个是上传插件里面来的, 另外一个是 文章编辑器里面来的
         // 获取表单上传文件
-        $file = request()->file('file');
+        $file = req()->file('file');
         $return_url = '';
         $editor = new EditorLogic;
 
         if (empty($file)) {
-            $file = request()->file('upfile');
+            $file = req()->file('upfile');
         }
         $result = $this->validate(
             ['file' => $file],
@@ -488,9 +494,9 @@ class Ueditor extends Base
 
         //$input_file  ['upfile'] = $info['Filedata'];  一个是上传插件里面来的, 另外一个是 文章编辑器里面来的
         // 获取表单上传文件
-        $file = request()->file('Filedata');
+        $file = req()->file('Filedata');
         if (empty($file)) {
-            $file = request()->file('upfile');    
+            $file = req()->file('upfile');    
         }
         
         $result = $this->validate(
@@ -545,9 +551,9 @@ class Ueditor extends Base
         $title = htmlspecialchars($pictitle , ENT_QUOTES);
         $path = htmlspecialchars($dir, ENT_QUOTES);
         // 获取表单上传文件
-        $file = request()->file('file');
+        $file = req()->file('file');
         if (empty($file)) {
-            $file = request()->file('upfile');
+            $file = req()->file('upfile');
         }
         $result = $this->validate(
             ['file' => $file],

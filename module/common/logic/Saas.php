@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui 
+ * @email moshihui@gmail.com 
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -69,7 +75,7 @@ class Saas
 
     public function getRoleRights($actList)
     {
-        $module = request()->module();
+        $module = req()->module();
         $limitRights = $this->app['right'][$module];
         if ($actList === 'all') {
             $roleRights = implode(',', $limitRights);;
@@ -123,12 +129,12 @@ class Saas
         }
 
         //过滤不需要登陆的行为
-        $action = request()->action();
+        $action = req()->action();
         if (!in_array($action, ['login', 'vertify', 'forget_pwd'])) {
             if (!session('admin_id')) {
                 $this->redirectSso();
             }
-        } elseif ($action == 'login' && request()->isGet()) {
+        } elseif ($action == 'login' && req()->isGet()) {
             $isLogin = input('is_login', 0);
             if ($isLogin != 1) {
                 $msg = input('err_msg');
@@ -288,9 +294,9 @@ class Saas
             return;
         }
 
-        $module     = request()->module();
-        $controller = request()->controller();
-        $action     = request()->action();
+        $module     = req()->module();
+        $controller = req()->controller();
+        $action     = req()->action();
 
         if ($controller == 'Sso') {
             return;
@@ -304,7 +310,7 @@ class Saas
         }
         $roleRight = explode(',', $roleRight);
 //        if (!in_array($controller . '@' . $action, $roleRight)) {
-//            if (request()->isAjax() || input('is_ajax') || input('is_json') || strpos($action, 'ajax') !== false) {
+//            if (req()->isAjax() || input('is_ajax') || input('is_json') || strpos($action, 'ajax') !== false) {
 //                ajaxReturn(['status' => -1, 'msg' => '您暂没有权限操作', 'result' => '']);
 //            } else {
 //                $this->error('您暂没有权限操作', null, '', 1000);

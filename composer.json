@@ -38,7 +38,16 @@
         "darkaonline/l5-swagger": "^5.8",
         "barryvdh/laravel-cors": "^0.11.3",
         "topthink/framework": "5.0.2",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "laravel-admin-ext/helpers": "^1.1",
+        "laravel-admin-ext/log-viewer": "^1.0",
+        "laravel-admin-ext/config": "^1.0",
+        "laravel-admin-ext/scheduling": "^1.0",
+        "laravel-admin-ext/api-tester": "^1.0",
+        "laravel-admin-ext/reporter": "^1.0",
+        "laravel-admin-ext/media-manager": "^1.0",
+        "laravel-admin-ext/redis-manager": "^1.0",
+        "ichynul/configx": "^1.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",

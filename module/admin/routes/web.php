@@ -13,6 +13,6 @@
 
 use App\Admin\Http\Controllers\AdminController;
 
-Route::prefix('admin')->group(function() {
-    Route::resource('/',  AdminController::class);
-});
+//Route::prefix('admin')->group(function() {
+//    Route::resource('/',  AdminController::class);
+//});

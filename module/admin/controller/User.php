@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -883,7 +889,7 @@ exit("请联系TPshop官网客服购买高级版支持此功能");
         $return = ['status' => 0, 'msg' => '参数错误', 'result' => ''];//初始化返回信息
         $userLabelValidate = Loader::validate('UserLabel');
         $UserLabel = new UserLabel();
-        if (request()->isPost()) {
+        if (req()->isPost()) {
             if ($label_info['label_id']) {
                 if (!$userLabelValidate->scene('edit')->batch()->check($label_info)) {
                     $return = ['status' => 0, 'msg' => '编辑失败', 'result' => $userLabelValidate->getError()];
@@ -900,7 +906,7 @@ exit("请联系TPshop官网客服购买高级版支持此功能");
                 }
             }
         }
-        if (request()->isDelete()) {
+        if (req()->isDelete()) {
             $UserLabel->where('id', $label_info['label_id'])->delete();
             $return = ['status' => 1, 'msg' => '删除成功', 'result' => ''];
         }

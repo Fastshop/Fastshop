@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -142,7 +148,7 @@ class OrderLogic
     {
         $return_imgs = '';
         if ($_FILES['return_imgs']['tmp_name']) {
-			$files = request()->file("return_imgs");
+			$files = req()->file("return_imgs");
             if (is_object($files)) {
                 $files = [$files]; //可能是一张图片，小程序情况
             }

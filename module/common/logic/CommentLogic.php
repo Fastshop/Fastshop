@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -243,7 +249,7 @@ class CommentLogic extends Model
         $comment_img = [];
         //$comments = '';
         if ($_FILES[$name]['tmp_name']) {
-            $files = request()->file($name);
+            $files = req()->file($name);
             if (is_object($files)) {
                 $files = [$files];
             }

@@ -365,6 +365,41 @@ return [
     |
     */
     'extensions' => [
+        'api-tester' => [
+
+            // route prefix for APIs
+            'prefix' => 'api',
+
+            // auth guard for api
+            'guard'  => 'api',
+
+            // If you are not using the default user model as the authentication model, set it up
+            'user_retriever' => function ($id) {
+                return \App\User::find($id);
+            },
+        ],
+
+        'media-manager' => [
+
+            // Select a local disk that you configured in `config/filesystem.php`
+            'disk' => 'public'
+        ],
+        'configx' => [
+            // Set to `false` if you want to disable this extension
+            'enable' => true,
+            'tabs' => [
+                'base' => '基本设置',
+                'shop' => '店铺设置',
+                'uplaod' => '上传设置',
+                'image' => '图片设置',
+                // if tab name is empty, get from trans : trans('admin.configx.tabs.image');
+                // tab名称留空则从翻译中获取
+            ],
+            // Whether check group permissions.
+            //if (!Admin::user()->can('confix.tab.base')) {/*hide base tab*/ } .
+            'check_permission' => false
+        ],
+
 
     ],
 ];

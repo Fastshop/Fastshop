@@ -27,8 +27,8 @@ function adminLog($log_info)
     $add['log_time'] = time();
     $add['admin_id'] = session('admin_id');
     $add['log_info'] = $log_info;
-    $add['log_ip'] = request()->ip();
-    $add['log_url'] = request()->baseUrl();
+    $add['log_ip'] = req()->ip();
+    $add['log_url'] = req()->baseUrl();
     M('admin_log')->add($add);
 }
 

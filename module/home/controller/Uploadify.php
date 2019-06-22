@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -253,8 +259,8 @@ class Uploadify extends Base {
 	
 	//上传文件
 	private function upFile($fieldName){
-		$file = request()->file('file');
-		if(empty($file)) $file = request()->file('upfile');
+		$file = req()->file('file');
+		if(empty($file)) $file = req()->file('upfile');
 		$result = $this->validate(
 				['file' => $file],
 				['file'=>'image|fileSize:40000000|fileExt:jpg,jpeg,gif,png'],
@@ -492,10 +498,10 @@ class Uploadify extends Base {
 		$path = htmlspecialchars($dir, ENT_QUOTES);
 		//$input_file ['upfile'] = $info['Filedata'];  一个是上传插件里面来的, 另外一个是 文章编辑器里面来的
 		// 获取表单上传文件
-		$file = request()->file('file');
+		$file = req()->file('file');
 	
 		if(empty($file))
-			$file = request()->file('upfile');
+			$file = req()->file('upfile');
 		$result = $this->validate(
 				['file' => $file],
 				['file'=>'image|fileSize:40000000|fileExt:jpg,jpeg,gif,png'],

@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -124,7 +130,7 @@ class Uploadify extends Base{
     	$end = $start + $size;
     	
     	/* 获取文件列表 */
-    	$files = $this->getfiles($path, $allowFiles, $key,['public/upload/goods/thumb']);
+    	$files = $this->getfiles($path, $allowFiles, $key,[UPLOAD_PATH. 'goods/thumb']);
     	if (!count($files)) {
     		echo json_encode(array(
     				"state" => "没有相关文件",

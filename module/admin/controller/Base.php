@@ -113,7 +113,7 @@ class Base extends Controller {
     	if($ctl == 'Index' || $act_list == 'all' || $ctl == 'Wx3rd'){
     		//后台首页控制器无需验证,超级管理员无需验证
     		return true;
-    	}elseif((request()->isAjax() && $this->verifyAjaxRequest($act)) || strpos($act,'ajax')!== false || in_array($act,$uneed_check)){
+    	}elseif((req()->isAjax() && $this->verifyAjaxRequest($act)) || strpos($act,'ajax')!== false || in_array($act,$uneed_check)){
     		//部分ajax请求不需要验证权限
     		return true;
     	}else{
@@ -135,7 +135,7 @@ class Base extends Controller {
      */
     private function verifyAjaxRequest($act){
         $verifyAjaxArr = ['delGoodsCategory','delGoodsAttribute','delBrand','delGoods'];
-        if(request()->isAjax() && in_array($act,$verifyAjaxArr)){
+        if(req()->isAjax() && in_array($act,$verifyAjaxArr)){
             $res = $this->verifyAction();
             if($res['status'] == -1){
                 $this->ajaxReturn($res);

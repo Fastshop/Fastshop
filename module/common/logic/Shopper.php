@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -72,9 +78,9 @@ class Shopper extends Model
         $log['log_shopper_id'] = $this->shopper['shopper_id'];
         $log['log_shopper_name'] = $this->shopper['shopper_name'];
         $log['log_content'] = $content;
-        $log['log_shopper_ip'] = request()->ip();
+        $log['log_shopper_ip'] = req()->ip();
         $log['log_shop_id'] = $this->shopper['shop_id'];
-        $log['log_url'] = request()->action();
+        $log['log_url'] = req()->action();
         Db::name('shopper_log')->add($log);
     }
 }

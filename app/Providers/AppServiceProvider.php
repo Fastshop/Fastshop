@@ -28,9 +28,9 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         $table = config('admin.extensions.config.table', 'admin_config');
-        // if (Schema::hasTable($table)) {
-        //     Config::load();
-        // }
-        // \Blade::setEchoFormat('%s');
+         if (Schema::hasTable($table)) {
+             Config::load();
+         }
+         \Blade::setEchoFormat('%s');
     }
 }

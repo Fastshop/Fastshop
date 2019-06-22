@@ -14,6 +14,8 @@ namespace think;
 use App\Kernel;
 
 // require_once __DIR__."/thinkphp/helper.php";
+require __DIR__ . '/../../module/think/helper.php';
+
 
 require_once __DIR__ . "/../../core/vendor/autoload.php";
 

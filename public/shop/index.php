@@ -46,7 +46,7 @@ require __DIR__.'/saas.php';
 //define('APP_PATH','./Application/');
 //  定义插件目录
 define('PLUGIN_PATH', __DIR__.'/plugins/');
-defined('UPLOAD_PATH') or define('UPLOAD_PATH', 'uploads/'); // 编辑器图片上传路径
+defined('UPLOAD_PATH') or define('UPLOAD_PATH', 'public/upload/'); // 编辑器图片上传路径
 define('TPSHOP_CACHE_TIME', 1); // TPshop 缓存时间  31104000
 
 $http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off') ? 'https' : 'http';

@@ -33,8 +33,8 @@ if (!function_exists('request')) {
     function request($key = null, $default = null)
     {
         if (is_null($key)) {
-            return Request::instance();
-            // return app('request');
+            //return Request::instance();
+             return app('request');
         }
 
         if (is_array($key)) {

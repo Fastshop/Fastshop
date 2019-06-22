@@ -136,9 +136,9 @@ if (!function_exists('input')) {
             $method = 'param';
         }
         if (isset($has)) {
-            return request()->has($key, $method, $default);
+            return req()->has($key, $method, $default);
         } else {
-            return request()->$method($key, $default, $filter);
+            return req()->$method($key, $default, $filter);
         }
     }
 }
@@ -406,12 +406,12 @@ if (!function_exists('trace')) {
     }
 }
 
-if (!function_exists('request')) {
+if (!function_exists('req')) {
     /**
      * 获取当前Request对象实例
      * @return Request
      */
-    function request()
+    function req()
     {
         return Request::instance();
     }

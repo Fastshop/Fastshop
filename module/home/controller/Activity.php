@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -118,7 +124,7 @@ class Activity extends Base
         $activityLogic = new ActivityLogic();
         $result = $activityLogic->getCouponList($atype, $user['user_id'], $p);
         $this->assign('coupon_list', $result);
-        if (request()->isAjax()) {
+        if (req()->isAjax()) {
             return $this->fetch('ajax_coupon_list');
         }
         return $this->fetch();

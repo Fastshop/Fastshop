@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -52,7 +58,7 @@ class MobileApp extends Base
         $param = I('post.');
 		$inc_type = $param['inc_type'];
         
-        $file = request()->file('app_path');
+        $file = req()->file('app_path');
         if ($file) {
             $result = $this->validate(
                 ['android_app' => $file], 

@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -267,7 +273,7 @@ class Tools extends Base {
 
 	public function restoreUpload()
 	{
-		$file = request()->file('sqlfile');
+		$file = req()->file('sqlfile');
 		if(empty($file)){
 			$this->error('请先上传sql文件');
 		}
