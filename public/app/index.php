@@ -6,6 +6,8 @@
  * @package WordPress
  */
 
+header('Location: ./wp-admin/') or exit;
+
 /**
  * Tells WordPress to load the WordPress theme and output it.
  *

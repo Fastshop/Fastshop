@@ -3,3 +3,4 @@
 /.phpstorm.meta.php
 /_ide_helper.php
 *.log
+/public/app
