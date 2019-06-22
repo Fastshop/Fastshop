@@ -15,17 +15,17 @@
   var SITEURL = window.location.host +'/index.php/admin';
 </script>
 
-<link href="/assets/vendor/static/css/main.css" rel="stylesheet" type="text/css">
-<link href="/assets/vendor/static/js/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
-<link href="/assets/vendor/static/font/css/font-awesome.min.css" rel="stylesheet" />
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/dialog/dialog.js" id="dialog_js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.cookie.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/admincp.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.validation.min.js"></script>
-<script src="/assets/vendor/js/layer/layer.js"></script><!--弹窗js 参考文档 http://layer.layui.com/--> 
-<script src="/assets/vendor/js/upgrade.js"></script>
+<link href="/public/static/css/main.css" rel="stylesheet" type="text/css">
+<link href="/public/static/js/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<link href="/public/static/font/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="/public/static/js/jquery.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery-ui/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/public/static/js/dialog/dialog.js" id="dialog_js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/public/static/js/admincp.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.validation.min.js"></script>
+<script src="/public/js/layer/layer.js"></script><!--弹窗js 参考文档 http://layer.layui.com/-->
+<script src="/public/js/upgrade.js"></script>
 </head>
 <body>
 <div class="admincp-header">
@@ -81,7 +81,7 @@
 			<span class="avatar">
 			<!-- 屏蔽管理员头像上传 -->
 			<!-- input name="_pic" type="file" class="admin-avatar-file" id="_pic" title="设置管理员头像"/ -->
-			<img alt="" tptype="admin_avatar" src="/assets/vendor/static/images/admint.png"> </span><i class="arrow" id="admin-manager-btn" title="显示快捷管理菜单"></i>
+			<img alt="" tptype="admin_avatar" src="/public/static/images/admint.png"> </span><i class="arrow" id="admin-manager-btn" title="显示快捷管理菜单"></i>
 			<div class="manager-menu">
                 <div class="title">
                     <h4>最后登录</h4>
@@ -101,10 +101,10 @@
         	<span class="bgdopa-t">我的工作台<i class="opa-arow"></i></span>
             <ul class="bgdopa-list">
                 <li style="display: none !important;" tptype="pending_matters"><a class="toast show-option" href="javascript:void(0);" onClick="$.cookie('commonPendingMatters', 0, {expires : -1});ajax_form('pending_matters', '待处理事项', 'http://www.tpshop.cn/admin/index.php?act=common&op=pending_matters', '480');" title="查看待处理事项">&nbsp;<em>0</em></a></li>
-                <li><a class="login-out show-option" href="{{ U('Admin/logout') }}"><img src="/assets/vendor/static/images/icon-exit.png">退出系统</a></li>
-                <li><a class="sitemap show-option" id="trace_show" href="{{ U('System/cleanCache',array('quick'=>1)) }}" target="workspace"><img src="/assets/vendor/static/images/cle-cache.png">更新缓存</a></li>
-                <li><a class="switch-smpro" href="http://wx.tp-shop.cn/client"><img src="/assets/vendor/static/images/icon-switch.png" style="margin-top:0;">切换小程序</a></li>
-                <li><a class="homepage show-option" target="_blank" href="/"><img src="/assets/vendor/static/images/icon-home.png">打开商城</a></li>
+                <li><a class="login-out show-option" href="{{ U('Admin/logout') }}"><img src="/public/static/images/icon-exit.png">退出系统</a></li>
+                <li><a class="sitemap show-option" id="trace_show" href="{{ U('System/cleanCache',array('quick'=>1)) }}" target="workspace"><img src="/public/static/images/cle-cache.png">更新缓存</a></li>
+                <li><a class="switch-smpro" href="http://wx.tp-shop.cn/client"><img src="/public/static/images/icon-switch.png" style="margin-top:0;">切换小程序</a></li>
+                <li><a class="homepage show-option" target="_blank" href="/"><img src="/public/static/images/icon-home.png">打开商城</a></li>
                 
             </ul>
         </div>

@@ -2,13 +2,13 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link href="/assets/vendor/static/css/index.css" rel="stylesheet" type="text/css">
-    <link href="/assets/vendor/static/css/perfect-scrollbar.min.css" rel="stylesheet" type="text/css">
-    <link href="/assets/vendor/static/css/purebox.css" rel="stylesheet" type="text/css">
-    <link href="/assets/vendor/static/js/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="/assets/vendor/static/js/jquery.js"></script>
-    <script type="text/javascript" src="/assets/vendor/static/js/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/assets/vendor/static/js/jquery.cookie.js"></script>
+    <link href="/public/static/css/index.css" rel="stylesheet" type="text/css">
+    <link href="/public/static/css/perfect-scrollbar.min.css" rel="stylesheet" type="text/css">
+    <link href="/public/static/css/purebox.css" rel="stylesheet" type="text/css">
+    <link href="/public/static/js/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/public/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/public/static/js/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/public/static/js/jquery.cookie.js"></script>
     <style>
         .contentWarp_item .section_select .item_comment{
             padding: 83px 0 31px 38px;
@@ -54,14 +54,14 @@
             <div class="contentWarp_item clearfix">
                 <div class="section_select">
                     <div class="item item_price">
-                        <i class="icon"><img src="/assets/vendor/static/images/1.png" width="71" height="74"></i>
+                        <i class="icon"><img src="/public/static/images/1.png" width="71" height="74"></i>
                         <div class="desc">
                             <div class="tit">{{ $count['new_order'] }}</div>
                             <span>今日订单总数</span>
                         </div>
                     </div>
                     <div class="item item_order">
-                        <i class="icon"><img src="/assets/vendor/static/images/2.png"></i>
+                        <i class="icon"><img src="/public/static/images/2.png"></i>
                         <div class="desc">
                             <div class="tit">{{ $count['new_users'] }}</div>
                             <span>今日会员总数</span>
@@ -69,14 +69,14 @@
                         <i class="icon"></i>
                     </div>
                     <div class="item item_comment">
-                        <i class="icon"><img src="/assets/vendor/static/images/3.png" width="90" height="86"></i>
+                        <i class="icon"><img src="/public/static/images/3.png" width="90" height="86"></i>
                         <div class="desc">
                             <div class="tit">{{ $count['comment'] }}</div>
                             <span>今日待审评论数</span>
                         </div>
                     </div>
                     <div class="item item_flow">
-                        <i class="icon"><img src="/assets/vendor/static/images/4.png" width="86"></i>
+                        <i class="icon"><img src="/public/static/images/4.png" width="86"></i>
                         <div class="desc">
                             <div class="tit">{{ $count['today_login'] }}</div>
                             <span>今日访问量</span>
@@ -215,8 +215,8 @@
         });
     });
 </script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.purebox.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/echart/echarts.min.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.purebox.js"></script>
+<script type="text/javascript" src="/public/static/js/echart/echarts.min.js"></script>
 <script type="text/javascript">
     set_statistical_chart(".section_order_count .filter_date a:first", "order", "week"); //初始设置
     set_statistical_chart(".section_total_count .filter_date a:first", "sale", "week"); //初始设置

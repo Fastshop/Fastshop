@@ -8,15 +8,15 @@
    
     <link href="/assets/static/css/reg3.css" rel="stylesheet" />
  <link rel="stylesheet" type="text/css" href="/assets/static/css/base.css"/>
-    <script type="text/javascript" src="/assets/vendor/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/public/js/jquery-1.10.2.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/assets/static/css/tpshop.css" />
-	<script src="/assets/vendor/js/layer/layer.js"></script><!--弹窗js 参考文档 http://layer.layui.com/-->    
-    <script src="/assets/vendor/js/global.js"></script>
-    <script src="/assets/vendor/js/md5.min.js"></script>
+	<script src="/public/js/layer/layer.js"></script><!--弹窗js 参考文档 http://layer.layui.com/-->
+    <script src="/public/js/global.js"></script>
+    <script src="/public/js/md5.min.js"></script>
 </head>
 <body>
     <div class="regcon">
-        <a class="m-fnlogoa fn-fl" href="/" ><img src="{{ $tpshop_config['shop_info_store_logo'] ?: '/assets/vendor/static/images/logo/pc_home_logo_default.png' }}" style="width: 159px;height: 58px;"/></a>
+        <a class="m-fnlogoa fn-fl" href="/" ><img src="{{ $tpshop_config['shop_info_store_logo'] ?: '/public/static/images/logo/pc_home_logo_default.png' }}" style="width: 159px;height: 58px;"/></a>
         <span class="m-fntit">欢迎注册</span>
         <div class="ui_tab">
             <ul class="ui_tab_nav regnav">

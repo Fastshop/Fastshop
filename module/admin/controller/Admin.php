@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -347,9 +353,9 @@ class Admin extends Base {
 			$r = $suppliers_model->where('suppliers_id', $data['suppliers_id'])->delete();
 			M('admin')->where(array('suppliers_id' => $data['suppliers_id']))->save(array('suppliers_id' => 0));
 			if($r){
-				respose(1);
+				tp_response(1);
 			}else{
-				respose('删除失败');
+				tp_response('删除失败');
 			}
 		}
 

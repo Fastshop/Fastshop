@@ -6,9 +6,9 @@
 		<link rel="stylesheet" type="text/css" href="/assets/static/css/tpshop.css" />
 		<link rel="shortcut icon" type="image/x-icon" href="{{ $tpshop_config['shop_info_store_ico'] ?: '/public/static/images/logo/storeico_default.png' }}" media="screen"/>
 		<script src="/assets/static/js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="/assets/vendor/js/layer/layer-min.js"></script>
-		<script src="/assets/vendor/js/global.js"></script>
-		<script src="/assets/vendor/js/pc_common.js"></script>
+		<script src="/public/js/layer/layer-min.js"></script>
+		<script src="/public/js/global.js"></script>
+		<script src="/public/js/pc_common.js"></script>
 	</head>
 	<body>
 	<!--header-s-->
@@ -36,7 +36,7 @@
                               </ul>
                           </span>
                       </div>
-					<script src="/assets/vendor/js/locationJson.js"></script>
+					<script src="/public/js/locationJson.js"></script>
 				  	<script src="/assets/static/js/location.js"></script>
 					<script>doInitRegion();</script>
                  @endif 

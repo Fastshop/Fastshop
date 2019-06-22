@@ -9,26 +9,26 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <!-- Apple devices fullscreen -->
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link href="/assets/vendor/static/css/main.css" rel="stylesheet" type="text/css">
-<link href="/assets/vendor/static/css/page.css" rel="stylesheet" type="text/css">
-<link href="/assets/vendor/static/font/css/font-awesome.min.css" rel="stylesheet" />
+<link href="/public/static/css/main.css" rel="stylesheet" type="text/css">
+<link href="/public/static/css/page.css" rel="stylesheet" type="text/css">
+<link href="/public/static/font/css/font-awesome.min.css" rel="stylesheet" />
 <!--[if IE 7]>
-  <link rel="stylesheet" href="/assets/vendor/static/font/css/font-awesome-ie7.min.css">
+  <link rel="stylesheet" href="/public/static/font/css/font-awesome-ie7.min.css">
 <![endif]-->
-<link href="/assets/vendor/static/js/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
-<link href="/assets/vendor/static/js/perfect-scrollbar.min.css" rel="stylesheet" type="text/css"/>
+<link href="/public/static/js/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+<link href="/public/static/js/perfect-scrollbar.min.css" rel="stylesheet" type="text/css"/>
 <style type="text/css">html, body { overflow: visible;}</style>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/layer/layer.js"></script><!-- 弹窗js 参考文档 http://layer.layui.com/-->
-<script type="text/javascript" src="/assets/vendor/static/js/admin.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.validation.min.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/common.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/perfect-scrollbar.min.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.mousewheel.js"></script>
-<script src="/assets/vendor/js/myFormValidate.js"></script>
-<script src="/assets/vendor/js/myAjax2.js"></script>
-<script src="/assets/vendor/js/global.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery-ui/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/public/static/js/layer/layer.js"></script><!-- 弹窗js 参考文档 http://layer.layui.com/-->
+<script type="text/javascript" src="/public/static/js/admin.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.validation.min.js"></script>
+<script type="text/javascript" src="/public/static/js/common.js"></script>
+<script type="text/javascript" src="/public/static/js/perfect-scrollbar.min.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.mousewheel.js"></script>
+<script src="/public/js/myFormValidate.js"></script>
+<script src="/public/js/myAjax2.js"></script>
+<script src="/public/js/global.js"></script>
     <script type="text/javascript">
     function delfunc(obj){
     	layer.confirm('确认删除？', {

@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -457,12 +463,12 @@ exit("请联系TPshop官网客服购买高级版支持此功能");
      	if(!empty($id)){
      		$r = M('system_menu')->where("id in ($id)")->delete();
      		if($r){
-     			respose(1);
+     			tp_response(1);
      		}else{
-     			respose('删除失败');
+     			tp_response('删除失败');
      		}
      	}else{
-     		respose('参数有误');
+     		tp_response('参数有误');
      	}
      }
 	//清除所有活动数据

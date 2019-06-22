@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/static/css/base.css"/>
     <link rel="stylesheet" type="text/css" href="/assets/static/css/index.css"/>
     <script src="/assets/static/js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/assets/vendor/js/global.js"></script>
+    <script src="/public/js/global.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="{{ $tpshop_config['shop_info_store_ico'] ?: '/public/static/images/logo/storeico_default.png' }}" media="screen"/>
 </head>
 <body class="gray_f5">
@@ -37,7 +37,7 @@
                               </ul>
                           </span>
                       </div>
-					<script src="/assets/vendor/js/locationJson.js"></script>
+					<script src="/public/js/locationJson.js"></script>
 				  	<script src="/assets/static/js/location.js"></script>
 					<script>doInitRegion();</script>
                 @endif

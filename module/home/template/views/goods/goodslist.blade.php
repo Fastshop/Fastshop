@@ -9,9 +9,9 @@
     <link rel="shortcut icon" type="image/x-icon"
           href="{{ $tpshop_config['shop_info_store_ico'] ?: '/public/static/images/logo/storeico_default.png' }}"
           media="screen"/>
-    <script src="/assets/vendor/js/layer/layer-min.js"></script>
-    <script src="/assets/vendor/js/global.js"></script>
-    <script src="/assets/vendor/js/pc_common.js"></script>
+    <script src="/public/js/layer/layer-min.js"></script>
+    <script src="/public/js/global.js"></script>
+    <script src="/public/js/pc_common.js"></script>
     <style>
         @media screen and (min-width: 1260px) and (max-width: 1465px) {
             .w1430 {
@@ -53,7 +53,7 @@
                               </ul>
                           </span>
                     </div>
-                    <script src="/assets/vendor/js/locationJson.js"></script>
+                    <script src="/public/js/locationJson.js"></script>
                     <script src="/assets/static/js/location.js"></script>
                     <script>doInitRegion();</script>
                 @endif

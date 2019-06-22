@@ -6,12 +6,12 @@
 <title>登录页</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="icon" href="/assets/vendor/static/animated_favicon.gif" type="image/gif" />
-<link href="/assets/vendor/static/css/login.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.SuperSlide.2.1.2.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.validation.min.js"></script>
-<script type="text/javascript" src="/assets/vendor/static/js/jquery.cookie.js"></script>
+<link rel="icon" href="/public/static/animated_favicon.gif" type="image/gif" />
+<link href="/public/static/css/login.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/public/static/js/jquery.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.SuperSlide.2.1.2.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.validation.min.js"></script>
+<script type="text/javascript" src="/public/static/js/jquery.cookie.js"></script>
 <!--[if lte IE 8]>
 	<script type="Text/Javascript" language="JavaScript">
 	    function detectBrowser()
@@ -89,9 +89,9 @@ if(!$.cookie('tpshopActionParam') && $.cookie('admin_type') != 1){
     </div>
     <div id="bannerBox">
         <ul id="slideBanner" class="slideBanner">
-            <li><img src="/assets/vendor/static/images/banner_1.jpg"></li>
-            <li><img src="/assets/vendor/static/images/banner_2.jpg"></li> 
-            <li><img src="/assets/vendor/static/images/banner_3.jpg"></li>
+            <li><img src="/public/static/images/banner_1.jpg"></li>
+            <li><img src="/public/static/images/banner_2.jpg"></li>
+            <li><img src="/public/static/images/banner_3.jpg"></li>
         </ul>
     </div>
     <!--<script type="text/javascript" src="js/jquery.purebox.js"></script> -->   

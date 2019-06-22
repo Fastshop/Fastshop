@@ -17,7 +17,7 @@ return [
         // 模板引擎类型 支持 php think 支持扩展
         'type'         => 'Think',
         // 模板路径
-        'view_path'    => __DIR__.'/mobile/template/default/',
+        'view_path'    => __DIR__.'/template/default/',
         //'./template/mobile/rainbow/',
         // 模板后缀
         'view_suffix'  => 'html',

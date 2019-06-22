@@ -6,14 +6,14 @@
 	</head>
 	<style>
 *{margin: 0 auto;padding: 0;}
-.tranjump{background: url(/assets/vendor/images/tac.jpg) no-repeat;width: 100%;height: 100%;}
+.tranjump{background: url(/public/images/tac.jpg) no-repeat;width: 100%;height: 100%;}
 .rectangle_box{position: absolute;left: 50%;right: 50%;top: 50%;bottom: 50%;margin-left: -189.5px;margin-top: -77px;}
 .borderopely{width: 363px;height: 138px;border: 8px solid rgba(255,255,255,0.6);}
 .tipbox{width: 363px;height: 138px;background: white;text-align: center;}
 .welcople{color: #666666;font-size: 16px;padding-top: 18px;}
-.welcople .litps{background: url(/assets/vendor/images/socp.png) no-repeat;width: 31px;height: 31px;display: inline-block;vertical-align: text-bottom;}
-.welcople .modifysu{background: url(/assets/vendor/images/socp2.png) no-repeat;width: 34px;height: 37px;}
-.welcople .modifyfail{background: url(/assets/vendor/images/socp3.png) no-repeat;width: 24px;height: 28px;}
+.welcople .litps{background: url(/public/images/socp.png) no-repeat;width: 31px;height: 31px;display: inline-block;vertical-align: text-bottom;}
+.welcople .modifysu{background: url(/public/images/socp2.png) no-repeat;width: 34px;height: 37px;}
+.welcople .modifyfail{background: url(/public/images/socp3.png) no-repeat;width: 24px;height: 28px;}
 .ma-to-30{margin-top: 30px;}
 .ma-to-20{margin-top: 20px;}
 .ma-to-10{margin-top: 10px;}

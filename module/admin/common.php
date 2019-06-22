@@ -173,8 +173,8 @@ function getMenuArr()
     return $menuArr;
 }
 
-
-function respose($res)
-{
-    exit(json_encode($res));
-}
+//
+//function tp_response($res)
+//{
+//    exit(json_encode($res));
+//}

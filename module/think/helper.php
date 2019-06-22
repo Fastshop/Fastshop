@@ -17,6 +17,7 @@ use think\Cache;
 use think\Config;
 use think\Cookie;
 use think\Db;
+use think\db\Query;
 use think\Debug;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
@@ -608,7 +609,7 @@ if (!function_exists('D')) {
     /**
      * 采有TP5最新助手函数特性实现函数简写方式 D
      * @param string $name 表名     
-     * @return DB对象
+     * @return Query
      */
     function D($name = '')
     {               
