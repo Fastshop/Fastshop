@@ -1,0 +1,12 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use Illuminate\Support\Facades\Route;
+use App\Module\RouteServiceProvider as ServiceProvider;
+
+class $CLASS$ extends ServiceProvider
+{
+    public $name = "$LOWER_NAME$";
+    public $Name = "$STUDLY_NAME$";
+}

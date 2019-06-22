@@ -21,7 +21,7 @@ require __DIR__.'/core/vendor/autoload.php';
 
 define('APP_PATH', __DIR__ . '/public/shop/application/');
 
-require_once __DIR__ . '/public/shop/thinkphp/base.php';
+require_once __DIR__ . '/module/think/base.php';
 
 // 执行应用
 think\App::initCommon();

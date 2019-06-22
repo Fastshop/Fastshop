@@ -1,0 +1,26 @@
+{
+    "name": "app/shop",
+    "license": "",
+    "description": "",
+    "authors": [
+        {
+            "name": "",
+            "email": "email@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Shop\\Providers\\ShopServiceProvider"
+            ],
+            "aliases": {
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "./",
+            "App\\Shop\\": "src/"
+        }
+    }
+}

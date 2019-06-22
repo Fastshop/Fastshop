@@ -38,10 +38,7 @@
         "darkaonline/l5-swagger": "^5.8",
         "barryvdh/laravel-cors": "^0.11.3",
         "topthink/framework": "5.0.2",
-        "topthink/think-installer": "~1.0",
-        "topthink/think-captcha": "~1.0",
-        "topthink/think-image": "~1.0",
-        "topthink/think-helper": "~1.0"
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",
@@ -58,7 +55,7 @@
         "preferred-install": "dist"
     },
     "extra": {
-        "think-path": "public/shop/thinkphp",
+        "think-path": "module/think",
         "include_files": [
             "library/helpers.php",
             "library/laravel-helpers.php",
@@ -110,7 +107,7 @@
     "repositories": {
         "think-php": {
             "type": "path",
-            "url": "public/shop/thinkphp"
+            "url": "module/think"
         },
         "local": {
             "type": "path",

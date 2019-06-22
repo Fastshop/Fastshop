@@ -1,0 +1,26 @@
+{
+    "name": "app/mobile",
+    "license": "",
+    "description": "",
+    "authors": [
+        {
+            "name": "",
+            "email": "email@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Mobile\\Providers\\MobileServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Mobile\\": "src/"
+        }
+    }
+}

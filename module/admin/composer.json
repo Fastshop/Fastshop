@@ -1,0 +1,26 @@
+{
+    "name": "app/admin",
+    "license": "",
+    "description": "",
+    "authors": [
+        {
+            "name": "",
+            "email": "email@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Admin\\Providers\\AdminServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Admin\\": "src/"
+        }
+    }
+}

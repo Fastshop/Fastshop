@@ -1,0 +1,26 @@
+{
+    "name": "app/home",
+    "license": "",
+    "description": "",
+    "authors": [
+        {
+            "name": "",
+            "email": "email@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Home\\Providers\\HomeServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Home\\": "src/"
+        }
+    }
+}

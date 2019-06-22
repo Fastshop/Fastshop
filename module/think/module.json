@@ -1,0 +1,14 @@
+{
+    "name": "Think",
+    "alias": "think",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "App\\Think\\Providers\\ThinkServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

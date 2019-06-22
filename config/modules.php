@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'namespace' => '',
+    'namespace' => 'App',
 
     /*
     |--------------------------------------------------------------------------
@@ -23,23 +23,24 @@ return [
     */
 
     'stubs' => [
-        'enabled' => false,
-        'path' => base_path() . '/vendor/nwidart/laravel-modules/src/Commands/stubs',
+        'enabled' => true,
+        'path' => resource_path('stubs'),
+            //base_path() . '/vendor/nwidart/laravel-modules/src/Commands/stubs',
         'files' => [
-            'routes/web' => 'Routes/web.php',
-            'routes/api' => 'Routes/api.php',
-            'views/index' => 'Resources/views/index.blade.php',
-            'views/master' => 'Resources/views/layouts/master.blade.php',
-            'scaffold/config' => 'Config/config.php',
+            'routes/web' => 'routes/web.php',
+            'routes/api' => 'routes/api.php',
+            'views/index' => 'resources/views/index.blade.php',
+            'views/master' => 'resources/views/layouts/master.blade.php',
+            'scaffold/config' => 'config/config.php',
             'composer' => 'composer.json',
-            'assets/js/app' => 'Resources/assets/js/app.js',
-            'assets/sass/app' => 'Resources/assets/sass/app.scss',
+            'assets/js/app' => 'resources/assets/js/app.js',
+            'assets/sass/app' => 'resources/assets/sass/app.scss',
             'webpack' => 'webpack.mix.js',
             'package' => 'package.json',
         ],
         'replacements' => [
-            'routes/web' => ['LOWER_NAME', 'STUDLY_NAME'],
-            'routes/api' => ['LOWER_NAME'],
+            'routes/web' => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE'],
+            'routes/api' => ['LOWER_NAME','STUDLY_NAME', 'MODULE_NAMESPACE'],
             'webpack' => ['LOWER_NAME'],
             'json' => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE'],
             'views/index' => ['LOWER_NAME'],
@@ -97,30 +98,30 @@ return [
         | Set the generate key to false to not generate that folder
         */
         'generator' => [
-            'config' => ['path' => 'Config', 'generate' => true],
-            'command' => ['path' => 'Console', 'generate' => true],
-            'migration' => ['path' => 'Database/Migrations', 'generate' => true],
-            'seeder' => ['path' => 'Database/Seeders', 'generate' => true],
-            'factory' => ['path' => 'Database/factories', 'generate' => true],
-            'model' => ['path' => 'Entities', 'generate' => true],
-            'controller' => ['path' => 'Http/Controllers', 'generate' => true],
-            'filter' => ['path' => 'Http/Middleware', 'generate' => true],
-            'request' => ['path' => 'Http/Requests', 'generate' => true],
-            'provider' => ['path' => 'Providers', 'generate' => true],
-            'assets' => ['path' => 'Resources/assets', 'generate' => true],
-            'lang' => ['path' => 'Resources/lang', 'generate' => true],
-            'views' => ['path' => 'Resources/views', 'generate' => true],
-            'test' => ['path' => 'Tests/Unit', 'generate' => true],
-            'test-feature' => ['path' => 'Tests/Feature', 'generate' => true],
-            'repository' => ['path' => 'Repositories', 'generate' => false],
-            'event' => ['path' => 'Events', 'generate' => false],
-            'listener' => ['path' => 'Listeners', 'generate' => false],
-            'policies' => ['path' => 'Policies', 'generate' => false],
-            'rules' => ['path' => 'Rules', 'generate' => false],
-            'jobs' => ['path' => 'Jobs', 'generate' => false],
-            'emails' => ['path' => 'Emails', 'generate' => false],
-            'notifications' => ['path' => 'Notifications', 'generate' => false],
-            'resource' => ['path' => 'Transformers', 'generate' => false],
+            'config' => ['path' => 'config', 'generate' => true],
+            'command' => ['path' => 'src/Console', 'generate' => true],
+            'migration' => ['path' => 'src/Database/Migrations', 'generate' => true],
+            'seeder' => ['path' => 'src/Database/Seeders', 'generate' => true],
+            'factory' => ['path' => 'src/Database/factories', 'generate' => true],
+            'model' => ['path' => 'src/Models', 'generate' => true],
+            'controller' => ['path' => 'src/Http/Controllers', 'generate' => true],
+            'filter' => ['path' => 'src/Http/Middleware', 'generate' => true],
+            'request' => ['path' => 'src/Http/Requests', 'generate' => true],
+            'provider' => ['path' => 'src/Providers', 'generate' => true],
+            'assets' => ['path' => 'resources/assets', 'generate' => true],
+            'lang' => ['path' => 'resources/lang', 'generate' => true],
+            'views' => ['path' => 'resources/views', 'generate' => true],
+            'test' => ['path' => 'src/Tests/Unit', 'generate' => true],
+            'test-feature' => ['path' => 'src/Tests/Feature', 'generate' => true],
+            'repository' => ['path' => 'src/Service', 'generate' => false],
+            'event' => ['path' => 'src/Events', 'generate' => false],
+            'listener' => ['path' => 'src/Listeners', 'generate' => false],
+            'policies' => ['path' => 'src/Policies', 'generate' => false],
+            'rules' => ['path' => 'src/Rules', 'generate' => false],
+            'jobs' => ['path' => 'src/Jobs', 'generate' => false],
+            'emails' => ['path' => 'src/Emails', 'generate' => false],
+            'notifications' => ['path' => 'src/Notifications', 'generate' => false],
+            'resource' => ['path' => 'src/Transformers', 'generate' => false],
         ],
     ],
     /*
@@ -149,10 +150,10 @@ return [
     */
 
     'composer' => [
-        'vendor' => 'nwidart',
+        'vendor' => 'app',
         'author' => [
-            'name' => 'Nicolas Widart',
-            'email' => 'n.widart@gmail.com',
+            'name' => '',
+            'email' => 'email@example.com',
         ],
     ],
     /*

@@ -23,9 +23,9 @@ define('LARAVEL_START', microtime(true));
 
 require __DIR__.'/../core/vendor/autoload.php';
 
-define('APP_PATH', __DIR__.'/shop/application/');
-
-require_once __DIR__.'/shop/thinkphp/base.php';
+//define('APP_PATH', __DIR__.'/shop/application/');
+//
+//require_once __DIR__.'/shop/thinkphp/base.php';
 
 
 require_once(dirname(__FILE__).'/app/wp-load.php');

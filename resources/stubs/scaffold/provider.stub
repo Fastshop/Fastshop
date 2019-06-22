@@ -1,0 +1,11 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use App\Module\ServiceProvider;
+
+class $CLASS$ extends ServiceProvider
+{
+    public $name = "$LOWER_NAME$";
+    public $Name = "$STUDLY_NAME$";
+}

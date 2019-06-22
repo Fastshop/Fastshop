@@ -2,14 +2,50 @@
 
 use App\Kernel;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Symfony\Component\VarDumper\VarDumper;
 use think\Config;
+use think\Request;
 
-//if (defined('THINK_PATH')) {
-//    require THINK_PATH . "/helper.php";
-//}
+if (!function_exists('root_path')) {
+    function root_path($path = '')
+    {
+        return dirname(base_path()) . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
 
-// exit (function_exists('request') ? 'true' : 'false');
+if (!function_exists('tp_empty')):
+    function tp_empty($var)
+    {
+        return empty($var) || (is_object($var) && method_exists($var, 'isEmpty') && $var->isEmpty());
+    }
+endif;
+
+if (!function_exists('request')) {
+    /**
+     * Get an instance of the current request or an input item from the request.
+     *
+     * @param array|string|null $key
+     * @param mixed $default
+     * @return \Illuminate\Http\Request|string|array|\think\Request
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    function request($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return Request::instance();
+            // return app('request');
+        }
+
+        if (is_array($key)) {
+            return app('request')->only($key);
+        }
+
+        $value = app('request')->__get($key);
+
+        return is_null($value) ? value($default) : $value;
+    }
+}
 
 if (!function_exists('config')) {
     /**
@@ -31,12 +67,16 @@ if (!function_exists('config')) {
             }
         }
 
+        $return = null;
 
-        if (is_null($value) && is_string($name)) {
-            $return = 0 === strpos($name, '?') ? Config::has(substr($name, 1), $range) : Config::get($name, $range);
-        } else {
-            $return = Config::set($name, $value, $range);
+        if (defined('THINK_PATH')) {
+            if (is_null($value) && is_string($name)) {
+                $return = 0 === strpos($name, '?') ? Config::has(substr($name, 1), $range) : Config::get($name, $range);
+            } else {
+                $return = Config::set($name, $value, $range);
+            }
         }
+
         return $return ?? $value;
     }
 }

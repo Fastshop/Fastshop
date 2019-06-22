@@ -13,11 +13,17 @@ namespace think;
 // 1. 加载基础文件
 use App\Kernel;
 
-require_once __DIR__."/thinkphp/helper.php";
+// require_once __DIR__."/thinkphp/helper.php";
 
-require_once __DIR__."/../../core/vendor/autoload.php";
+require_once __DIR__ . "/../../core/vendor/autoload.php";
 
-require __DIR__.'/thinkphp/base.php';
+//define('VENDOR_PATH', ROOT_PATH . 'vendor' . DS);
+// 定义应用目录
+define('APP_PATH', realpath(__DIR__ . '/../../module') . DIRECTORY_SEPARATOR);
+define('RUNTIME_PATH', realpath(__DIR__ . "/../../core/storage") .DIRECTORY_SEPARATOR. "runtime".DIRECTORY_SEPARATOR);
+is_dir(RUNTIME_PATH) or mkdir(RUNTIME_PATH, 0777, true);
+
+require __DIR__ . '/../../module/think/base.php';
 
 $app = Kernel::core();
 
