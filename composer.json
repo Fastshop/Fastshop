@@ -77,8 +77,8 @@
             "require": [
             ],
             "recurse": true,
-            "replace": true,
-            "ignore-duplicates": false,
+            "replace": false,
+            "ignore-duplicates": true,
             "merge-dev": false,
             "merge-extra": true,
             "merge-extra-deep": true,
