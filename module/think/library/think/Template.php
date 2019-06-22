@@ -130,6 +130,35 @@ class Template
         $this->config[$name] = $value;
     }
 
+    public function make($template)
+    {
+        static $namespace;
+        $template = $this->parseTemplateFile($template);
+        if ($template) {
+
+            $tplpath = realpath(APP_PATH . $template) ?: realpath($template);
+            $tplname = substr($tplpath, strlen(realpath($this->config('view_path'))) + 1);
+            $path = dirname($this->config('view_path')) . "/views/";
+            if (!isset($namespace)) {
+                $namespace = \View::addNamespace('tp', $path);
+            }
+
+            $cacheFile = $path . str_replace('.html', ".blade.php", $tplname);
+            $name = str_replace(['.html', '/'], ['', '.'], $tplname);
+
+
+            if (!file_exists($cacheFile) || filemtime($cacheFile) < filemtime($tplpath) || $_GET['debug'] == 'tpl') {
+                $content = file_get_contents($tplpath);
+                $this->compiler($content, $cacheFile);
+            }
+            return "tp::$name";
+
+        } else {
+            kd('template not found', get_defined_vars());
+        }
+
+    }
+
     /**
      * 渲染模板文件
      *
@@ -159,41 +188,23 @@ class Template
 //            }
 //        }
 
-        $template = $this->parseTemplateFile($template);
-        if ($template) {
 
-            $tplpath = realpath(APP_PATH . $template) ?: realpath($template);
-            $tplname = substr($tplpath,strlen(realpath($this->config('view_path')))+1 );
-            static $namespace;
-            $path = dirname($this->config('view_path'))."/views/";
-            if(!isset($namespace)){
-                $namespace = \View::addNamespace('tpl', $path);
-            }
+        //kd($cacheFile,file_get_contents($cacheFile));
 
-            $cacheFile = $path . str_replace('.html', ".blade.php", $tplname);
-            $name = str_replace(['.html', '/'], ['', '.'], $tplname);
-
-
-            if (!file_exists($cacheFile) || filemtime($cacheFile) < filemtime($tplpath) || $_GET['debug'] == 'tpl') {
-                $content = file_get_contents($tplpath);
-                $this->compiler($content, $cacheFile);
-            }
-
-            //kd($cacheFile,file_get_contents($cacheFile));
-
-            //$view = view("$pre::$name");
-            //kd($view);
+        //$view = view("$pre::$name");
+        //kd($view);
 
 //            if (\Blade::isExpired($view->getPath())) {
 //                \Blade::compile($view->getPath());
 //            }
 
-            echo view("tpl::$name")->with($this->data)->render();
+        $name = $this->make($template);
+        echo view($name)->with($this->data)->render();
 
-            return;
+        return;
 
 
-            //           kd($view->getPath());
+        //           kd($view->getPath());
 
 
 //                $cacheFile = $this->config['cache_path'] . $this->config['cache_prefix'] . md5($this->config['layout_name'] . $template) . '.' .
@@ -210,7 +221,7 @@ class Template
 //
 //            kd($tplname);
 
-            // 页面缓存
+        // 页面缓存
 //            ob_start();
 //            ob_implicit_flush(0);
 //            // 读取编译存储
@@ -222,9 +233,7 @@ class Template
 //                Cache::set($this->config['cache_id'], $content, $this->config['cache_time']);
 //            }
 //            echo $content;
-        } else {
-            kd('template not found', get_defined_vars());
-        }
+
     }
 
     /**
@@ -361,16 +370,15 @@ class Template
             $content = preg_replace($find, $replace, $content);
         }
 
-        $content = preg_replace_callback("#<\?php\s+echo\s+(.+?)[\s\;]*?\?>#is",function($test){
-            $test[1] = trim(trim($test[1]),';');
+        $content = preg_replace_callback("#<\?php\s+echo\s+(.+?)[\s\;]*?\?>#is", function ($test) {
+            $test[1] = trim(trim($test[1]), ';');
             return "{{ $test[1] }}";
-        },$content);
+        }, $content);
 
-        if(0){
+        if (0) {
             // 优化生成的php代码
             $content = preg_replace('/\?>\s*<\?php\s(?!echo\b)/s', '', $content);
         }
-
 
 
         // 模板过滤输出
@@ -652,11 +660,16 @@ class Template
                 //支持加载变量文件名
                 $templateName = $this->get(substr($templateName, 1));
             }
-            $template = $this->parseTemplateFile($templateName);
-            if ($template) {
-                // 获取模板文件内容
-                $parseStr .= file_get_contents($template);
-            }
+            //kd($templateName,);
+
+            $name = $this->make($templateName);
+            $parseStr .= "@include('$name')\n";
+
+//            $template = $this->parseTemplateFile($templateName);
+//            if ($template) {
+//                // 获取模板文件内容
+//                $parseStr .= file_get_contents($template);
+//            }
         }
         return $parseStr;
     }

@@ -21,7 +21,270 @@
 </head>
 <body>
 <!--header-s-->
-@include('tp::public.header')
+<link rel="stylesheet" type="text/css" href="/assets/static/css/base.css"/>
+<link rel="shortcut icon" type="image/x-icon" href="{{ $tpshop_config['shop_info_store_ico'] ?: '/public/static/images/logo/storeico_default.png' }}" media="screen"/>
+<div class="tpshop-tm-hander">
+	<div class="top-hander">
+		<div class="w1224 pr clearfix">
+			<div class="fl">
+			    @if(strtolower(ACTION_NAME) != 'goodsinfo') 
+                      <link rel="stylesheet" href="/assets/static/css/location.css" type="text/css"><!-- 收货地址，物流运费 -->
+                      <div class="sendaddress pr fl">
+                          <span>送货至：</span>
+                          <!-- <span>深圳<i class="share-a_a1"></i></span>-->
+                          <span>
+                              <ul class="list1">
+                                  <li class="summary-stock though-line">
+                                      <div class="dd" style="border-right:0px;width:200px;">
+                                          <div class="store-selector add_cj_p">
+                                              <div class="text"><div></div><b></b></div>
+                                              <div onclick="$(this).parent().removeClass('hover')" class="close"></div>
+                                          </div>
+                                      </div>
+                                  </li>
+                              </ul>
+                          </span>
+                      </div>
+					<script src="/public/js/locationJson.js"></script>
+				  	<script src="/assets/static/js/location.js"></script>
+					<script>doInitRegion();</script>
+                 @endif 
+				<div class="fl nologin">
+					<a class="red" href="{{ U('Home/user/login') }}">登录</a>
+					<a href="{{ U('Home/user/reg') }}">注册</a>
+				</div>
+				<div class="fl islogin hide">
+					<a class="red userinfo" href="{{ U('Home/user/index') }}"></a>
+					<a  href="{{ U('Home/user/logout') }}"  title="退出" target="_self">安全退出</a>
+				</div>
+			</div>
+			<ul class="top-ri-header fr clearfix">
+				<li><a target="_blank" href="{{ U('Home/Order/order_list') }}">我的订单</a></li>
+				<li class="spacer"></li>
+				<li><a target="_blank" href="{{ U('Home/User/visit_log') }}">我的浏览</a></li>
+				<li class="spacer"></li>
+				<li><a target="_blank" href="{{ U('Home/User/goods_collect') }}">我的收藏</a></li>
+				<li class="spacer"></li>
+				<li><a target="_blank" href="http://help.tp-shop.cn/Index/Help/channel/cat_id/5.html">帮助中心</a></li>
+				<li class="spacer"></li>
+				<li class="hover-ba-navdh">
+					<div class="nav-dh">
+						<span>网站导航</span>
+						<i class="share-a_a1"></i>
+					</div>
+					<ul class="conta-hv-nav clearfix">
+                        <li>
+                            <a href="{{ U('Home/Activity/promoteList') }}">优惠活动</a>
+                        </li>
+                        <li>
+                            <a href="{{ U('Home/Activity/pre_sell_list') }}">预售活动</a>
+                        </li>
+                        <!--<li>
+                            <a href="{{ U('Home/Goods/integralMall') }}">拍卖活动</a>
+                        </li>-->
+                        <li>
+                            <a href="{{ U('Home/Goods/integralMall') }}">兑换中心</a>
+                        </li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="nav-middan-z w1224 clearfix">
+		<a class="ecsc-logo" href="{{ U('Home/index/index') }}">
+            <img src="{{ $tpshop_config['shop_info_store_logo'] ?: '/public/static/images/logo/pc_home_logo_default.png' }}"/>
+        </a>
+		<div class="ecsc-search">
+			<form id="searchForm" name="" method="get" action="{{ U('Home/Goods/search') }}" class="ecsc-search-form">
+				<input autocomplete="off" name="q" id="q" type="text" value="{{ \think\Request::instance()->param('q') }}" class="ecsc-search-input" placeholder="请输入搜索关键字...">
+				<button type="submit" class="ecsc-search-button">搜索</button>
+    			<div class="candidate p">
+                    <ul id="search_list"></ul>
+                </div>
+                <script type="text/javascript">
+                    ;(function($){
+                        $.fn.extend({
+                            donetyping: function(callback,timeout){
+                                timeout = timeout || 1e3;
+                                var timeoutReference,
+                                        doneTyping = function(el){
+                                            if (!timeoutReference) return;
+                                            timeoutReference = null;
+                                            callback.call(el);
+                                        };
+                                return this.each(function(i,el){
+                                    var $el = $(el);
+                                    $el.is(':input') && $el.on('keyup keypress',function(e){
+                                        if (e.type=='keyup' && e.keyCode!=8) return;
+                                        if (timeoutReference) clearTimeout(timeoutReference);
+                                        timeoutReference = setTimeout(function(){
+                                            doneTyping(el);
+                                        }, timeout);
+                                    }).on('blur',function(){
+                                        doneTyping(el);
+                                    });
+                                });
+                            }
+                        });
+                    })(jQuery);
+
+                    $('.ecsc-search-input').donetyping(function(){
+                        search_key();
+                    },500).focus(function(){
+                        var search_key = $.trim($('#q').val());
+                        if(search_key != ''){
+                            $('.candidate').show();
+                        }
+                    });
+                    $('.candidate').mouseleave(function(){
+                        $(this).hide();
+                    });
+
+                    function searchWord(words){
+                        $('#q').val(words);
+                        $('#searchForm').submit();
+                    }
+                    function search_key(){
+                        var search_key = $.trim($('#q').val());
+                        if(search_key != ''){
+                            $.ajax({
+                                type:'post',
+                                dataType:'json',
+                                data: {key: search_key},
+                                url:"{{ U('Home/Api/searchKey') }}",
+                                success:function(data){
+                                    if(data.status == 1){
+                                        var html = '';
+                                        $.each(data.result, function (n, value) {
+                                            html += '<li onclick="searchWord(\''+value.keywords+'\');"><div class="search-item">'+value.keywords+'</div><div class="search-count">约'+value.goods_num+'个商品</div></li>';
+                                        });
+                                        html += '<li class="close"><div class="search-count">关闭</div></li>';
+                                        $('#search_list').empty().append(html);
+                                        $('.candidate').show();
+                                    }else{
+                                        $('#search_list').empty();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                </script>
+			</form>
+			<div class="keyword clearfix">
+				@foreach( $tpshop_config['hot_keywords'] ?: [] as $k => $wd )
+
+				<a class="key-item" href="{{ U('Home/Goods/search',array('q'=>$wd)) }}" target="_blank">{{ $wd }}</a>
+				
+@endforeach
+			</div>
+		</div>
+		<div class="u-g-cart fr" id="hd-my-cart">
+			<a href="{{ U('Home/Cart/index') }}">
+			<div class="c-n fl">
+				<i class="share-shopcar-index"></i>
+				<span>我的购物车</span>
+				<em class="shop-nums" id="cart_quantity"></em>
+			</div>
+			</a>
+			<div class="u-fn-cart" id="show_minicart">
+				<div class="minicartContent" id="minicart">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="nav w1224 clearfix">
+		<div class="categorys home_categorys">
+			<div class="dt">
+				<a href="" target="_blank"><i class="share-a_a2"></i>全部商品分类</a>
+			</div>
+			<!--全部商品分类-s-->
+			<div class="dd">
+				<div class="cata-nav" id="cata-nav">
+				 @foreach( $goods_category_tree ?: [] as $kr => $v )
+
+					<div class="item">
+						@if($v['level'] == 1) 
+						<div class="item-left">
+							<h3 class="cata-nav-name">
+								<div class="cata-nav-wrap">
+									<i class="ico ico-nav-{{ $kr-1 }}"></i>
+									<a href="{{ U('Home/Goods/goodsList',array('id'=>$v['id'])) }}" title="{{ $v['name'] }}">{{ $v['mobile_name'] }}</a>
+								</div>
+								<!--<a href="" >手机店</a>-->
+							</h3>
+						</div>
+						 @endif 
+						<div class="cata-nav-layer">
+							<div class="cata-nav-left">
+								 <!-- 如果没有热门分类就隐藏 --> 
+								 @if(count((array)$v['hot_cate']) < 1) 
+								  @endif 
+								<div class="cata-layer-title" @if(count((array)$v['hot_cate']) == 0) style="display:none" @endif >
+									@foreach( $v['hot_cate'] ?: [] as $key => $hc )
+
+									<a class="layer-title-item" href="{{ U('Home/Goods/goodsList',['id'=>$hc['id']]) }}">{{ $hc['name'] }}<i class="ico ico-arrow-right">></i></a>
+									
+@endforeach
+								</div>
+							 
+								<div class="subitems">
+									@foreach( $v['tmenu'] ?: [] as $k2 => $v2 )
+
+									@if($v2['parent_id'] == $v['id']) 
+										<dl class="clearfix">
+											<dt><a href="{{ U('Home/Goods/goodsList',array('id'=>$v2['id'])) }}" target="_blank">{{ $v2['name'] }}</a></dt>
+											<dd class="clearfix">
+												@foreach( $v2['sub_menu'] ?: [] as $k3 => $v3 )
+
+													@if($v3['parent_id'] == $v2['id']) 
+													<a href="{{ U('Home/Goods/goodsList',array('id'=>$v3['id'])) }}" target="_blank">{{ $v3['name'] }}</a>
+													 @endif 
+												
+@endforeach
+											</dd>
+										</dl>
+									 @endif 
+									
+@endforeach
+								</div>
+							</div>
+							<div class="advertisement_down">
+								 @foreach( tpl_adv("","5","","v3","key","100+$kr") as $key => $v3 ) 
+								<a href="{{ $v3['ad_link'] }}" @if($v3['target'] == 1) target="_blank" @endif >
+									<img class="w-100" src="{{ $v3['ad_code'] }}" title="{{ $v3['title'] }}"/>
+								</a>
+								 @endforeach 
+							</div>
+							 @foreach( tpl_adv("","1","","az","key","51") as $key => $az ) 
+							<a href="{{ $az['ad_link'] }}" class="cata-nav-rigth" @if($az['target'] == 1) target="_blank" @endif >
+								<img class="w-100" src="{{ $az['ad_code'] }}" title="{{ $az['title'] }}" />
+							</a>
+							 @endforeach 
+						</div>
+					</div>
+					
+@endforeach					
+				</div>
+				<script>
+					$('#cata-nav').find('.item').hover(function () {
+						$(this).addClass('nav-active').siblings().removeClass('nav-active');
+					},function () {
+						$(this).removeClass('nav-active');
+					})
+				</script>
+			</div>
+			<!--全部商品分类-e-->
+		</div>
+		<ul class="navitems clearfix" id="navitems">
+			<li @if(CONTROLLER_NAME == 'Index') class="selected" @endif ><a href="{{ U('Index/index') }}">首页</a></li>
+			 @foreach(tpl_query("SELECT * FROM `__PREFIX__navigation` where is_show = 1 and position = 'top' ORDER BY `sort` DESC") as $k=>$v) 
+			<li <?php if($_SERVER['REQUEST_URI']==str_replace('&amp;','&',$v['url'])){ echo "class='selected'";}?>>
+       			<a href="{{ $v['url'] }}" @if($v['is_new'] == 1) target="_blank"  @endif  >{{ $v['name'] }}</a>
+       		</li>
+			 @endforeach 
+		</ul>
+	</div>
+</div>
 
 <!--header-e-->
 <div class="search-box p">
@@ -423,7 +686,315 @@
     </div>
 </div>
 <!--搭配购组合套餐 s-->
-@include('tp::goods.goodsInfoCombination')
+
+<!--搭配购组合套餐 s-->
+<div class="Combination-set-meal p">
+</div>
+
+<script>
+    /**
+     * 获取搭配购商品
+     */
+    function getCombination() {
+        var goods_id = {{ $goods['goods_id'] }};
+        var item_id = $("input[name='item_id']").val();
+        var url = "/index.php?m=Home&c=Goods&a=combination";
+        $.ajax({
+            type: "Post",
+            url: url,
+            data: {goods_id: goods_id, item_id: item_id},
+            dataType: "json",
+            success: function (data) {
+                if (data.status == 1) {
+                    var str = combinationHtml(data.result)
+                    $('.Combination-set-meal').html(str);
+                    f()
+                }
+
+            }
+        });
+    }
+
+    function combinationHtml(result) {
+        var goods_id = {{ $goods['goods_id'] }};
+        var item_id = $("input[name='item_id']").val();
+        var html = '<div class="w1224">' +
+            '<div class="set-meal-wrap">' +
+            '<form action="" method="">' +
+            '<!--组合nav---s-->' +
+            '<div class="set-meal-nav">' +
+            '<ul class="p">'
+        $.each(result, function (i, o) {
+            var nav = i == 0 ? "meal-nav-li" : "";
+            html += '<li class="fl ' + nav + '">' + o.title + '</li>';
+        })
+
+        html += '</ul>' +
+            '</div>' +
+            '<!--组合nav---e-->' +
+            '<!--组合套餐内容---s-->'
+        $.each(result, function (i, o) {
+            var img =o.combination_goods[0]['original_img']?o.combination_goods[0]['original_img']:'/public/images/icon_goods_thumb_empty_300.png';
+            var price =(o.combination_goods[0]['original_price'] - o.combination_goods[0]['price']).toFixed(2);
+            html += '<div class="set-meal-cont">' +
+                '<div class="set-meal-list p">' +
+                '<div class="fl meal-one">' +
+                '<input type="hidden" class="combination_goods_ids" value="'+o.combination_goods[0]['goods_id']+'">' +
+                '<input type="hidden" class="combination_item_id" value="'+o.combination_goods[0]['item_id']+'">' +
+                '<input type="hidden" class="combination_id" value="'+o.combination_id+'">' +
+                '<a href="/index.php/Home/Goods/goodsInfo/id/'+o.combination_goods[0]['goods_id']+'">' +
+                '<div class="meal-img">' +
+                '<img src="'+img+'" />' +
+                '</div>' +
+                '<div class="meal-name">' +
+                o.combination_goods[0]['goods_name'] + o.combination_goods[0]['key_name'] +
+                '</div>' +
+                '<div class="meal-price original_price_one">￥<span>' +
+                o.combination_goods[0]['price'] +
+                '</span></div>' +
+                '</a>' +
+                '<div class="Collocations-money original_price_one_collocations">搭配省:￥<span>' + price + '</span></div>'+
+                '</div>' +
+                '<div class="fl jia-icon-wrap">' +
+                '<div class="meal-jia-icon">' +
+                '</div>' +
+                '</div>' +
+                '<div class="fl meal-jia-list">' +
+                '<div class="at-Bou-wrap mr_frbox">' +
+                '<div class="at-Boutique mr_frUl  at-que">' +
+                '<ul class="p ">';
+            $.each(o.combination_goods, function (ii, oo) {
+                var selected = '';
+                if(goods_id == oo.goods_id && item_id == oo.item_id){selected = 'checked'}
+
+                var price = (oo.original_price - oo.price).toFixed(2);
+                var img =oo.original_img?oo.original_img:'/public/images/icon_goods_thumb_empty_300.png';
+                if (ii != 0) {
+                    html += '<li class="fl">' +
+                        '<div class="bou-img">' +
+                        '<img src="'+img+'" />' +
+                        '</div>' +
+                        '<div class="pror-title">' +
+                        '<h3><a href="/index.php/Home/Goods/goodsInfo/id/'+oo.goods_id+'">' + oo.goods_name + oo.key_name + '</a></h3>' +
+                        '</div>' +
+                        '<div class="meal-price">' +
+                        '<div class="meal-price-radio">' +
+                        '<input type="checkbox" data-id="'+oo.goods_id+'" data-item="'+oo.item_id+'" onclick="clickGetPrice(this,' + oo.price + ',' + (oo.original_price - oo.price) + ')" ' + selected + ' id="price-radio1' + oo.goods_id + oo.combination_id +oo.item_id+ '" />' +
+                        '<label for="price-radio1' + oo.goods_id + oo.combination_id + oo.item_id+'" ></label>' +
+                        '</div>' +
+                        '￥<span>' + oo.price + '</span>' +
+                        '</div>';
+                    if (price != 0) {
+                        html += '<div class="Collocations-money">搭配省:￥<span>' + price + '</span></div>';
+                    }
+                    html += '</li>';
+                }
+            })
+            html += '</ul>' +
+                '<div  class="at-lef mr_frBtnL prev at-iconbts">' +
+                '<i></i>' +
+                '</div>' +
+                '<div  class="at-rig mr_frBtnR next  at-iconbts">' +
+                '<i ></i>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="fl jia-icon-wrap">' +
+                '<div class="meal-jia-icon jia-icon-dengyu">' +
+                '</div>' +
+                '</div>' +
+                '<div class="fl set-meal-right">' +
+                '<p class="set-meal-slect">已选择<span>1</span>件</p>' +
+                '<div class="Combination-price">组合价:<span>￥<i>0</i></span></div>' +
+                '<div class="Price-saving">共节省:￥<span>0</span></div>' +
+                '<div class="Purchase-immediately-btn">' +
+                '<input type="button" name="" id="" onclick="addCombinationShop(this,1)" value="立即购买" />' +
+                '<label></label>' +
+                '</div>' +
+                '<div class="add-Shopping-btn">' +
+                '<input type="button" name="" id="" onclick="addCombinationShop(this)" value="加入购物车" />' +
+                '<label></label>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                    '</div>' +
+                '<!--组合套餐内容---e-->'
+        })
+        html += '</form>' +
+            '</div>' +
+            '</div>'
+        return html;
+    }
+
+
+</script>
+<script type="text/javascript">
+    //			组合套餐商品轮播
+    //选中数量
+    function f() {
+
+
+        (function () {
+            var nowIndex = 0;
+            var timer = null;
+            var pretime = null;
+            var noxttime = null;
+            $(".at-lef").click(function () {
+                var this_obj = $(this);
+                clearTimeout(noxttime);//清除时间
+                noxttime = setTimeout(function () {
+                    oleft(this_obj);
+                }, 300)
+            });
+            $(".at-rig").click(function () {
+                var this_obj = $(this);
+                clearTimeout(pretime);
+                pretime = setTimeout(function () {
+                    oright(this_obj);
+                }, 300)
+            });
+
+            //点击往后
+            function oright(this_obj) {
+                this_obj.siblings("ul").find("li:last").insertBefore(this_obj.siblings("ul").find("li:first"));
+                this_obj.siblings("ul").animate({"left": "-165px"});
+                this_obj.siblings("ul").animate({"left": 0}, 1000, "backOut");
+                nowIndex--;
+                if (nowIndex < 0) {
+                    nowIndex = this_obj.siblings("ul").find("li").length - 1;
+                }
+            }
+
+            //点击往前
+            function oleft(this_obj) {
+                this_obj.siblings("ul").animate({"left": "-165px"}, 1000, "backIn", function () {
+                    this_obj.siblings("ul").find("li:first").appendTo(this_obj.siblings("ul"));
+                    this_obj.siblings("ul").animate({"left": "0"}, 0);
+                });
+                nowIndex++;
+                if (nowIndex > this_obj.siblings("ul").find("li").length - 1) {
+                    nowIndex = 0;
+                }
+            }
+
+            //			导航切换
+            $(".set-meal-cont").eq(0).show();
+            CombinationPrice = $('.original_price_one').eq(0).find('span').text();//默认主商品的市场价
+            PriceSaving = $('.original_price_one_collocations').eq(0).find('span').text();//默认主商品的优惠价
+            $('.Price-saving').eq(0).find('span').text(PriceSaving);//默认主商品的优惠价
+            eachIput($('.at-que').eq(0).find('input[type=checkbox]'));
+            $('.Combination-price').eq(0).find('i').text(CombinationPrice);
+            $('.Price-saving').eq(0).find('span').text(PriceSaving);
+            $('.set-meal-slect').eq(0).find('span').text(num);
+            $(".set-meal-nav li").click(function () {
+                var index = $(this).index();
+                CombinationPrice = $('.original_price_one').eq(index).find('span').text();
+                PriceSaving = $('.original_price_one_collocations').eq(index).find('span').text();
+                $('.Price-saving').eq(index).find('span').text(PriceSaving);
+                eachIput($('.at-que').eq(index).find('input[type=checkbox]'));
+                $('.Combination-price').eq(index).find('i').text(CombinationPrice);
+                $('.Price-saving').eq(index).find('span').text(PriceSaving);
+                $('.set-meal-slect').eq(index).find('span').text(num);
+                $(".set-meal-nav li").removeClass("meal-nav-li");
+                $(this).addClass("meal-nav-li");
+                $(".set-meal-cont").hide();
+                $(".set-meal-cont").eq(index).show()
+
+            })
+
+        })();
+
+    }
+
+    //遍历默认选中的
+    function eachIput(data) {
+        num = 1;
+        data.each(function (i) {
+            var checked = $(this).context.checked;
+            if (checked) {
+                var val = $(this).parents(".meal-price").find('span').text();
+                var saving = $(this).parents(".meal-price").next().find('span').text();
+                CombinationPrice = (CombinationPrice - 0) + (val - 0);
+                PriceSaving = (PriceSaving - 0) + (saving - 0);
+                num++;
+            }
+        });
+    }
+
+    //选中获取价格
+    function clickGetPrice(e, price, saving) {
+        var parents = $(e).parents(".set-meal-cont");
+        var CombinationCount = parents.find('.Combination-price').find('i').text();
+        var PriceCount = parents.find('.Price-saving').find('span').text();
+        if ($(e).attr('checked')) {
+            $(e).removeAttr('checked')
+            parents.find('.Combination-price').find('i').text((CombinationCount - price).toFixed(2));
+            parents.find('.Price-saving').find('span').text((PriceCount - saving).toFixed(2));
+            num--
+            parents.find('.set-meal-slect').find('span').text(num);
+        } else {
+            $(e).attr('checked', 'checked')
+            parents.find('.Combination-price').find('i').text((CombinationCount - 0 + price).toFixed(2));
+            parents.find('.Price-saving').find('span').text((PriceCount - 0 + saving).toFixed(2));
+            num++
+            parents.find('.set-meal-slect').find('span').text(num);
+        }
+    }
+
+    function addCombinationShop(e,t) {
+        var a = $(e).parents('.set-meal-cont').find('.at-que').find('input[type=checkbox]');
+        var n = 0;
+        var arr = new Array();
+        var address = $('#dispatching_msg').attr('region_id');
+        var combination = {goods_id:$(e).parents('.set-meal-cont').find('.combination_goods_ids').val(),item_id:$(e).parents('.set-meal-cont').find('.combination_item_id').val(),'region_id':address};
+        arr.push(combination) ;
+        var combination_id = $(e).parents('.set-meal-cont').find('.combination_id').val();
+        $.each(a,function (i,o) {
+            var checked = $(this).context.checked;
+            if (checked) {
+                var combination_goods_ids = {goods_id:$(this).attr('data-id'),item_id:$(this).attr('data-item'),'region_id':address};
+                arr.push(combination_goods_ids) ;
+                n++;
+            }
+        });
+
+        if(n==0){
+            alert('请至少勾选一个商品');
+            return false;
+        }else{
+            $.ajax({
+                type: "Post",
+                url: "{{ U('Home/Cart/addCombination') }}",
+                data: {combination_id: combination_id, combination_goods: arr,num:1},
+                dataType: "json",
+                success: function (data) {
+
+                    if (data.status == 1) {
+                        if(t==1){
+                            location.href = "/index.php?m=Home&c=Cart&a=index";
+                            return false;
+                        }else{
+                            layer.open({
+                                type: 2,
+                                title: '温馨提示',
+                                skin: 'layui-layer-rim', //加上边框
+                                area: ['490px', '386px'], //宽高
+                                content: "/index.php?m=Home&c=Goods&a=open_add_cart"
+                            });
+                        }
+
+                    }else{
+                        layer.msg(data.msg, {icon: 2});
+                    }
+
+                }
+            });
+        }
+
+    }
+
+</script>
 
 <!--搭配购组合套餐 e-->
 <div class="detail-main p">
@@ -461,8 +1032,348 @@
                 </div>
             </div>
         </div>
-        @include('tp::goods.goodsInfoDetail')
+        <div class="deta-ri-ma">
+    <div class="introduceshop">
+        <div id="datail-nav-top" class="datail-nav-top">
+            <ul>
+                <li class="red"><a href="javascript:void(0);">商品介绍</a></li>
+                <li><a href="javascript:void(0);">规格及包装</a></li>
+                <li><a href="javascript:void(0);">评价<em>({{ $goods['comment_statistics']['total_sum'] }})</em></a></li>
+                <li><a href="javascript:void(0);" onclick="get_consult(0,1)">售后服务</a></li>
+            </ul>
+        </div>
+        <!--<div class="he-nav"></div>-->
+        <div class="shop-describe shop-con-describe p">
+            <div class="deta-descri">
+                <p class="shopname_de"><span>商品名称：</span><span>{{ $goods['goods_name'] }}</span></p>
+                <div class="ma-d-uli p">
+                    <ul>
+                        <li><span>货号：</span><span>{{ $goods['goods_sn'] }}</span></li>
+                        <?php $goods_attr_show_list = $goods->goodsAttr()->where('attr_index',1)->select(); ?>
+                         @foreach( $goods_attr_show_list ?: [] as $i => $goods_attr )
 
+                            <li><span>{{ $goods_attr['goods_attribute']['attr_name'] }}：</span><span>{{ $goods_attr['attr_value'] }}</span></li>
+                        
+@endforeach
+                    </ul>
+                </div>
+
+                <div class="moreparameter">
+                    <!--
+                    <a href="">跟多参数<em>>></em></a>
+                    -->
+                </div>
+            </div>
+            <div class="detail-img-b">
+                @if($goods['video']) 
+                    <video controls="controls" id="detail_video" preload="preload" onended="this.load();">
+                        <source src="{{ $goods['video'] }}" TYPE="video/mp4"/>
+                    </video>
+                 @endif 
+                {{ htmlspecialchars_decode($goods['goods_content']) }}
+            </div>
+        </div>
+        <div class="shop-describe shop-con-describe p" style="display: none;">
+            <div class="deta-descri">
+                <!--
+                <p class="shopname_de"><span>如果您发现商品信息不准确，<a class="de_cb" href="">欢迎纠错</a></span></p>
+                -->
+                <h2 class="shopname_de">属性</h2>
+                @foreach( $goods_attr_show_list ?: [] as $k => $v )
+
+                    <div class="twic_a_alon">
+                        <p class="gray_t">{{ $v['goods_attribute']['attr_name'] }}</p>
+                        <p>{{ $v['attr_value'] }}</p>
+                    </div>
+                
+@endforeach
+            </div>
+        </div>
+        <div class="shop-con-describe p" style="display: none;">
+            <div class="shop-describe p">
+                <div class="comm_stsh ma-to-20">
+                    <div class="deta-descri">
+                        <h2>商品评价</h2>
+                    </div>
+                </div>
+                <div class="deta-descri p">
+                    <ul class="tebj">
+                        <li class="percen"><span>{{ $goods['comment_statistics']['high_rate'] }}%</span></li>
+                        <li class="co-cen">
+                            <div class="comm_gooba">
+                                <div class="gg_c">
+                                    <span class="hps">好评</span>
+                                    <span class="hp">（{{ $goods['comment_statistics']['high_rate'] }}%）</span>
+                                            <span class="zz_rg"><i
+                                                    style="width: {{ $goods['comment_statistics']['high_rate'] }}%;"></i></span>
+                                </div>
+                                <div class="gg_c">
+                                    <span class="hps">中评</span>
+                                    <span class="hp">（{{ $goods['comment_statistics']['center_rate'] }}%）</span>
+                                            <span class="zz_rg"><i
+                                                    style="width: {{ $goods['comment_statistics']['center_rate'] }}%;"></i></span>
+                                </div>
+                                <div class="gg_c">
+                                    <span class="hps">差评</span>
+                                    <span class="hp">（{{ $goods['comment_statistics']['low_rate'] }}%）</span>
+                                            <span class="zz_rg"><i
+                                                    style="width: {{ $goods['comment_statistics']['low_rate'] }}%;"></i></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="tjd-sum">
+                            <!--<p class="tjd">推荐点：</p>-->
+                            <div class="tjd-a">
+                                买家评论事项：购买后有什么问题, 满意, 或者不不满, 都可以在这里评论出来, 这里评论全部源于真实的评论.
+                            </div>
+                        </li>
+                        <li class="te-cen">
+                            <div class="nchx_com">
+                                <p>您可以对已购的商品进行评价</p>
+                                <a class="jfnuv" href="{{ U('Home/Order/comment') }}">发表评论</a>
+                                <!--<p class="xja"><span>详见</span><a class="de_cb" href="">积分规则</a></p>-->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="deta-descri p">
+                    <div class="cte-deta">
+                        <ul id="fy-comment-list">
+                            <li data-t="1" class="red">
+                                <a href="javascript:void(0);"
+                                   class="selected">全部评论（{{ $goods['comment_statistics']['total_sum'] }}）</a>
+                            </li>
+                            <li data-t="2">
+                                <a href="javascript:void(0);">好评（{{ $goods['comment_statistics']['high_sum'] }}）</a>
+                            </li>
+                            <li data-t="3">
+                                <a href="javascript:void(0);">中评（{{ $goods['comment_statistics']['center_sum'] }}）</a>
+                            </li>
+                            <li data-t="4">
+                                <a href="javascript:void(0);">差评（{{ $goods['comment_statistics']['low_sum'] }}）</a>
+                            </li>
+                            <li data-t="5">
+                                <a href="javascript:void(0);">有图（{{ $goods['comment_statistics']['img_sum'] }}）</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="line-co-sunall" id="ajax_comment_return">
+                </div>
+            </div>
+        </div>
+        <div class="shop-con-describe p" style="display: none;">
+            <div class="shop-describe p">
+                <div class="comm_stsh ma-to-20">
+                    <div class="deta-descri">
+                        <h2>售后保障</h2>
+                    </div>
+                </div>
+                <div class="deta-descri p">
+                    <div class="securi-afr">
+                        <ul>
+                            <li class="frhe"><i class="detai-ico msz1"></i></li>
+                            <li class="wnuzsuhe">
+                                <h2>卖家服务</h2>
+                                <p>全国联保一年</p>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li class="frhe"><i class="detai-ico msz2"></i></li>
+                            <li class="wnuzsuhe">
+                                <h2>商城承诺</h2>
+                                <p>商城平台卖家销售并发货的商品，由平台卖家提供发票和相应的售后服务。请您放心购买！
+                                    注：因厂家会在没有任何提前通知的情况下更改产品包装、产地或者一些附件，本司不能确保客户收到的货物与商城图片、产地、附件说明完全一致。
+                                    只能确保为原厂正货！并且保证与当时市场上同样主流新品一致。若本商城没有及时更新，请大家谅解！</p>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li class="frhe"><i class="detai-ico msz3"></i></li>
+                            <li class="wnuzsuhe">
+                                <h2>正品行货</h2>
+                                <p>商城向您保证所售商品均为正品行货，商城自营商品开具机打发票或电子发票。</p>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li class="frhe"><i class="detai-ico msz4"></i></li>
+                            <li class="wnuzsuhe">
+                                <h2>全国联保</h2>
+                                <p>凭质保证书及商城发票，可享受全国联保服务（奢侈品、钟表除外；奢侈品、钟表由联系保修，享受法定三包售后服务），与您亲临商场选购的商品享
+                                    受相同的质量保证。商城还为您提供具有竞争力的商品价格和运费政策，请您放心购买！ </p>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li class="frhe"><i class="detai-ico msz5"></i></li>
+                            <li class="wnuzsuhe">
+                                <h2>退货无忧</h2>
+                                <p>客户购买商城自营商品7日内（含7日，自客户收到商品之日起计算），在保证商品完好的前提下，可无理由退货。（部分商品除外，详情请见各商品细则）</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="comm_stsh ma-to-20">
+                    <div class="deta-descri">
+                        <h2>退款说明</h2>
+                    </div>
+                </div>
+                <div class="deta-descri p">
+                    <div class="fetbajc">
+                        <p>1.若您购买的家电商品已经拆封过，需要退换货，需请联系原厂开具鉴定检测单</p>
+                        <p>2.签收商品隔日起七日内提交退货申请，2-3天快递员与您联系安排取回商品</p>
+                        <p>3.商品退回检验，且必须附上检测单</p>
+                        <p>5.若退回商品有缺件、影响二次销售状况时，退款作业将暂时停止，飞牛网会依商品状况报价，后由客服人员与您联系说明并于订单内扣除费用后退回剩余款项，
+                            或您可以取消退货申请；若符合退货条件者将于商品取回后约1-2个工作日内完成退款</p>
+                        <p>4.通过线上支付的订单办理退货，商品退回检验无误后，商城将提交退款申请, 实际款项会依照各银行作业时间返还至您原支付方式 若您采用货到付款，请于
+                            办理退货时提供退款账户，亦于商品退回检验无误后，将退款汇至您的银行账户中</p>
+                    </div>
+                </div>
+            </div>
+            <!--商品咨询-status-->
+            <div class="consult-h" id="consult-h">
+                <div class="consult-menus">
+                    <a class="consult-ac" href="javascript:;" onclick="get_consult(0,1)">全部咨询</a>
+                    <a href="javascript:;" onclick="get_consult(1,1)">商品咨询</a>
+                    <a href="javascript:;" onclick="get_consult(2,1)">支付</a>
+                    <a href="javascript:;" onclick="get_consult(3,1)">配送</a>
+                    <a href="javascript:;" onclick="get_consult(4,1)">售后</a>
+                    <input type="hidden" name="type" id="type" value="0"/>
+                </div>
+                <div class="consult-cont">
+                    <div class="consult-item">
+                        <div class="consult-tips"><span class="c-orange">温馨提示：</span>
+                            因产线可能更改商品包装、产地、附配件等未及时通知，且每位咨询者购买、提问时间等不同。为此，客服给到的回复仅对提问者3天内有效，其他网友仅供参考！给您带来的不便还请谅解，谢谢！
+                        </div>
+                        <div id="consult_content">
+                        </div>
+                        <div class="publish-title">发表咨询</div>
+                        <form method="post" id="consultForm">
+                            <input type="hidden" name="goods_id" value="{{ $goods['goods_id'] }}"/>
+                            <div class="publish-cont">
+                                <p class="check-consult-tpye">
+                                    商品咨询：
+                                    <label> <input type="radio" name="consult_type" value="1"
+                                                   checked/>商品咨询</label>
+                                    <label> <input type="radio" name="consult_type" value="2"/>支付</label>
+                                    <label> <input type="radio" name="consult_type" value="3"/>配送</label>
+                                    <label> <input type="radio" name="consult_type" value="4"/>售后</label>
+                                </p>
+                                <div class="nickname">
+                                    昵称:
+                                    @if(empty($username)) 
+                                        <input type="text" name="username" placeholder="请输入昵称" value=""/>
+                                        @else
+                                        {{ $username }}
+                                        <input type="hidden" name="username" value="{{ $username }}" readonly/>
+                                     @endif 
+                                </div>
+                                        <textarea class="publish-des" placeholder="请在这里输入你要描述的信息" name="content"
+                                                  id="content"></textarea>
+                                <p class="v-code">
+                                    验证码:
+                                    <input type="text" name="verify_code" maxlength="4"/>
+                                    <img id="verify_code" width="80" height="40" onclick="verify()">
+                                </p>
+                                <input class="publish-btn" id="consult_submit" type="button"
+                                       value="提交"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--商品咨询-end-->
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        verify();
+        ajaxComment(1, 1);
+    });
+    // 普通 图形验证码
+    function verify() {
+        $('#verify_code').attr('src', '/index.php?m=Home&c=User&a=verify&type=consult&r=' + Math.random());
+    }
+    //商品评价
+    function ajaxComment(commentType, page) {
+        $.ajax({
+            type: "GET",
+            url: "/index.php?m=Home&c=goods&a=ajaxComment&goods_id={{ $goods['goods_id'] }}&commentType=" + commentType + "&p=" + page,//+tab,
+            success: function (data) {
+                $("#ajax_comment_return").html('').append(data);
+            }
+        });
+    }
+    var consult = $('#consult-h');
+    consult.find('.consult-item').eq(0).addClass('consult-ac');
+    consult.find('.consult-menus>a').click(function () {
+        $(this).addClass('consult-ac').siblings().removeClass('consult-ac');
+        consult.find('.consult-item').eq($(this).index()).addClass('consult-ac').siblings().removeClass('consult-ac');
+        $('.check-consult-tpye').find('a').eq($(this).index())
+    });
+    //商品咨询分页
+    $(document).on('click', '.pagination  a', function () {
+        var page = $(this).data('p');
+        var type = $('#type').val();
+        get_consult(type, page)
+    });
+
+    /**
+     * 获取商品咨询
+     * @param type  //咨询类型
+     * @param page  //分页
+     */
+    function get_consult(type, page) {
+        var goods_id = $("input[name='goods_id']").val();
+        var url = "/index.php?m=Home&c=Goods&a=ajax_consult";
+        $.ajax({
+            type: "get",
+            url: url,
+            data: {goods_id: goods_id, consult_type: type, p: page},
+            dataType: "html",
+            success: function (data) {
+                $('#consult_content').empty().append(data);
+            }
+        });
+    }
+
+    //商品咨询提交
+    $(document).on('click', '#consult_submit', function () {
+        var content = $.trim($('#content').val());
+        if (content.length > 500) {
+            layer.msg('咨询内容不得超过500字符！！', {icon: 3});
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: "{{ U('Goods/consult') }}",
+            data: $('#consultForm').serialize(),
+            dataType: "json",
+            success: function (data) {
+                if (data.status == 1) {
+                    layer.msg(data.msg, {icon: 1});
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            }
+        });
+    });
+
+    //商品介绍、规格及包装选项卡切换
+    $("#datail-nav-top ul li").click(function () {
+        $("#datail-nav-top").css("position", "static");
+        $("html,body").animate({scrollTop:$("#datail-nav-top").offset().top}, 300);
+        $(this).addClass('red').siblings().removeClass('red');
+        var er = $('.datail-nav-top ul li').index(this);
+        $('.shop-con-describe').eq(er).show().siblings('.shop-con-describe').hide();
+    })
+
+    // 好评差评 切换
+    $('.cte-deta ul li').click(function () {
+        $(this).addClass('red').siblings().removeClass('red');
+        commentType = $(this).data('t');// 评价类型   好评 中评  差评
+        ajaxComment(commentType, 1);
+    })
+</script>
     </div>
 </div>
 <script type="text/javascript">
@@ -484,10 +1395,239 @@
 
 </script>
 <!--footer-s-->
-@include('tp::public.footer')
+<div class="tpshop-service">
+	<ul class="w1224 clearfix">
+		<li>
+			<i class="ico ico-day7">{{ $tpshop_config['shopping_auto_service_date'] }}</i>
+			<p class="service">{{ $tpshop_config['shopping_auto_service_date'] }}天无理由退货</p>
+		</li>
+		<li>
+			<i class="ico ico-day15">15</i>
+			<p class="service">15天免费换货</p>
+		</li>
+		<li>
+			<i class="ico ico-quality"></i>
+			<p class="service">正品行货 品质保障</p>
+		</li>
+		<li>
+			<i class="ico ico-service"></i>
+			<p class="service">专业售后服务</p>
+		</li>
+	</ul>
+</div>
+<div class="footer">
+	<div class="w1224 clearfix" style="padding-bottom: 10px;">
+		<div class="left-help-list">
+			<div class="help-list-wrap clearfix">
+				 @foreach(tpl_query("select * from `__PREFIX__article_cat` where cat_id < 6  order by sort_order asc") as $k=>$v) 
+					<dl>
+						<dt>{{ $v['cat_name'] }}</dt>
+						 @foreach(tpl_query("select * from `__PREFIX__article` where cat_id = $v[cat_id]  and is_open=1 limit 5") as $k2=>$v2) 
+						<dd><a href="{{ U('Home/Article/detail',array('article_id'=>$v2['article_id'])) }}">{{ $v2['title'] }}</a></dd>
+						 @endforeach 
+					</dl>
+				 @endforeach 
+			</div>
+			<div class="friendship-links clearfix">
+	            <span>友情链接 : </span>
+                <div class="links-wrap-h clearfix">
+                 @foreach(tpl_query("select * from `__PREFIX__friend_link` where is_show=1") as $k=>$v) 
+                    <a href="{{ $v['link_url'] }}" @if($v['target'] == 1) target="_blank" @endif  >{{ $v['link_name'] }}</a>
+                 @endforeach 
+                </div>
+	        </div>	
+		</div>
+		<div class="right-contact-us">
+			<h3 class="title">联系我们</h3>
+			<span class="phone">{{ $tpshop_config['shop_info_phone'] }}</span>
+			<p class="tips">周一至周日8:00-18:00<br />(仅收市话费)</p>
+			<!--<div class="qr-code-list clearfix">-->
+				<!--<a class="qr-code" href="javascript:;"><img class="w-100" src="/assets/static/images/qrcode.png" alt="" /></a>-->
+				<!--<a class="qr-code qr-code-tpshop" href="javascript:;"><img class="w-100" src="/assets/static/images/qrcode.png" alt="" /></a>-->
+			<!--</div>-->
+		</div>
+	</div>
+    <div class="mod_copyright p">
+        <div class="grid-top">
+             @foreach(tpl_query("SELECT * FROM `__PREFIX__navigation` where is_show = 1 AND position = 'bottom' ORDER BY `sort` DESC") as $kk=>$vv) 
+                <a href="{{ $vv['url'] }}" @if($vv['is_new'] == 1)  target="_blank"  @endif  >{{ $vv['name'] }}</a><span>|</span>
+             @endforeach 
+            <!--<a href="javascript:void (0);">关于我们</a><span>|</span>-->
+            <!--<a href="javascript:void (0);">联系我们</a><span>|</span>-->
+            <!-- @foreach(tpl_query("select * from `__PREFIX__article` where cat_id = 5 and is_open=1") as $k=>$v) -->
+                <!--<a href="{{ U('Home/Article/detail',array('article_id'=>$v['article_id'])) }}">{{ $v['title'] }}</a>-->
+                <!--<span>|</span>-->
+            <!-- @endforeach -->
+        </div>
+        <p>Copyright © 2016-2025 {{ $tpshop_config['shop_info_store_name'] ?: 'TPshop商城' }} 版权所有 保留一切权利 备案号:<a href="http://www.miitbeian.gov.cn" >{{ $tpshop_config['shop_info_record_no'] }}</a></p>
+        <p class="mod_copyright_auth">
+            <a class="mod_copyright_auth_ico mod_copyright_auth_ico_1" href="" target="_blank">经营性网站备案中心</a>
+            <a class="mod_copyright_auth_ico mod_copyright_auth_ico_2" href="" target="_blank">可信网站信用评估</a>
+            <a class="mod_copyright_auth_ico mod_copyright_auth_ico_3" href="" target="_blank">网络警察提醒你</a>
+            <a class="mod_copyright_auth_ico mod_copyright_auth_ico_4" href="" target="_blank">诚信网站</a>
+            <a class="mod_copyright_auth_ico mod_copyright_auth_ico_5" href="" target="_blank">中国互联网举报中心</a>
+        </p>
+    </div>
+</div>
+<style>
+    .mod_copyright {
+        border-top: 1px solid #EEEEEE;
+    }
+    .grid-top {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .grid-top span {
+        margin: 0 10px;
+        color: #ccc;
+    }
+    .mod_copyright > p {
+        margin-top: 10px;
+        color: #666;
+        text-align: center;
+    }
+    .mod_copyright_auth_ico {
+        overflow: hidden;
+        display: inline-block;
+        margin: 0 3px;
+        width: 103px;
+        height: 32px;
+        background-image: url(/assets/static/images/ico_footer.png);
+        line-height: 1000px;
+    }
+    .mod_copyright_auth_ico_1 {
+        background-position: 0 -151px;
+    }
+    .mod_copyright_auth_ico_2 {
+        background-position: -104px -151px;
+    }
+    .mod_copyright_auth_ico_3 {
+        background-position: 0 -184px;
+    }
+    .mod_copyright_auth_ico_4 {
+        background-position: -104px -184px;
+    }
+    .mod_copyright_auth_ico_5 {
+        background-position: 0 -217px;
+    }
+</style>
+<script>
+    // 延时加载二维码图片
+    jQuery(function($) {
+        $('img[img-url]').each(function() {
+            var _this = $(this),
+                    url = _this.attr('img-url');
+            _this.attr('src',url);
+        });
+    });
+</script>
+<div class="soubao-sidebar">
+    <div class="soubao-sidebar-bg"></div>
+    <div class="sidertabs tab-lis-1">
+        <div class="sider-top-stra sider-midd-1">
+            <div class="icon-tabe-chan">
+                <a href="{{ U('Home/User/index') }}">
+                    <i class="share-side share-side1"></i>
+                    <i class="share-side tab-icon-tip triangleshow"></i>
+                </a>
 
-@include('tp::public.sidebar_cart')
+                <div class="dl_login">
+                    <div class="hinihdk">
+                        <img src="/assets/static/images/dl.png"/>
 
+                        <p class="loginafter nologin"><span>你好，请先</span><a href="{{ U('Home/user/login') }}">登录！</a></p>
+                        <!--未登录-e--->
+                        <!--登录后-s--->
+                        <p class="loginafter islogin">
+                            <span class="id_jq userinfo">陈xxxxxxx</span>
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="{{ U('Home/user/logout') }}" title="点击退出">退出！</a>
+                        </p>
+                        <!--未登录-s--->
+                    </div>
+                </div>
+            </div>
+            <div class="icon-tabe-chan shop-car">
+                <a href="javascript:void(0);" onclick="ajax_side_cart_list()">
+                    <div class="tab-cart-tip-warp-box">
+                        <div class="tab-cart-tip-warp">
+                            <i class="share-side share-side1"></i>
+                            <i class="share-side tab-icon-tip"></i>
+                            <span class="tab-cart-tip">购物车</span>
+                            <span class="tab-cart-num J_cart_total_num" id="tab_cart_num">0</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="icon-tabe-chan massage">
+                <a href="{{ U('Home/User/message_notice') }}" target="_blank">
+                    <i class="share-side share-side1"></i>
+                    <!--<i class="share-side tab-icon-tip"></i>-->
+                    <span class="tab-tip">消息</span>
+                </a>
+            </div>
+        </div>
+        <div class="sider-top-stra sider-midd-2">
+            <div class="icon-tabe-chan mmm">
+                <a href="{{ U('Home/User/goods_collect') }}" target="_blank">
+                    <i class="share-side share-side1"></i>
+                    <!--<i class="share-side tab-icon-tip"></i>-->
+                    <span class="tab-tip">收藏</span>
+                </a>
+            </div>
+            <div class="icon-tabe-chan hostry">
+                <a href="{{ U('Home/User/visit_log') }}" target="_blank">
+                    <i class="share-side share-side1"></i>
+                    <!--<i class="share-side tab-icon-tip"></i>-->
+                    <span class="tab-tip">足迹</span>
+                </a>
+            </div>
+            <!--<div class="icon-tabe-chan sign">-->
+                <!--<a href="" target="_blank">-->
+                    <!--<i class="share-side share-side1"></i>-->
+                    <!--&lt;!&ndash;<i class="share-side tab-icon-tip"></i>&ndash;&gt;-->
+                    <!--<span class="tab-tip">签到</span>-->
+                <!--</a>-->
+            <!--</div>-->
+        </div>
+    </div>
+    <div class="sidertabs tab-lis-2">
+        <div class="icon-tabe-chan advice">
+            <a title="点击这里给我发消息" href="tencent://message/?uin={{ $tpshop_config['shop_info_qq2'] }}&amp;Site=TPshop商城&amp;Menu=yes" target="_blank">
+                <i class="share-side share-side1"></i>
+                <!--<i class="share-side tab-icon-tip"></i>-->
+                <span class="tab-tip">在线咨询</span>
+            </a>
+        </div>
+        <!--<div class="icon-tabe-chan request">-->
+            <!--<a href="" target="_blank">-->
+                <!--<i class="share-side share-side1"></i>-->
+                <!--&lt;!&ndash;<i class="share-side tab-icon-tip"></i>&ndash;&gt;-->
+                <!--<span class="tab-tip">意见反馈</span>-->
+            <!--</a>-->
+        <!--</div>-->
+        <div class="icon-tabe-chan qrcode">
+            <a href="" target="_blank">
+                <i class="share-side share-side1"></i>
+                <i class="share-side tab-icon-tip triangleshow"></i>
+                <span class="tab-tip qrewm">
+                    <img img-url="/index.php?m=Home&c=Index&a=qr_code&data={{ $mobile_url }}&head_pic={{ $head_pic }}&back_img={{ $back_img }}"/>
+                    扫一扫下载APP
+                </span>
+            </a>
+        </div>
+        <div class="icon-tabe-chan comebacktop">
+            <a href="" target="_blank">
+                <i class="share-side share-side1"></i>
+                <!--<i class="share-side tab-icon-tip"></i>-->
+                <span class="tab-tip">返回顶部</span>
+            </a>
+        </div>
+    </div>
+    <div class="shop-car-sider">
+
+    </div>
+</div>
+<script src="/assets/static/js/common.js"></script>
 <!--看了又看-s-->
 <div style="display: none" id="look_see">
      @foreach(tpl_query("select goods_id,goods_name,shop_price from `__PREFIX__goods` where goods_id != $goods[goods_id] AND cat_id = $goods[cat_id] AND is_on_sale = 1 limit 12") as $k=>$look) 
