@@ -30,7 +30,7 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Exception  $exception
+     * @param \Exception $exception
      * @return void
      */
     public function report(Exception $exception)
@@ -41,15 +41,22 @@ class Handler extends ExceptionHandler
         if ($this->shouldReport($exception)) {
             Reporter::report($exception);
         }
-    
+        kd([
+            get_class($exception),
+            $exception->getMessage(),
+            $exception->getFile() . ":" . $exception->getLine(),
+            'ErrorCode:' . $exception->getCode(),
+            $exception->getTraceAsString()
+        ]);
+
         parent::report($exception);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param \Illuminate\Http\Request $request
+     * @param \Exception $exception
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception)

@@ -207,43 +207,48 @@ class Krumo {
         $showVersion = static::_config('display', 'show_version', true);
         $showCallInfo = static::_config('display', 'show_call_info', true);
         $krumoUrl = 'https://github.com/mmucklo/krumo';
-        
+
+        ob_start();
+
         //////////////////////
         // Start HTML header//
         //////////////////////
         print "<div class=\"krumo-root\">\n";
         print "\t<ul class=\"krumo-node krumo-first\">\n";
-        
+
         // The actual item itself
         static::_dump($data);
-        
+
         if($showVersion || $showCallInfo) {
             print "\t\t<li class=\"krumo-footnote\" onDblClick=\"toggle_expand_all();\">\n";
-            
+
             if($showCallInfo && isset($d['file']) && $d['file']) {
                 print "<span class=\"krumo-call\" style=\"white-space:nowrap;\">";
-                print "Called from <strong><code>".$d['file']."</code></strong>, ";
-                print "line <strong><code>".$d['line']."</code></strong></span>";
+                print "Called from <strong><code>".$d['file'].":{$d['line']}</code></strong></span> ";
+               // print "line <strong><code>".$d['line']."</code></strong>";
             }
-            
+
             if($showVersion) {
                 $version = static::version();
                 print "<span class=\"krumo-version\" style=\"white-space:nowrap;\">\n";
                 print "<strong class=\"krumo-version-number\">Krumo version $version</strong> | <a href=\"$krumoUrl\" target=\"_blank\">$krumoUrl</a>\n";
                 print "</span>\n";
             }
-            
+
             print "</li>";
         }
-        
+
         print "</ul></div>\n";
         print "<!-- Krumo - HTML -->\n\n";
-        
+
         // Output the CSS and JavaScript AFTER the HTML
         static::_css();
         ////////////////////
         // End HTML header//
         ////////////////////
+        $outpout = ob_get_clean();
+        $outpout = str_replace(realpath(__DIR__."/../../../"),'.',$outpout);
+        print $outpout;
         
         // flee the hive
         $_recursion_marker = static::_marker();
