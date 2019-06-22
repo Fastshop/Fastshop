@@ -1,5 +1,11 @@
 <?php
 /**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
+/**
  * tpshop
  * ============================================================================
  * * 版权所有 2015-2027 深圳搜豹网络科技有限公司，并保留所有权利。
@@ -125,13 +131,13 @@ function goods_thum_images($goods_id, $width, $height, $item_id = 0)
     }
 
     try {
-        require_once 'vendor/topthink/think-image/src/Image.php';
-        require_once 'vendor/topthink/think-image/src/image/Exception.php';
-        if (strstr(strtolower($original_img), '.gif')) {
-            require_once 'vendor/topthink/think-image/src/image/gif/Encoder.php';
-            require_once 'vendor/topthink/think-image/src/image/gif/Decoder.php';
-            require_once 'vendor/topthink/think-image/src/image/gif/Gif.php';
-        }
+//        require_once 'vendor/topthink/think-image/src/Image.php';
+//        require_once 'vendor/topthink/think-image/src/image/Exception.php';
+//        if (strstr(strtolower($original_img), '.gif')) {
+//            require_once 'vendor/topthink/think-image/src/image/gif/Encoder.php';
+//            require_once 'vendor/topthink/think-image/src/image/gif/Decoder.php';
+//            require_once 'vendor/topthink/think-image/src/image/gif/Gif.php';
+//        }
         $image = \think\Image::open($original_img);
 
         $goods_thumb_name = $goods_thumb_name . '.' . $image->type();
@@ -176,13 +182,13 @@ function get_sub_images($sub_img, $goods_id, $width, $height)
     }
 
     try {
-        require_once 'vendor/topthink/think-image/src/Image.php';
-        require_once 'vendor/topthink/think-image/src/image/Exception.php';
-        if (strstr(strtolower($original_img), '.gif')) {
-            require_once 'vendor/topthink/think-image/src/image/gif/Encoder.php';
-            require_once 'vendor/topthink/think-image/src/image/gif/Decoder.php';
-            require_once 'vendor/topthink/think-image/src/image/gif/Gif.php';
-        }
+//        require_once 'vendor/topthink/think-image/src/Image.php';
+//        require_once 'vendor/topthink/think-image/src/image/Exception.php';
+//        if (strstr(strtolower($original_img), '.gif')) {
+//            require_once 'vendor/topthink/think-image/src/image/gif/Encoder.php';
+//            require_once 'vendor/topthink/think-image/src/image/gif/Decoder.php';
+//            require_once 'vendor/topthink/think-image/src/image/gif/Gif.php';
+//        }
         $image = \think\Image::open($original_img);
 
         $goods_thumb_name = $goods_thumb_name . '.' . $image->type();
