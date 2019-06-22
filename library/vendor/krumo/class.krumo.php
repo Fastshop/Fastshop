@@ -961,7 +961,7 @@ class Krumo {
             
             print "<div class=\"krumo-nest\" $collapse_style>";
             print "<ul class=\"krumo-node\">";
-            print "<li class=\"krumo-child\"> <pre class=\"krumo-preview\"><code style='font-family:  monospace;line-height: 2;'>".$data.
+            print "<li class=\"krumo-child\"> <pre class=\"krumo-preview\" style='padding:1em;white-space: pre-wrap;word-wrap: break-word;'><code style='font-family:  monospace;line-height: 2;'>".$data.
                 "</code></pre></li>";
             print "</ul></div>";
         }

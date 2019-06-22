@@ -271,7 +271,7 @@
               </td>
               <td class="handle">
                 <div style="text-align:center;   min-width:120px !important; max-width:inherit !important;">
-                  <span style="margin-left:{{ ($vo[level] * 3) }}em" class="btn"><em><i class="fa fa-cog"></i>设置<i class="arrow"></i></em>
+                  <span style="margin-left:{{ ($vo['level'] * 3) }}em" class="btn"><em><i class="fa fa-cog"></i>设置<i class="arrow"></i></em>
                   <ul>
                     <li><a href="{{ U('Goods/addEditCategory',array('id'=>$vo['id'])) }}">编辑分类信息</a></li>
                     @if($vo['level'] < 3)                   
