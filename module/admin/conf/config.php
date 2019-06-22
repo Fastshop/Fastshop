@@ -1,11 +1,17 @@
 <?php
+/**
+ * @author Moshihui
+ * @email moshihui@gmail.com
+ * @qq 86146002
+ */
+
 return array(
-     'URL_HTML_SUFFIX'       =>  '',  // URL伪静态后缀设置
+    'URL_HTML_SUFFIX' => '',  // URL伪静态后缀设置
     // 'OUTPUT_ENCODE' =>  true, //页面压缩输出支持   配置了 没鸟用
-    'PAYMENT_PLUGIN_PATH' =>  PLUGIN_PATH.'payment',
-    'LOGIN_PLUGIN_PATH' =>  PLUGIN_PATH.'login',
-    'FUNCTION_PLUGIN_PATH' => PLUGIN_PATH.'function',
-	'SHOW_PAGE_TRACE' => true,
-	'CFG_SQL_FILESIZE'=>5242880,
-    'URL_MODEL'=>2, //
+    'PAYMENT_PLUGIN_PATH' => PLUGIN_PATH . 'payment',
+    'LOGIN_PLUGIN_PATH' => PLUGIN_PATH . 'login',
+    'FUNCTION_PLUGIN_PATH' => PLUGIN_PATH . 'function',
+    'SHOW_PAGE_TRACE' => true,
+    'CFG_SQL_FILESIZE' => 5242880,
+    'URL_MODEL' => 2, //
 );

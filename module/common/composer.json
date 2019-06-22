@@ -14,7 +14,6 @@
                 "App\\Common\\Providers\\CommonServiceProvider"
             ],
             "aliases": {
-                
             }
         }
     },

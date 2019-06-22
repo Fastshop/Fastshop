@@ -7,6 +7,14 @@ use Symfony\Component\VarDumper\VarDumper;
 use think\Config;
 use think\Request;
 
+
+
+if(!function_exists('logic')){
+    function logic($class){
+        return new $class;
+    }
+}
+
 if (!function_exists('root_path')) {
     function root_path($path = '')
     {

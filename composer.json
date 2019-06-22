@@ -100,7 +100,8 @@
             "encore/laravel-admin/src/helpers.php"
         ],
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "app\\": "module/"
         },
         "classmap": [
             "core/database/seeds",

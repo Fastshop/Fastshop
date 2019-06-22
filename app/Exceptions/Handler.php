@@ -32,22 +32,23 @@ class Handler extends ExceptionHandler
      *
      * @param \Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
         $_ENV = [];
         if (ob_get_length()) ob_end_clean();
 
-        if ($this->shouldReport($exception)) {
-            Reporter::report($exception);
-        }
-        kd([
-            get_class($exception),
-            $exception->getMessage(),
-            $exception->getFile() . ":" . $exception->getLine(),
-            'ErrorCode:' . $exception->getCode(),
-            $exception->getTraceAsString()
-        ]);
+//        if ($this->shouldReport($exception)) {
+//            Reporter::report($exception);
+//        }
+//        kd([
+//            get_class($exception),
+//            $exception->getMessage(),
+//            $exception->getFile() . ":" . $exception->getLine(),
+//            'ErrorCode:' . $exception->getCode(),
+//            $exception->getTraceAsString()
+//        ]);
 
         parent::report($exception);
     }

@@ -11,8 +11,10 @@
 |
 */
 
+use app\demo\controller\DemoTestController;
 use App\Demo\Http\Controllers\DemoController;
 
 Route::prefix('demo')->group(function() {
     Route::resource('/',  DemoController::class);
+    Route::any("test/{name?}/{action?}",DemoTestController::class);
 });

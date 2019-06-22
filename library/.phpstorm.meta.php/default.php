@@ -12,10 +12,10 @@ namespace PHPSTORM_META
     ]));
     
     override(\Logic(0), map([
-        '' => '@Logic',
+        '' => '@',
     ]));
     
     override(\logic(0), map([
-        '' => '@Logic',
+        '' => '@',
     ]));
 }
