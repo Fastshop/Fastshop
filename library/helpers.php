@@ -2,50 +2,60 @@
 
 use App\Kernel;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\View\Factory as ViewFactory;
 use Symfony\Component\VarDumper\VarDumper;
 use think\Config;
-use think\Request;
 
+if( !function_exists('check_table_prefix')) {
+    function check_table_prefix($name, $prefix)
+    {
+        $list = explode('_', $name);
+        $last = array_pop($list);
+        $list[] = $name;
+        if(class_exists(implode("\\", array_merge(['model'], $list)))) {
+            return '';
+        }
+        return $prefix;
+    }
 
+}
 
-if(!function_exists('logic')){
-    function logic($class){
+if( !function_exists('logic')) {
+    function logic($class)
+    {
         return new $class;
     }
 }
 
-if (!function_exists('root_path')) {
+if( !function_exists('root_path')) {
     function root_path($path = '')
     {
         return dirname(base_path()) . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 }
 
-if (!function_exists('tp_empty')):
+if( !function_exists('tp_empty')):
     function tp_empty($var)
     {
         return empty($var) || (is_object($var) && method_exists($var, 'isEmpty') && $var->isEmpty());
     }
 endif;
 
-if (!function_exists('request')) {
+if( !function_exists('request')) {
     /**
      * Get an instance of the current request or an input item from the request.
-     *
      * @param array|string|null $key
      * @param mixed $default
      * @return \Illuminate\Http\Request|string|array|\think\Request
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    function request($key = null, $default = null)
+    function request($key = NULL, $default = NULL)
     {
-        if (is_null($key)) {
+        if(is_null($key)) {
             //return Request::instance();
-             return app('request');
+            return app('request');
         }
 
-        if (is_array($key)) {
+        if(is_array($key)) {
             return app('request')->only($key);
         }
 
@@ -55,30 +65,29 @@ if (!function_exists('request')) {
     }
 }
 
-if (!function_exists('config')) {
+if( !function_exists('config')) {
     /**
      * 获取和设置配置参数
-     *
      * @param string|array $name 参数名
      * @param mixed $value 参数值
      * @param string $range 作用域
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    function config($name = '', $value = null, $range = '')
+    function config($name = '', $value = NULL, $range = '')
     {
 
-        if (Kernel::$kernel != null) {
+        if(Kernel::$kernel != NULL) {
             $config = _config($name);
-            if (isset($config)) {
+            if(isset($config)) {
                 return $config;
             }
         }
 
-        $return = null;
+        $return = NULL;
 
-        if (defined('THINK_PATH')) {
-            if (is_null($value) && is_string($name)) {
+        if(defined('THINK_PATH')) {
+            if(is_null($value) && is_string($name)) {
                 $return = 0 === strpos($name, '?') ? Config::has(substr($name, 1), $range) : Config::get($name, $range);
             } else {
                 $return = Config::set($name, $value, $range);
@@ -89,23 +98,22 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('_config')) {
+if( !function_exists('_config')) {
     /**
      * Get / set the specified configuration value.
      * If an array is passed as the key, we will assume you want to set an array of values.
-     *
      * @param array|string|null $key
      * @param mixed $default
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    function _config($key = null, $default = null)
+    function _config($key = NULL, $default = NULL)
     {
-        if (is_null($key)) {
+        if(is_null($key)) {
             return app('config');
         }
 
-        if (is_array($key)) {
+        if(is_array($key)) {
             return app('config')->set($key);
         }
 
@@ -115,7 +123,7 @@ if (!function_exists('_config')) {
     }
 }
 
-if (!function_exists('dump')) {
+if( !function_exists('dump')) {
     /**
      * @param $var
      * @param array $moreVars
@@ -126,9 +134,9 @@ if (!function_exists('dump')) {
     {
         // find caller
         $_ = debug_backtrace();
-        while ($d = array_pop($_)) {
+        while($d = array_pop($_)) {
             $function = strToLower($d['function']);
-            if (in_array($function, ["krumo", "k", "kd", 'dd', "dump"]) || (strToLower(@$d['class']) == 'krumo')) {
+            if(in_array($function, ["krumo", "k", "kd", 'dd', "dump"]) || (strToLower(@$d['class']) == 'krumo')) {
                 print "{$d['file']}:{$d['line']} \n";
                 break;
             }
@@ -136,11 +144,11 @@ if (!function_exists('dump')) {
 
         VarDumper::dump($var);
 
-        foreach ($moreVars as $v) {
+        foreach($moreVars as $v) {
             VarDumper::dump($v);
         }
 
-        if (1 < func_num_args()) {
+        if(1 < func_num_args()) {
             return func_get_args();
         }
 
@@ -150,7 +158,7 @@ if (!function_exists('dump')) {
     }
 }
 
-if (!function_exists('dd')) {
+if( !function_exists('dd')) {
     /**
      * @param mixed ...$vars
      * @return mixed
@@ -159,14 +167,14 @@ if (!function_exists('dd')) {
     {
         // find caller
         $_ = debug_backtrace();
-        while ($d = array_pop($_)) {
+        while($d = array_pop($_)) {
             $function = strToLower($d['function']);
-            if (in_array($function, ["krumo", "k", "kd", 'dd', "dump"]) || (strToLower(@$d['class']) == 'krumo')) {
+            if(in_array($function, ["krumo", "k", "kd", 'dd', "dump"]) || (strToLower(@$d['class']) == 'krumo')) {
                 print "{$d['file']}:{$d['line']} \n";
                 break;
             }
         }
-        foreach ($vars as $v) {
+        foreach($vars as $v) {
             VarDumper::dump($v);
         }
 
@@ -176,41 +184,41 @@ if (!function_exists('dd')) {
     }
 }
 
-if (!function_exists('isDingoApiRequest')) {
+if( !function_exists('isDingoApiRequest')) {
     function isDingoApiRequest()
     {
         $requestDomain = trim(request()->root(), '/');
         $prefix = config('api.prefix');
-        if (!empty($prefix)) {
+        if( !empty($prefix)) {
             $requestDomain = trim($requestDomain, '/') . '/' . trim($prefix, '/');
         }
         $strict = config('api.strict');
-        if ($strict) {
-            $strict = (getApiAcceptHeader() == request()->header('Accept')) ? true : false;
+        if($strict) {
+            $strict = (getApiAcceptHeader() == request()->header('Accept')) ? TRUE : FALSE;
         } else {
-            $strict = true; // always return true if not strict.
+            $strict = TRUE; // always return true if not strict.
         }
         return (
             starts_with($requestDomain, trim(getApiDomain(), '/'))
-            && (true == $strict)
+            && (TRUE == $strict)
         );
     }
 }
-if (!function_exists('getApiDomain')) {
+if( !function_exists('getApiDomain')) {
     function getApiDomain()
     {
         $uri = config('api.domain');
-        if (empty($uri)) {
+        if(empty($uri)) {
             $uri = config('app.url');
         }
         $prefix = config('api.prefix');
-        if (!empty($prefix)) {
+        if( !empty($prefix)) {
             $uri = trim($uri, '/') . '/' . trim($prefix, '/');
         }
         return $uri . '/';
     }
 }
-if (!function_exists('getApiAcceptHeader')) {
+if( !function_exists('getApiAcceptHeader')) {
     function getApiAcceptHeader()
     {
         return 'application/'
@@ -220,18 +228,17 @@ if (!function_exists('getApiAcceptHeader')) {
     }
 }
 
-if (!function_exists('app')) {
+if( !function_exists('app')) {
     /**
      * Get the available container instance.
-     *
      * @param string|null $abstract
      * @param array $parameters
      * @return mixed|\App\Kernel
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    function app($abstract = null, array $parameters = [])
+    function app($abstract = NULL, array $parameters = [])
     {
-        if (is_null($abstract)) {
+        if(is_null($abstract)) {
             return Container::getInstance();
         }
 

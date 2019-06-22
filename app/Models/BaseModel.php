@@ -20,6 +20,8 @@ class BaseModel extends Model
     const UPDATED_AT = NULL;
     const CREATED_AT = NULL;
 
+    protected $__tp_model;
+
     /**
      * @return static|\Illuminate\Database\Eloquent\Builder
      */
@@ -38,6 +40,6 @@ class BaseModel extends Model
         $shortClass = (new \ReflectionClass($this))->getShortName();
         $basename = preg_replace("/^tp_/", '', $this->table);
         $modelClass = str_replace('_', '', ucwords($basename, '_'));
-        return D($basename)->data($this->toArray());
+        return $this->__tp_model ?: $this->__tp_model = D($basename)->data($this->toArray());
     }
 }

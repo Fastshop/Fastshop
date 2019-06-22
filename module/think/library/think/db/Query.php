@@ -319,7 +319,7 @@ class Query
     {
         if($name || empty($this->table)) {
             $name = $name ?: $this->name;
-            $tableName = $this->prefix;
+            $tableName = check_table_prefix($name,$this->prefix) ;
             if($name) {
                 $tableName .= Loader::parseName($name);
             }
