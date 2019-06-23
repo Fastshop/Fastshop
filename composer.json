@@ -49,6 +49,7 @@
         "ichynul/configx": "^1.2"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-master",
         "barryvdh/laravel-ide-helper": "^2.6",
         "doctrine/dbal": "^2.9",
         "beyondcode/laravel-dump-server": "^1.0",
