@@ -86,7 +86,7 @@ class TestsController extends Controller
             if( !is_dir($concurrentDirectory = dirname($path)) && !mkdir($concurrentDirectory, 0777, TRUE)) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
             }
-            if( !file_exists($path) || $request->get('force')) {
+            if( !file_exists($path) || $request->get('force') === 'true') {
                 file_put_contents($path, str_replace(array_keys($replace), array_values($replace), $tpl));
                 dump($name);
             }
