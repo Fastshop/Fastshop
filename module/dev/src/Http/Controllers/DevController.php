@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class DevController extends Controller
-{
+class DevController extends Controller {
+
     /**
      * Display a listing of the resource.
      * @return Response
