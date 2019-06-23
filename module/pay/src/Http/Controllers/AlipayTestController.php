@@ -4,6 +4,7 @@ namespace App\Pay\Http\Controllers;
 use AlipayFundTransToaccountTransferRequest;
 use AopClient;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 
 class AlipayTestController extends Controller {
     
@@ -72,6 +73,6 @@ class AlipayTestController extends Controller {
 }
 JSON
         );
-        kd($result);
+        return response()->json($result);
     }
 }
