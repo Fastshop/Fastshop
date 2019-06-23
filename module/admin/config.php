@@ -10,7 +10,7 @@ return [
         // 模板引擎类型 支持 php think 支持扩展
         'type' => 'Think',
         // 模板路径
-        'view_path' => __DIR__.'/template/default/',// './application/admin/view/',
+        'view_path' => __DIR__ . '/template/default/',// './application/admin/view/',
         // 模板后缀
         'view_suffix' => 'html',
         // 模板文件名分隔符
@@ -28,7 +28,7 @@ return [
     'view_replace_str' => [
         '__PUBLIC__' => '/public',
         '__ROOT__' => '',
-        // '__STATIC__' => '/template/pc/default/Static',
+        '__STATIC__' => '/public',
     ],
     'PAYMENT_PLUGIN_PATH' => PLUGIN_PATH . 'payment',
     'LOGIN_PLUGIN_PATH' => PLUGIN_PATH . 'login',
@@ -44,10 +44,10 @@ return [
     'DATA_BACKUP_COMPRESS_LEVEL' => 9, //数据库备份文件压缩级别
     // URL伪静态后缀
     'url_html_suffix' => '',
-    'NEWS_TAG' => array(
+    'NEWS_TAG' => [
         '0' => '最新',
         '1' => '热门',
         '2' => '推荐',
-        '3' => '精品'
-    )
+        '3' => '精品',
+    ],
 ];

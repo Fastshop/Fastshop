@@ -1,12 +1,12 @@
 <?php
 
-namespace $CLASS_NAMESPACE$;
+namespace App\Dev\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Http\Controllers\Controller;
 
-class $CLASS$ extends Controller
+class DevController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class $CLASS$ extends Controller
      */
     public function index()
     {
-        return view('$LOWER_NAME$::index');
+        return view('dev::index');
     }
 
     /**
@@ -23,7 +23,7 @@ class $CLASS$ extends Controller
      */
     public function create()
     {
-        return view('$LOWER_NAME$::create');
+        return view('dev::create');
     }
 
     /**
@@ -43,7 +43,7 @@ class $CLASS$ extends Controller
      */
     public function show($id)
     {
-        return view('$LOWER_NAME$::show');
+        return view('dev::show');
     }
 
     /**
@@ -53,7 +53,7 @@ class $CLASS$ extends Controller
      */
     public function edit($id)
     {
-        return view('$LOWER_NAME$::edit');
+        return view('dev::edit');
     }
 
     /**

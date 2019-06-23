@@ -109,9 +109,9 @@
             "App\\Mobile\\": "module/mobile/src/",
             "App\\Demo\\": "module/demo/src/",
             "App\\Think\\": "module/think/src/",
+            "App\\Dev\\": "module/dev/src/",
             "App\\Home\\": "module/home/src/"
         },
-
         "classmap": [
             "core/database/seeds",
             "core/database/factories"
