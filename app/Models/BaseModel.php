@@ -15,12 +15,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel query()
  */
 class BaseModel extends Model {
-
-    const UPDATED_AT = NULL;
-    const CREATED_AT = NULL;
+    
+    const UPDATED_AT = null;
+    const CREATED_AT = null;
     protected $__tp_model;
     use AdminBuilder;
-
+    
     /**
      * @return static|\Illuminate\Database\Eloquent\Builder
      */
@@ -28,20 +28,20 @@ class BaseModel extends Model {
     {
         return new TableField();
     }
-
+    
     /**
      * @param array $data
      * @return static
      */
-    public static function as(&$data = NULL)
+    public static function as(&$data = null)
     {
         if(is_array($data) || empty($data)) {
             return new static($data ?: []);
-        } else {
-            return $data;
         }
+        
+        return $data;
     }
-
+    
     // public function fromJson($value, $asObject = FALSE)
     // {
     //     if( !$asObject) {
@@ -51,7 +51,7 @@ class BaseModel extends Model {
     //     return parent::fromJson($value, $asObject);
     //
     // }
-
+    
     /**
      * @return \think\db\Query
      * @throws \ReflectionException

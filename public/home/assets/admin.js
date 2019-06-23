@@ -25,8 +25,14 @@ $(function () {
         }
     });
 
-    var group = $('#adminmenu > .wp-has-current-submenu.group').attr('class').match(/group-\w+/)[0];
+    var group = 'group-main';
+    var kk = $('#adminmenu > .wp-has-current-submenu.group').attr('class');
+    if (kk) {
+        group = kk.match(/group-\w+/)[0];
+    }
     $('#wp-admin-bar-' + group + " a").trigger("click");
+
+
     //$('#wp-admin-bar-' + group).addClass('hover');
     //$('#wpadminbar .quicklinks .ab-top-menu li.group').show();
     $('#adminmenu').show();
