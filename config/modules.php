@@ -29,6 +29,7 @@ return [
         'files' => [
             'routes/web' => 'routes/web.php',
             'routes/api' => 'routes/api.php',
+            'console/command' => 'console/command.php',
             'views/index' => 'resources/views/index.blade.php',
             'views/master' => 'resources/views/layouts/master.blade.php',
             'scaffold/config' => 'config/config.php',
@@ -56,7 +57,7 @@ return [
                 'MODULE_NAMESPACE',
             ],
         ],
-        'gitkeep' => true,
+        'gitkeep' => false,
     ],
     'paths' => [
         /*
