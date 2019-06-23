@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * model\admin\admin_menu
+ *
  * @method \think\db\Query tp()
  * @property int $id
  * @property int $parent_id

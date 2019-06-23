@@ -46,6 +46,7 @@ return [
             'views/index' => ['LOWER_NAME'],
             'views/master' => ['LOWER_NAME', 'STUDLY_NAME'],
             'scaffold/config' => ['STUDLY_NAME'],
+            'provider' => ['STUDLY_NAME'],
             'composer' => [
                 'LOWER_NAME',
                 'STUDLY_NAME',

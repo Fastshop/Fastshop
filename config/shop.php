@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'name' => 'Shop'
+    'name' => 'Shop',
+    'domain' => 'shop.demo.pro',
 ];

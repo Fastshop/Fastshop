@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Models\BaseModel
+ *
  * @package shop.pro
  * @since 2019-06-16
  * @mixin \Eloquent

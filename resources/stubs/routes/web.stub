@@ -14,5 +14,11 @@
 use $MODULE_NAMESPACE$\$STUDLY_NAME$\Http\Controllers\$STUDLY_NAME$Controller;
 
 Route::prefix('$LOWER_NAME$')->group(function() {
-    Route::resource('/',  $STUDLY_NAME$Controller::class);
+    // Route::resource('/',  $STUDLY_NAME$Controller::class);
+    Route::any('/{name?}/{action?}/{extra?}', $STUDLY_NAME$Controller::class)
+        ->where([
+            'extra' => '[\w/\-]+',
+            'name' => '[\w\-]+',
+            'action' => '[\w\-]+',
+        ]);
 });

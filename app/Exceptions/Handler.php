@@ -36,19 +36,19 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        $_ENV = [];
+       // $_ENV = [];
         if (ob_get_length()) ob_end_clean();
 
-//        if ($this->shouldReport($exception)) {
-//            Reporter::report($exception);
-//        }
-//        kd([
-//            get_class($exception),
-//            $exception->getMessage(),
-//            $exception->getFile() . ":" . $exception->getLine(),
-//            'ErrorCode:' . $exception->getCode(),
-//            $exception->getTraceAsString()
-//        ]);
+       if ($this->shouldReport($exception)) {
+           Reporter::report($exception);
+       }
+       kd([
+           get_class($exception),
+           $exception->getMessage(),
+           $exception->getFile() . ":" . $exception->getLine(),
+           'ErrorCode:' . $exception->getCode(),
+           $exception->getTraceAsString()
+       ]);
 
         parent::report($exception);
     }
@@ -62,7 +62,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        $_ENV = [];
+        //$_ENV = [];
         if (ob_get_length()) ob_end_clean();
         return parent::render($request, $exception);
     }

@@ -14,6 +14,11 @@
 use App\Dev\Http\Controllers\DevController;
 
 Route::prefix('dev')->group(function() {
+    
     Route::any('/{name?}/{action?}/{extra?}', DevController::class)
-        ->where(['extra' => '[\w/]+']);
+        ->where([
+            'extra' => '[\w/\-]+',
+            'name' => '[\w\-]+',
+            'action' => '[\w\-]+',
+        ]);
 });
