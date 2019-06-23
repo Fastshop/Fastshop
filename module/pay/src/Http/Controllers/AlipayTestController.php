@@ -43,7 +43,9 @@ class AlipayTestController extends Controller {
     {
         $request = is_object($class) ? $class : new $class;
         $request->setBizContent(is_array($data) ? json_encode($data) : $data);
-        return $this->getClient()->execute($request);
+        $result =  $this->getClient()->execute($request);
+        $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
+        return $result->$responseNode;
     }
     
     public function index()

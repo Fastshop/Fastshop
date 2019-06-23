@@ -46,7 +46,8 @@
         "laravel-admin-ext/reporter": "^1.0",
         "laravel-admin-ext/media-manager": "^1.0",
         "laravel-admin-ext/redis-manager": "^1.0",
-        "ichynul/configx": "^1.2"
+        "ichynul/configx": "^1.2",
+        "ext-mcrypt": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
