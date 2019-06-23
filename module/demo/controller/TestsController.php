@@ -50,13 +50,24 @@ class TestsController extends Controller
             }
             $namespace = $list = explode('_', $name);
 
-            array_pop($namespace);
+            $last = array_pop($namespace);
             if($r = array_search('return', $namespace)) {
                 $namespace[ $r ] = 'returns';
             }
 
             $basename = preg_replace("/^tp_/", '', $name);
             $modelClass = str_replace('_', '', ucwords($basename, '_'));
+
+            if(count(explode('_', $basename)) == 1) {
+                $namespace[] = $last;
+            } else {
+                foreach($tables as $tname) {
+                    if(strpos($tname, $name . '_') === 0) {
+                        $namespace[] = $last;
+                        break;
+                    }
+                }
+            }
 
             // $tpclass = '\think\db\Query';
             // if(class_exists($_class = "\\app\\common\\model\\$modelClass")){
@@ -66,7 +77,7 @@ class TestsController extends Controller
             $path = root_path("model/" . implode('/', $namespace) . "/$name.php");
             //$path = str_replace(['/return/'],['/returns/'],$path);
             $replace = [
-                '__TPCLASS__' => '\\'. ($basename != $name ?  get_class(D($basename)) : 'think\db\Query'),
+                '__TPCLASS__' => '\\' . ($basename != $name ? get_class(D($basename)) : 'think\db\Query'),
                 '__NAMESPACE__' => implode('\\', array_merge(['model'], $namespace)),
                 '__CLASS__' => $name,
                 '__TABLE_NAME__' => $name,
