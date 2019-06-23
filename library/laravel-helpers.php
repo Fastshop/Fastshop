@@ -912,11 +912,11 @@ if (! function_exists('__L')) {
 if (! function_exists('url')) {
     /**
      * Generate a url for the application.
-     *
-     * @param  string  $path
-     * @param  mixed   $parameters
-     * @param  bool|null    $secure
+     * @param string $path
+     * @param mixed $parameters
+     * @param bool|null $secure
      * @return \Illuminate\Contracts\Routing\UrlGenerator|string
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function url($path = null, $parameters = [], $secure = null)
     {

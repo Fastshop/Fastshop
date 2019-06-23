@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Models;
 
 use App\Support\TableField;
+use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Models\BaseModel
- *
  * @package shop.pro
  * @since 2019-06-16
  * @mixin \Eloquent
@@ -15,12 +14,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel query()
  */
-class BaseModel extends Model
-{
+class BaseModel extends Model {
+
     const UPDATED_AT = NULL;
     const CREATED_AT = NULL;
-
     protected $__tp_model;
+    use AdminBuilder;
 
     /**
      * @return static|\Illuminate\Database\Eloquent\Builder
@@ -29,6 +28,29 @@ class BaseModel extends Model
     {
         return new TableField();
     }
+
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function as(&$data = NULL)
+    {
+        if(is_array($data) || empty($data)) {
+            return new static($data ?: []);
+        } else {
+            return $data;
+        }
+    }
+
+    // public function fromJson($value, $asObject = FALSE)
+    // {
+    //     if( !$asObject) {
+    //         return (array)parent::fromJson($value, $asObject);
+    //     }
+    //
+    //     return parent::fromJson($value, $asObject);
+    //
+    // }
 
     /**
      * @return \think\db\Query

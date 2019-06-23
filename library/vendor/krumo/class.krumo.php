@@ -213,6 +213,16 @@ class Krumo {
         //////////////////////
         // Start HTML header//
         //////////////////////
+        
+        
+        // Output the CSS and JavaScript AFTER the HTML
+        static $hook;
+        if(!isset($hook) && $hook = 1){
+            register_shutdown_function(function(){
+                static::_css();
+            });
+        }
+        
         print "<div class=\"krumo-root\">\n";
         print "\t<ul class=\"krumo-node krumo-first\">\n";
 
@@ -241,8 +251,7 @@ class Krumo {
         print "</ul></div>\n";
         print "<!-- Krumo - HTML -->\n\n";
 
-        // Output the CSS and JavaScript AFTER the HTML
-        static::_css();
+
         ////////////////////
         // End HTML header//
         ////////////////////
@@ -417,7 +426,7 @@ class Krumo {
     }
     
     public static function get_icon($name, $title) {
-        $path = dirname(__FILE__)."/icons/$name.png";
+        $path = __DIR__ ."/icons/$name.png";
         $rel =  static::base64_encode_image($path,'png');  //static::calculate_relative_path($path);
         
         $ret = "<img style=\"padding: 0 2px 0 2px\" src=\"$rel\" title=\"$title\" alt=\"name\" />";
@@ -799,7 +808,7 @@ class Krumo {
         
         // callback
         if(is_callable($data)) {
-            $_ = array_values($data());
+            $_ = array_values((array)$data);
             print "<span class=\"krumo-callback\"> |";
             print " (<em class=\"krumo-type\">Callback</em>) <strong class=\"krumo-string\">";
             
@@ -907,7 +916,7 @@ class Krumo {
                 $title .= "$slash_r ".static::plural($slash_r, "carriage return");
             }
             
-            // $icon = static::get_icon("information", $title);
+            $icon = static::get_icon("information", $title);
             
             // We flag this as extra so the dropdown can show the correctly formatted version
             $_extra = true;
@@ -1130,7 +1139,7 @@ class Krumo {
         }
         
         // print
-        if($_css = $css != '') {
+        if($_css = ($css != '')) {
             // See if there is a CSS path in the config
             $relative_krumo_path = static::calculate_relative_path(__FILE__, true);
             $css_url = static::_config('css', 'url', $relative_krumo_path);
@@ -1600,6 +1609,9 @@ class Krumo {
             return 'data:image/'.$filetype.';base64,'.base64_encode($imgbinary);
         }
     }
+    
+    static $result = [];
+    
 }
 
 /**
@@ -1610,9 +1622,18 @@ class Krumo {
  */
 if( ! function_exists("krumo")) {
     function krumo(...$_) {
-        $_ = func_get_args();
+        static $shutdown;
+        if(!isset($shutdown) && $shutdown = 1){
+            register_shutdown_function(function() {
+                echo implode("\n", Krumo::$result);
+            });
+        }
+        //$_ = func_get_args();
+        ob_start();
+        $return = call_user_func_array(['krumo', 'dump'], $_);
+        Krumo::$result[] = ob_get_clean();
+        return $return;
         
-        return call_user_func_array(['krumo', 'dump'], $_);
     }
 }
 

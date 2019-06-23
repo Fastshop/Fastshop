@@ -45,6 +45,10 @@ class MenuController extends Controller
                     if ((new $menuModel())->withPermission()) {
                         $form->select('permission', trans('admin.permission'))->options($permissionModel::pluck('name', 'slug'));
                     }
+                    $form->text('extra->group',"分组");
+                    $form->text('extra->slug',"Slug");
+                    $form->text('extra->admin_url',"Admin Url");
+
                     $form->hidden('_token')->default(csrf_token());
 
                     $column->append((new Box(trans('admin.new'), $form))->style('success'));
@@ -131,6 +135,10 @@ class MenuController extends Controller
         if ($form->model()->withPermission()) {
             $form->select('permission', trans('admin.permission'))->options($permissionModel::pluck('name', 'slug'));
         }
+
+        $form->text('extra->group',"分组");
+        $form->text('extra->slug',"Slug");
+        $form->text('extra->admin_url',"Admin Url");
 
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));

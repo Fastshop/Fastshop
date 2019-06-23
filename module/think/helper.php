@@ -273,7 +273,7 @@ if( !function_exists('url')) {
      * @param string|array $vars 变量
      * @param bool|string $suffix 生成的URL后缀
      * @param bool|string $domain 域名
-     * @return string
+     * @return string|\Illuminate\Contracts\Routing\UrlGenerator
      */
     function url($url = '', $vars = '', $suffix = TRUE, $domain = FALSE)
     {

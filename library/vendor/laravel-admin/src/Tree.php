@@ -20,7 +20,7 @@ class Tree implements Renderable
     protected $elementId = 'tree-';
 
     /**
-     * @var Model
+     * @var \App\Models\BaseModel
      */
     protected $model;
 
@@ -75,6 +75,13 @@ class Tree implements Renderable
      * @var Tools
      */
     public $tools;
+    
+    /**
+     * @return \App\Models\BaseModel
+     */
+    public function getModel(){
+        return $this->model;
+    }
 
     /**
      * Menu constructor.
@@ -201,10 +208,10 @@ class Tree implements Renderable
      */
     public function saveOrder($serialize)
     {
-        $tree = json_decode($serialize, true);
+        $tree = json_decode(stripcslashes($serialize) , true);
 
         if (json_last_error() != JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException(json_last_error_msg());
+            throw new \InvalidArgumentException(json_last_error_msg()."    ".$serialize);
         }
 
         $this->model->saveOrder($tree);

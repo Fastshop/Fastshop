@@ -1,5 +1,7 @@
 <?php
 
+use model\admin\admin_menu;
+
 return [
 
     /*
@@ -187,7 +189,8 @@ return [
 
         // Menu table and model.
         'menu_table' => 'admin_menu',
-        'menu_model' => Encore\Admin\Auth\Database\Menu::class,
+        'menu_model' => admin_menu::class,
+            //Encore\Admin\Auth\Database\Menu::class,
 
         // Pivot table for table above.
         'operation_log_table'    => 'admin_operation_log',

@@ -12,6 +12,7 @@ div.krumo-root {
     padding: 4px;
     margin: .5em;
     background-color: #F8F8F8;
+    z-index: 999999;
 }
 
 div.krumo-root * {
